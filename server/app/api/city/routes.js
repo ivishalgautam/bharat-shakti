@@ -7,11 +7,15 @@ export default async function routes(fastify, opts) {
     { preHandler: (req, res) => multipartPreHandler(req, res, []) },
     controller.create
   );
-  fastify.put("/:id", {}, controller.update);
+  fastify.put(
+    "/:id",
+    { preHandler: (req, res) => multipartPreHandler(req, res, ["image"]) },
+    controller.update
+  );
   fastify.get("/:id", {}, controller.getById);
   fastify.delete("/:id", {}, controller.deleteById);
 }
 
-export async function keywordPublicRoutes(fastify, opts) {
+export async function citiesPublicRoutes(fastify, opts) {
   fastify.get("/", {}, controller.get);
 }

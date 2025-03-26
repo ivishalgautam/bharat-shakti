@@ -29,7 +29,7 @@ const init = async (sequelize) => {
         },
       },
       is_featured: { type: DataTypes.BOOLEAN, defaultValue: false },
-      image: { type: DataTypes.TEXT, defaultValue: "" },
+      image: { type: DataTypes.ARRAY(DataTypes.TEXT), defaultValue: [] },
       meta_title: { type: DataTypes.TEXT, defaultValue: "" },
       meta_description: { type: DataTypes.TEXT, defaultValue: "" },
       meta_keywords: { type: DataTypes.TEXT, defaultValue: "" },
@@ -85,7 +85,7 @@ const get = async (req) => {
   SELECT
       COUNT(sct.id) OVER()::integer as total
     FROM ${constants.models.SECTOR_TABLE} sct
-    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON tdr.procedure_id = sct.id
+    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON sct.id = ANY(tdr.sector_ids)
     ${whereClause}
     GROUP BY sct.id
     ORDER BY sct.created_at DESC
@@ -116,7 +116,7 @@ const get = async (req) => {
     raw: true,
   });
 
-  return { authorities: data, total: count?.[0]?.total ?? 0 };
+  return { sectors: data, total: count?.[0]?.total ?? 0 };
 };
 
 const update = async (req, id) => {

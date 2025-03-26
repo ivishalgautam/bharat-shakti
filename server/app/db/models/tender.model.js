@@ -25,14 +25,14 @@ const init = async (sequelize) => {
         type: DataTypes.INTEGER,
         defaultValue: 0,
       },
-      bid_start_date: {
-        type: DataTypes.DATE,
-        allowNull: false,
-      },
-      bid_end_date: {
-        type: DataTypes.DATE,
-        allowNull: false,
-      },
+      // bid_start_date: {
+      //   type: DataTypes.DATE,
+      //   allowNull: false,
+      // },
+      // bid_end_date: {
+      //   type: DataTypes.DATE,
+      //   allowNull: false,
+      // },
       slug: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -42,7 +42,13 @@ const init = async (sequelize) => {
       },
       bid_number: { type: DataTypes.STRING, defaultValue: "" },
       dated: { type: DataTypes.STRING, defaultValue: "" },
-      bid_end_date_time: { type: DataTypes.STRING, defaultValue: "" },
+      bid_end_date_time: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        validate: {
+          isDate: { args: true, message: "Bid end date time is required" },
+        },
+      },
       department: { type: DataTypes.STRING, defaultValue: "" },
       organisation: { type: DataTypes.STRING, defaultValue: "" },
       office: { type: DataTypes.STRING, defaultValue: "" },
@@ -61,10 +67,10 @@ const init = async (sequelize) => {
       ote_lte: { type: DataTypes.STRING, defaultValue: "" },
       epbg_percentage: { type: DataTypes.STRING, defaultValue: "" },
       buyer_specification_document: {
-        type: DataTypes.STRING,
-        defaultValue: "",
+        type: DataTypes.ARRAY(DataTypes.STRING),
+        allowNull: true,
       },
-      drawing: { type: DataTypes.STRING, defaultValue: "" },
+      drawing: { type: DataTypes.ARRAY(DataTypes.STRING), allowNull: true },
       consignee: { type: DataTypes.STRING, defaultValue: "" },
       delivery_days: { type: DataTypes.STRING, defaultValue: "" },
       distribution: { type: DataTypes.STRING, defaultValue: "" },
@@ -78,23 +84,23 @@ const init = async (sequelize) => {
       splitting_applied: { type: DataTypes.STRING, defaultValue: "" },
       save_to_my_business: { type: DataTypes.STRING, defaultValue: "" },
       authority_ids: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
+        type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
       },
       city_ids: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
+        type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
       },
       keyword_ids: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
+        type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
       },
       sector_ids: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
+        type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
       },
       state_ids: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
+        type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
       },
       meta_title: { type: DataTypes.TEXT, defaultValue: "" },
@@ -165,13 +171,13 @@ const get = async (req) => {
   const queryParams = {};
   let q = req.query.q;
   if (q) {
-    whereConditions.push(`st.name ILIKE :query`);
+    whereConditions.push(`tdr.name ILIKE :query`);
     queryParams.query = `%${q}%`;
   }
 
   const featured = req.query.featured;
   if (featured) {
-    whereConditions.push(`st.is_featured = true`);
+    whereConditions.push(`tdr.is_featured = true`);
   }
 
   const page = req.query.page ? Number(req.query.page) : 1;
@@ -185,24 +191,19 @@ const get = async (req) => {
 
   let countQuery = `
   SELECT
-      COUNT(st.id) OVER()::integer as total
-    FROM ${constants.models.STATE_TABLE} st
-    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON tdr.procedure_id = st.id
+      COUNT(tdr.id) OVER()::integer as total
+    FROM ${constants.models.TENDER_TABLE} tdr
     ${whereClause}
-    GROUP BY st.id
-    ORDER BY st.created_at DESC
-    LIMIT :limit OFFSET :offset
+    GROUP BY tdr.id
+    ORDER BY tdr.created_at DESC
   `;
 
   let query = `
   SELECT
-      st.id, st.name, st.image, st.slug, st.created_at,
-      COUNT(tdr.id)::integer as tenders_count
-    FROM ${constants.models.STATE_TABLE} st
-    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON st.id = ANY(tdr.state_ids)
+      tdr.*
+    FROM ${constants.models.TENDER_TABLE} tdr
     ${whereClause}
-    GROUP BY st.id
-    ORDER BY st.created_at DESC
+    ORDER BY tdr.created_at DESC
     LIMIT :limit OFFSET :offset
   `;
 
@@ -213,12 +214,12 @@ const get = async (req) => {
   });
 
   const count = await TenderModel.sequelize.query(countQuery, {
-    replacements: { ...queryParams, limit, offset },
+    replacements: { ...queryParams },
     type: QueryTypes.SELECT,
     raw: true,
   });
 
-  return { procedures: data, total: count?.[0]?.total ?? 0 };
+  return { tenders: data, total: count?.[0]?.total ?? 0 };
 };
 
 const update = async (req, id, { transaction }) => {

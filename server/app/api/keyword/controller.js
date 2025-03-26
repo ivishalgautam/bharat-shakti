@@ -12,6 +12,9 @@ const create = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     const validateData = keywordSchema.parse(req.body);
+    const filePaths = req.filePaths;
+
+    req.body.image = filePaths;
     req.body.slug = slugify(validateData.name);
 
     await table.KeywordModel.create(req, { transaction });
@@ -32,7 +35,17 @@ const update = async (req, res) => {
         .code(status.NOT_FOUND)
         .send({ status: false, message: "Keyword not found!" });
 
+    const existingGallery = record.image;
+    const updatedGallery = req.body.image;
+    req.body.image = [...(req.filePaths ?? []), ...updatedGallery];
+
+    const documentsToDelete = getItemsToDelete(existingGallery, updatedGallery);
     await table.KeywordModel.update(req, 0, { transaction });
+
+    if (documentsToDelete.length) {
+      await cleanupFiles(documentsToDelete);
+    }
+
     await transaction.commit();
     res
       .code(status.ACCEPTED)

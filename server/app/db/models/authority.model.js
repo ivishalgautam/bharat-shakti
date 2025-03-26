@@ -29,7 +29,7 @@ const init = async (sequelize) => {
         },
       },
       is_featured: { type: DataTypes.BOOLEAN, defaultValue: false },
-      image: { type: DataTypes.TEXT, defaultValue: "" },
+      image: { type: DataTypes.ARRAY(DataTypes.TEXT), defaultValue: [] },
       meta_title: { type: DataTypes.TEXT, defaultValue: "" },
       meta_description: { type: DataTypes.TEXT, defaultValue: "" },
       meta_keywords: { type: DataTypes.TEXT, defaultValue: "" },
@@ -85,11 +85,9 @@ const get = async (req) => {
   SELECT
       COUNT(at.id) OVER()::integer as total
     FROM ${constants.models.AUTHORITY_TABLE} at
-    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON tdr.procedure_id = at.id
+    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON at.id = ANY(tdr.authority_ids)
     ${whereClause}
-    GROUP BY at.id
     ORDER BY at.created_at DESC
-    LIMIT :limit OFFSET :offset
   `;
 
   let query = `
@@ -111,12 +109,13 @@ const get = async (req) => {
   });
 
   const count = await AuthorityModel.sequelize.query(countQuery, {
-    replacements: { ...queryParams, limit, offset },
+    replacements: { ...queryParams },
     type: QueryTypes.SELECT,
     raw: true,
+    plain: true,
   });
 
-  return { authorities: data, total: count?.[0]?.total ?? 0 };
+  return { authorities: data, total: count?.total ?? 0 };
 };
 
 const update = async (req, id, { transaction }) => {
@@ -136,11 +135,12 @@ const update = async (req, id, { transaction }) => {
       },
       returning: true,
       raw: true,
+      plain: true,
       transaction,
     }
   );
 
-  return rows[0];
+  return rows;
 };
 
 const getById = async (req, id) => {

@@ -29,7 +29,7 @@ const init = async (sequelize) => {
         },
       },
       is_featured: { type: DataTypes.BOOLEAN, defaultValue: false },
-      image: { type: DataTypes.TEXT, defaultValue: "" },
+      image: { type: DataTypes.ARRAY(DataTypes.TEXT), defaultValue: [] },
       meta_title: { type: DataTypes.TEXT, defaultValue: "" },
       meta_description: { type: DataTypes.TEXT, defaultValue: "" },
       meta_keywords: { type: DataTypes.TEXT, defaultValue: "" },
@@ -85,7 +85,7 @@ const get = async (req) => {
   SELECT
       COUNT(ct.id) OVER()::integer as total
     FROM ${constants.models.CITY_TABLE} ct
-    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON tdr.procedure_id = ct.id
+    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON ct.id = ANY(tdr.city_ids)
     ${whereClause}
     GROUP BY ct.id
     ORDER BY ct.created_at DESC

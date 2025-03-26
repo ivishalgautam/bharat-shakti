@@ -29,7 +29,7 @@ const init = async (sequelize) => {
         },
       },
       is_featured: { type: DataTypes.BOOLEAN, defaultValue: false },
-      image: { type: DataTypes.TEXT, defaultValue: "" },
+      image: { type: DataTypes.ARRAY(DataTypes.TEXT), defaultValue: [] },
       meta_title: { type: DataTypes.TEXT, defaultValue: "" },
       meta_description: { type: DataTypes.TEXT, defaultValue: "" },
       meta_keywords: { type: DataTypes.TEXT, defaultValue: "" },
@@ -85,7 +85,7 @@ const get = async (req) => {
   SELECT
       COUNT(kw.id) OVER()::integer as total
     FROM ${constants.models.KEYWORD_TABLE} kw
-    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON tdr.procedure_id = kw.id
+    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON kw.id = ANY(tdr.keyword_ids)
     ${whereClause}
     GROUP BY kw.id
     ORDER BY kw.created_at DESC
@@ -97,7 +97,7 @@ const get = async (req) => {
       kw.id, kw.name, kw.image, kw.slug, kw.created_at,
       COUNT(tdr.id)::integer as tenders_count
     FROM ${constants.models.KEYWORD_TABLE} kw
-    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON kw.id = ANY(tdr.keyword_ids)
+  LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON kw.id = ANY(tdr.keyword_ids)  
     ${whereClause}
     GROUP BY kw.id
     ORDER BY kw.created_at DESC
@@ -116,7 +116,7 @@ const get = async (req) => {
     raw: true,
   });
 
-  return { authorities: data, total: count?.[0]?.total ?? 0 };
+  return { keywords: data, total: count?.[0]?.total ?? 0 };
 };
 
 const update = async (req, id) => {

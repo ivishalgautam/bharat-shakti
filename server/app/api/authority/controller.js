@@ -4,6 +4,7 @@ import { sequelize } from "../../db/postgres.js";
 import { cleanupFiles } from "../../helpers/cleanup-files.js";
 import constants from "../../lib/constants/index.js";
 import { authoritySchema } from "../../utils/schema/authority.schema.js";
+import { getItemsToDelete } from "../../helpers/filter.js";
 
 const status = constants.http.status;
 const message = constants.http.message;
@@ -12,6 +13,8 @@ const create = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     const validateData = authoritySchema.parse(req.body);
+    const filePaths = req.filePaths;
+    req.body.image = filePaths;
     req.body.slug = slugify(validateData.name);
     await table.AuthorityModel.create(req, { transaction });
     await transaction.commit();
@@ -31,7 +34,17 @@ const update = async (req, res) => {
         .code(status.NOT_FOUND)
         .send({ status: false, message: "Authority not found!" });
 
+    const existingGallery = record.image;
+    const updatedGallery = req.body.image;
+    req.body.image = [...(req.filePaths ?? []), ...updatedGallery];
+
+    const documentsToDelete = getItemsToDelete(existingGallery, updatedGallery);
     await table.AuthorityModel.update(req, 0, { transaction });
+
+    if (documentsToDelete.length) {
+      await cleanupFiles(documentsToDelete);
+    }
+
     await transaction.commit();
     res
       .code(status.ACCEPTED)
@@ -52,7 +65,7 @@ const deleteById = async (req, res) => {
         .send({ status: false, message: "Authority not found!" });
 
     await table.AuthorityModel.deleteById(req, 0, { transaction });
-    await cleanupFiles([record.image]);
+    await cleanupFiles(record.image);
 
     await transaction.commit();
     res
