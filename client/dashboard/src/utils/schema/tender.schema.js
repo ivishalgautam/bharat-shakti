@@ -1,13 +1,15 @@
 import { z } from "zod";
 
 export const TenderSchema = z.object({
-  name: z.string().default(""),
+  name: z
+    .string({ required_error: "Tender name is required!" })
+    .min(1, { message: "tender name is required!" }),
   tender_amount: z.number().int().default(0),
-  bid_start_date: z.coerce.date(),
-  bid_end_date: z.coerce.date(),
+  // bid_start_date: z.string(),
+  // bid_end_date: z.string(),
   bid_number: z.string().default(""),
   dated: z.string().default(""),
-  bid_end_date_time: z.string().default(""),
+  bid_end_date_time: z.coerce.date(),
   department: z.string().default(""),
   organisation: z.string().default(""),
   office: z.string().default(""),
@@ -22,17 +24,17 @@ export const TenderSchema = z.object({
   tender_value: z.string().default(""),
   ote_lte: z.string().default(""),
   epbg_percentage: z.string().default(""),
-  buyer_specification_document: z.string().default(""),
-  drawing: z.string().default(""),
   consignee: z.string().default(""),
   delivery_days: z.string().default(""),
   distribution: z.string().default(""),
   pre_qualification_criteria: z.string().default(""),
-  mse_exemption_for_turnover: z.string().default(""),
-  startup_exemption_for_turnover: z.string().default(""),
-  bid_to_ra_enabled: z.string().default(""),
-  splitting_applied: z.string().default(""),
-  save_to_my_business: z.string().default(""),
+
+  bid_to_ra_enabled: z.boolean().default(false),
+  mse_exemption_for_turnover: z.boolean().default(false),
+  save_to_my_business: z.boolean().default(false),
+  splitting_applied: z.boolean().default(false),
+  startup_exemption_for_turnover: z.boolean().default(false),
+
   authority_ids: z.array(z.string()).default([]),
   city_ids: z.array(z.string()).default([]),
   keyword_ids: z.array(z.string()).default([]),

@@ -8,6 +8,7 @@ export const endpoints = {
   },
   profile: "/users/me",
   authorities: { getAll: "/authorities" },
+  tenders: { getAll: "/tenders" },
   sectors: { getAll: "/sectors" },
   keywords: { getAll: "/keywords" },
   states: { getAll: "/states" },

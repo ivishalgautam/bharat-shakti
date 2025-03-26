@@ -10,10 +10,10 @@ export const authoritySchema = z.object({
       z.object({
         name: z.string().min(1, "File name is required"),
         size: z.number().max(5 * 1024 * 1024, "File size must be under 5MB"), // Max 5MB
-        type: z.enum(["image/png", "image/jpeg", "image/jpg"]),
+        type: z.enum(["image/png", "image/jpeg", "image/jpg", "image/webp"]),
       })
     )
-    .min(1, "At least one file is required"),
+    .optional(),
   meta_title: z.string().default(""),
   meta_description: z.string().default(""),
   meta_keywords: z.string().default(""),

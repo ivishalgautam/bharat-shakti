@@ -6,7 +6,7 @@ const create = async (data) => {
 };
 
 const update = async (id, data) => {
-  return await http().put(`${endpoints.keywords.getAll}/${id}`, data);
+  return await http().put(`${endpoints.keywords.getAll}/${id}`, data, true);
 };
 
 const deleteById = async (id) => {
@@ -14,7 +14,8 @@ const deleteById = async (id) => {
 };
 
 const getById = async (id) => {
-  return await http().get(`${endpoints.keywords.getAll}/${id}`);
+  const { data } = await http().get(`${endpoints.keywords.getAll}/${id}`);
+  return data;
 };
 
 const get = async (searchParams = "") => {

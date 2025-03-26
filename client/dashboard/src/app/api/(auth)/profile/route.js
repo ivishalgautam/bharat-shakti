@@ -27,6 +27,7 @@ export async function GET(request) {
       cookieStore.delete("refresh_token");
       return NextResponse.redirect(new URL("/login", request.url));
     }
+
     token = newTokenData.token;
     cookieStore.set("token", token, {
       path: "/",
@@ -45,6 +46,13 @@ export async function GET(request) {
       },
     });
     const data = res.data;
+
+    cookieStore.set("role", data.role, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    });
 
     return NextResponse.json({ user: data }, { status: res.status });
   } catch (error) {

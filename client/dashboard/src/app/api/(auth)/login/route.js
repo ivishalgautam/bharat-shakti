@@ -32,6 +32,13 @@ export async function POST(request) {
         sameSite: "lax",
         secure: process.env.NODE_ENV === "production",
       });
+      cookieStore.set("role", json.user_data.role, {
+        path: "/",
+        expires: new Date(json.expire_time),
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      });
     }
     // Return the same response as the external backend.
     return NextResponse.json(json, { status: res.status });

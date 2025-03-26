@@ -2,10 +2,10 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import city from "@/services/city";
 import { toast } from "@/hooks/use-toast";
 
-export const useGetCities = () => {
+export const useGetCities = (searchParams = "") => {
   return useQuery({
     queryKey: ["cities"],
-    queryFn: city.get,
+    queryFn: () => city.get(searchParams),
   });
 };
 
@@ -43,11 +43,11 @@ export const useCreateCity = (handleSuccess) => {
   });
 };
 
-export const useUpdateCity = () => {
+export const useUpdateCity = (id) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }) => city.update(id, data),
+    mutationFn: (data) => city.update(id, data),
     onSuccess: () => {
       toast({
         title: "Updated",
@@ -70,11 +70,11 @@ export const useUpdateCity = () => {
   });
 };
 
-export const useDeleteCity = () => {
+export const useDeleteCity = (handleSuccess) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id) => city.delete(id),
+    mutationFn: ({ id }) => city.deleteById(id),
     onSuccess: () => {
       toast({
         title: "Deleted",
@@ -82,6 +82,7 @@ export const useDeleteCity = () => {
       });
 
       queryClient.invalidateQueries(["cities"]);
+      typeof handleSuccess === "function" && handleSuccess();
     },
     onError: (error) => {
       console.error("Mutation Error:", error);

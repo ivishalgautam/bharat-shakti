@@ -198,4 +198,16 @@ export const sidebarData = [
   },
 ];
 
+export const filteredRoutes = sidebarData.flatMap((item) =>
+  item.items.length ? [item.url, ...item.items.map(({ url }) => url)] : item.url
+);
+export const filteredRoutesWithRoles = sidebarData.flatMap((item) =>
+  item.items.length
+    ? [
+        { url: item.url, roles: item.roles },
+        ...item.items.map(({ url, roles }) => ({ url, roles })),
+      ]
+    : { url: item.url, roles: item.roles }
+);
+
 export const publicRoutes = ["/", "/admin", "/register"];

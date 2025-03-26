@@ -1,25 +1,44 @@
-import PageContainer from "@/components/layout/page-container";
-import { buttonVariants } from "@/components/ui/button";
+import { Suspense } from "react";
+import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
+import { searchParamsCache, serialize } from "@/lib/searchparams";
 import { Heading } from "@/components/ui/heading";
+import PageContainer from "@/components/layout/page-container";
+import TableActions from "./_component/table-actions";
+import Listing from "./_component/listing";
 import Link from "next/link";
-import React from "react";
+import { Plus } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { buttonVariants } from "@/components/ui/button";
 
-export default function ProductsPage() {
+export const metadata = {
+  title: "Tenders",
+};
+
+export default async function Tenders({ searchParams }) {
+  searchParamsCache.parse(searchParams);
+  const key = serialize({ ...searchParams });
+
   return (
     <PageContainer>
-      <Heading title={"Tenders"} description="Create, Update, Delete tender." />
-
-      <div className="flex items-center justify-start gap-4 flex-wrap">
-        {Array.from({ length: 1000 }).map((_, ind) => (
-          <Link
-            key={ind}
-            href={`/products/${ind + 1}`}
-            className={buttonVariants({ variant: "outline" })}
-          >
-            Product {ind + 1}
-          </Link>
-        ))}
+      <div className="flex items-start justify-between">
+        <Heading
+          title="Tenders"
+          description="Manage Tenders (Create, Update, Delete)."
+        />
+        <Link
+          href={"/tenders/create"}
+          className={cn(buttonVariants({ variant: "outline" }), "h-7")}
+        >
+          <Plus /> Add
+        </Link>
       </div>
+      <TableActions />
+      <Suspense
+        key={key}
+        fallback={<DataTableSkeleton columnCount={4} rowCount={10} />}
+      >
+        <Listing />
+      </Suspense>
     </PageContainer>
   );
 }

@@ -6,7 +6,7 @@ const create = async (data) => {
 };
 
 const update = async (id, data) => {
-  return await http().put(`${endpoints.authorities.getAll}/${id}`, data);
+  return await http().put(`${endpoints.authorities.getAll}/${id}`, data, true);
 };
 
 const deleteById = async (id) => {
@@ -14,11 +14,15 @@ const deleteById = async (id) => {
 };
 
 const getById = async (id) => {
-  return await http().get(`${endpoints.authorities.getAll}/${id}`);
+  const { data } = await http().get(`${endpoints.authorities.getAll}/${id}`);
+  return data;
 };
 
 const get = async (searchParams = "") => {
-  return await http().get(`${endpoints.authorities.getAll}?${searchParams}`);
+  const { data } = await http().get(
+    `${endpoints.authorities.getAll}?${searchParams}`
+  );
+  return data;
 };
 
 const authority = {

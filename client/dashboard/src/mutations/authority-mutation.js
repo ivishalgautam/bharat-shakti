@@ -2,17 +2,17 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import authority from "@/services/authority";
 import { toast } from "@/hooks/use-toast";
 
-export const useGetAuthorities = () => {
+export const useGetAuthorities = (searchParams = "") => {
   return useQuery({
     queryKey: ["authorities"],
-    queryFn: authority.get,
+    queryFn: () => authority.get(searchParams),
   });
 };
 
 export const useGetAuthority = (id) => {
   return useQuery({
     queryKey: ["authorities", id],
-    queryFn: () => authority.get(id),
+    queryFn: () => authority.getById(id),
     enabled: !!id,
   });
 };
@@ -43,11 +43,11 @@ export const useCreateAuthority = (handleSuccess) => {
   });
 };
 
-export const useUpdateAuthority = () => {
+export const useUpdateAuthority = (id) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }) => authority.update(id, data),
+    mutationFn: (data) => authority.update(id, data),
     onSuccess: () => {
       toast({
         title: "Updated",
@@ -70,11 +70,11 @@ export const useUpdateAuthority = () => {
   });
 };
 
-export const useDeleteAuthority = () => {
+export const useDeleteAuthority = (handleSuccess) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id) => authority.delete(id),
+    mutationFn: ({ id }) => authority.deleteById(id),
     onSuccess: () => {
       toast({
         title: "Deleted",
@@ -82,6 +82,7 @@ export const useDeleteAuthority = () => {
       });
 
       queryClient.invalidateQueries(["authorities"]);
+      typeof handleSuccess === "function" && handleSuccess();
     },
     onError: (error) => {
       console.error("Mutation Error:", error);

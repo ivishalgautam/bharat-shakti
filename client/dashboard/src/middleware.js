@@ -14,12 +14,9 @@ const filteredDynamicRoutes = sidebarData
 
 const AUTH_ROUTES = ["/", "/register"];
 const PRIVATE_ROUTES = [...new Set(filteredRoutes)];
-const DYNAMIC_PRIVATE_ROUTES = filteredDynamicRoutes.map((url) =>
-  url.replace(/:\w+/g, "*")
-);
-
-console.log({ DYNAMIC_PRIVATE_ROUTES });
-
+// const DYNAMIC_PRIVATE_ROUTES = filteredDynamicRoutes.map((url) =>
+//   url.replace(/:\w+/g, ":path*")
+// );
 export default async function middleware(req) {
   const token = req.cookies.get("refresh_token")?.value;
   const url = req.nextUrl.clone();
@@ -29,11 +26,7 @@ export default async function middleware(req) {
     return NextResponse.redirect(url);
   }
 
-  if (
-    !token &&
-    (PRIVATE_ROUTES.some((path) => pathname.startsWith(path)) ||
-      DYNAMIC_PRIVATE_ROUTES.some((path) => pathname.startsWith(path)))
-  ) {
+  if (!token && PRIVATE_ROUTES.some((path) => pathname.startsWith(path))) {
     url.pathname = "/";
     return NextResponse.redirect(url);
   }
@@ -42,9 +35,5 @@ export default async function middleware(req) {
 }
 
 export const config = {
-  matcher: [
-    "/((?!.+\\.[\\w]+$|_next).*)",
-    "/(api|trpc)(.*)",
-    "/products/:path*",
-  ],
+  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/(api|trpc)(.*)"],
 };

@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { ScrollArea } from "./ui/scroll-area";
 import { useAuth } from "@/providers/auth-provider";
 import { Skeleton } from "./ui/skeleton";
+import { sidebarData } from "@/data/routes";
 
 export function NavMain({ items }) {
   const pathname = usePathname();
@@ -33,7 +34,7 @@ export function NavMain({ items }) {
         <SidebarGroupLabel>Platform</SidebarGroupLabel>
         <SidebarMenu>
           {isUserLoading
-            ? Array.from({ length: 10 }).map((_, ind) => (
+            ? Array.from({ length: sidebarData.length + 1 }).map((_, ind) => (
                 <Skeleton className={"h-8 bg-white/5"} key={ind} />
               ))
             : items.map((item) => (
@@ -56,8 +57,8 @@ export function NavMain({ items }) {
                     >
                       <CollapsibleTrigger
                         asChild
-                        className={cn("text-white", {
-                          "bg-primary": pathname.includes(item.url),
+                        className={cn("text-white hover:bg-white/10", {
+                          "bg-white/10": pathname.includes(item.url),
                         })}
                       >
                         <Link href={item.url}>
@@ -87,9 +88,12 @@ export function NavMain({ items }) {
                             {item.items?.map((subItem) => (
                               <SidebarMenuSubItem key={subItem.title}>
                                 <SidebarMenuSubButton
-                                  className={cn("text-white", {
-                                    "bg-primary": pathname === subItem.url,
-                                  })}
+                                  className={cn(
+                                    "text-white hover:bg-white/10",
+                                    {
+                                      "bg-white/10": pathname === subItem.url,
+                                    }
+                                  )}
                                   asChild
                                 >
                                   <Link href={subItem.url}>

@@ -13,7 +13,7 @@ export const keywordSchema = z.object({
         type: z.enum(["image/png", "image/jpeg", "image/jpg"]),
       })
     )
-    .min(1, "At least one file is required"),
+    .optional(),
   meta_title: z.string().default(""),
   meta_description: z.string().default(""),
   meta_keywords: z.string().default(""),

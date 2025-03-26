@@ -7,6 +7,7 @@ export async function POST(request) {
   try {
     cookieStore.delete("token");
     cookieStore.delete("refresh_token");
+    cookieStore.delete("role");
 
     return NextResponse.json({ message: "Logged out." }, { status: 200 });
   } catch (err) {

@@ -1,7 +1,5 @@
 "use client";
 
-import * as React from "react";
-
 import { NavMain } from "@/components/nav-main";
 import {
   Sidebar,
@@ -13,19 +11,22 @@ import { sidebarData } from "@/data/routes";
 import { NavUser } from "./nav-user";
 import { useAuth } from "@/providers/auth-provider";
 import { Skeleton } from "./ui/skeleton";
+import { useMemo } from "react";
 
 export function AppSidebar({ ...props }) {
   const { user, isUserLoading } = useAuth();
-  const filteredRoutes = sidebarData
-    .filter((route) => route.roles.includes(user?.role))
-    .map((item) => {
-      return {
-        ...item,
-        items: item.items.filter(
-          (item) => item.roles.includes(user?.role) && item.isVisible
-        ),
-      };
-    });
+  const filteredRoutes = useMemo(() => {
+    return sidebarData
+      .filter((route) => route.roles.includes(user?.role))
+      .map((item) => {
+        return {
+          ...item,
+          items: item.items.filter(
+            (item) => item.roles.includes(user?.role) && item.isVisible
+          ),
+        };
+      });
+  }, [user]);
 
   return (
     <Sidebar variant="inset" {...props}>

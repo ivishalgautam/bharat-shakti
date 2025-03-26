@@ -2,17 +2,17 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import state from "@/services/state";
 import { toast } from "@/hooks/use-toast";
 
-export const useGetStates = () => {
+export const useGetStates = (searchParams = "") => {
   return useQuery({
     queryKey: ["states"],
-    queryFn: state.get,
+    queryFn: () => state.get(searchParams),
   });
 };
 
 export const useGetState = (id) => {
   return useQuery({
     queryKey: ["states", id],
-    queryFn: () => state.get(id),
+    queryFn: () => state.getById(id),
     enabled: !!id,
   });
 };
@@ -43,11 +43,11 @@ export const useCreateState = (handleSuccess) => {
   });
 };
 
-export const useUpdateState = () => {
+export const useUpdateState = (id) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }) => state.update(id, data),
+    mutationFn: (data) => state.update(id, data),
     onSuccess: () => {
       toast({
         title: "Updated",
@@ -70,11 +70,11 @@ export const useUpdateState = () => {
   });
 };
 
-export const useDeleteState = () => {
+export const useDeleteState = (handleSuccess) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id) => state.delete(id),
+    mutationFn: ({ id }) => state.deleteById(id),
     onSuccess: () => {
       toast({
         title: "Deleted",
@@ -82,6 +82,7 @@ export const useDeleteState = () => {
       });
 
       queryClient.invalidateQueries(["states"]);
+      typeof handleSuccess === "function" && handleSuccess();
     },
     onError: (error) => {
       console.error("Mutation Error:", error);

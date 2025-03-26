@@ -2,17 +2,17 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import keyword from "@/services/keyword";
 import { toast } from "@/hooks/use-toast";
 
-export const useGetKeywords = () => {
+export const useGetKeywords = (searchParams) => {
   return useQuery({
     queryKey: ["keywords"],
-    queryFn: keyword.get,
+    queryFn: () => keyword.get(searchParams),
   });
 };
 
 export const useGetKeyword = (id) => {
   return useQuery({
     queryKey: ["keywords", id],
-    queryFn: () => keyword.get(id),
+    queryFn: () => keyword.getById(id),
     enabled: !!id,
   });
 };
@@ -43,11 +43,11 @@ export const useCreateKeyword = (handleSuccess) => {
   });
 };
 
-export const useUpdateKeyword = () => {
+export const useUpdateKeyword = (id) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }) => keyword.update(id, data),
+    mutationFn: (data) => keyword.update(id, data),
     onSuccess: () => {
       toast({
         title: "Updated",
@@ -70,11 +70,11 @@ export const useUpdateKeyword = () => {
   });
 };
 
-export const useDeleteKeyword = () => {
+export const useDeleteKeyword = (handleSuccess) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id) => keyword.delete(id),
+    mutationFn: ({ id }) => keyword.deleteById(id),
     onSuccess: () => {
       toast({
         title: "Deleted",
@@ -82,6 +82,7 @@ export const useDeleteKeyword = () => {
       });
 
       queryClient.invalidateQueries(["keywords"]);
+      typeof handleSuccess === "function" && handleSuccess();
     },
     onError: (error) => {
       console.error("Mutation Error:", error);

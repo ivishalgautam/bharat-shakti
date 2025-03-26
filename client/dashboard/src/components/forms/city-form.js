@@ -5,14 +5,24 @@ import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
-import { useCreateAuthority } from "@/mutations/authority-mutation";
 import { Textarea } from "../ui/textarea";
 import Dropzone from "../dropzone";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { citySchema } from "@/utils/schema/city.schema";
-import { useCreateCity } from "@/mutations/city-mutation";
+import {
+  useCreateCity,
+  useGetCity,
+  useUpdateCity,
+} from "@/mutations/city-mutation";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import config from "@/config";
+import Spinner from "../ui/spinner";
+import ErrorMessage from "../ui/error";
 
-export default function CityForm() {
+export default function CityForm({ id, type = "create" }) {
+  const [images, setImages] = useState([]);
   const {
     register,
     handleSubmit,
@@ -20,14 +30,19 @@ export default function CityForm() {
     reset,
     control,
     setValue,
-    setError,
   } = useForm({ resolver: zodResolver(citySchema) });
 
   const files = useWatch({ control, name: "files" }) ?? [];
+  const router = useRouter();
+
   const handleSuccess = () => {
     reset();
+    router.replace("/cities?limit=10");
   };
   const createMutation = useCreateCity(handleSuccess);
+  const updateMutation = useUpdateCity(id);
+  const { data, isLoading, isError, error } = useGetCity(id);
+
   const onSubmit = async (data) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => formData.append(key, value));
@@ -35,13 +50,32 @@ export default function CityForm() {
     if (files && files?.length) {
       files.forEach((file) => formData.append("file", file));
     }
-    console.log({ formData });
-    createMutation.mutate(formData);
+    if (type === "create") {
+      createMutation.mutate(formData);
+    }
+    if (type === "edit") {
+      formData.append("image", JSON.stringify(images));
+      updateMutation.mutate(formData);
+    }
   };
 
   const handleDrop = (acceptedFiles) => {
     setValue("files", acceptedFiles);
   };
+
+  useEffect(() => {
+    if (data) {
+      setValue("name", data.name);
+      setValue("is_featured", data.is_featured);
+      setValue("meta_title", data.meta_title);
+      setValue("meta_keywords", data.meta_keywords);
+      setValue("meta_description", data.meta_description);
+      setImages(data.image);
+    }
+  }, [data, setValue, setImages]);
+
+  if (type === "edit" && isLoading) return <Spinner />;
+  if (type === "edit" && isError) return <ErrorMessage error={error} />;
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -50,21 +84,57 @@ export default function CityForm() {
           htmlFor="image"
           className="block text-sm font-medium text-gray-700"
         >
-          Image URL
+          Image
         </Label>
 
-        <Dropzone onDropFiles={handleDrop} />
-
-        <ul className="mt-4">
-          {files.map((file, index) => (
-            <li key={index} className="text-sm text-gray-600">
-              {file.name} ({(file.size / 1024).toFixed(2)} KB)
-            </li>
-          ))}
-        </ul>
-
-        {errors.files && (
-          <p className="mt-1 text-sm text-red-500">{errors.files.message}</p>
+        {type === "edit" && images?.length ? (
+          <ul className="mt-4 flex items-center justify-start">
+            {images.map((file, index) => (
+              <li
+                key={index}
+                className="text-sm text-gray-600 p-2 border shadow rounded-lg space-y-1"
+              >
+                <Image
+                  src={`${config.file_base}/${file}`}
+                  width={50}
+                  height={50}
+                  alt="file"
+                  className="mx-auto"
+                />
+                <Button
+                  type="button"
+                  variant="destructive"
+                  className="h-4 shadow-none text-[10px]"
+                  onClick={() =>
+                    setImages((prev) => prev.filter((i) => file !== i))
+                  }
+                >
+                  Delete
+                </Button>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <>
+            <Dropzone onDropFiles={handleDrop} />
+            <ul className="mt-4">
+              {files.map((file, index) => (
+                <li key={index} className="text-sm text-gray-600">
+                  {file.name} ({(file.size / 1024).toFixed(2)} KB)
+                  {errors.files?.[index]?.type && (
+                    <p className="mt-1 text-sm text-red-500">
+                      {errors.files?.[index]?.type.message}
+                    </p>
+                  )}
+                </li>
+              ))}
+            </ul>
+            {errors.files && (
+              <p className="mt-1 text-sm text-red-500">
+                {errors.files.message}
+              </p>
+            )}
+          </>
         )}
       </div>
 
@@ -94,18 +164,10 @@ export default function CityForm() {
           control={control}
           name="is_featured"
           render={({ field: { onChange, value } }) => (
-            <Checkbox
-              id="is_featured"
-              type="checkbox"
-              onCheckedChange={onChange}
-              value={value}
-            />
+            <Checkbox onCheckedChange={onChange} checked={value} />
           )}
         />
-        <Label
-          htmlFor="is_featured"
-          className="ml-2 block text-sm text-gray-700"
-        >
+        <Label className="ml-2 block text-sm text-gray-700">
           Featured content
         </Label>
       </div>
@@ -165,7 +227,7 @@ export default function CityForm() {
       </div>
       <div className="text-end">
         <Button type="submit" disabled={createMutation.isPending}>
-          {createMutation.isPending ? "Creating..." : "Create Authority"}
+          {createMutation.isPending ? "Submitting..." : "Submit"}
         </Button>
       </div>
     </form>

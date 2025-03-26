@@ -2,17 +2,17 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import sector from "@/services/sector";
 import { toast } from "@/hooks/use-toast";
 
-export const useGetSectors = () => {
+export const useGetSectors = (searchParams = "") => {
   return useQuery({
     queryKey: ["sectors"],
-    queryFn: sector.get,
+    queryFn: () => sector.get(searchParams),
   });
 };
 
 export const useGetSector = (id) => {
   return useQuery({
     queryKey: ["sectors", id],
-    queryFn: () => sector.get(id),
+    queryFn: () => sector.getById(id),
     enabled: !!id,
   });
 };
@@ -43,11 +43,11 @@ export const useCreateSector = (handleSuccess) => {
   });
 };
 
-export const useUpdateSector = () => {
+export const useUpdateSector = (id) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }) => sector.update(id, data),
+    mutationFn: (data) => sector.update(id, data),
     onSuccess: () => {
       toast({
         title: "Updated",
@@ -70,11 +70,11 @@ export const useUpdateSector = () => {
   });
 };
 
-export const useDeleteSector = () => {
+export const useDeleteSector = (handleSuccess) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id) => sector.delete(id),
+    mutationFn: ({ id }) => sector.deleteById(id),
     onSuccess: () => {
       toast({
         title: "Deleted",
@@ -82,6 +82,7 @@ export const useDeleteSector = () => {
       });
 
       queryClient.invalidateQueries(["sectors"]);
+      typeof handleSuccess === "function" && handleSuccess();
     },
     onError: (error) => {
       console.error("Mutation Error:", error);
