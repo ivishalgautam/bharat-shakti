@@ -13,9 +13,6 @@ const create = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     const validateData = sectorSchema.parse(req.body);
-    const filePaths = req.filePaths;
-
-    req.body.image = filePaths;
     req.body.slug = slugify(validateData.name);
     await table.SectorModel.create(req, { transaction });
     await transaction.commit();
@@ -67,7 +64,9 @@ const deleteById = async (req, res) => {
         .send({ status: false, message: "Sector not found!" });
 
     await table.SectorModel.deleteById(req, 0, { transaction });
-    await cleanupFiles([record.image]);
+    if (record.image?.length) {
+      await cleanupFiles(record.image);
+    }
 
     await transaction.commit();
     res

@@ -65,7 +65,18 @@ const deleteById = async (req, res) => {
         .send({ status: false, message: "Tender not found!" });
 
     await table.TenderModel.deleteById(req, 0, { transaction });
-    await cleanupFiles([record.image]);
+
+    if (record.buyer_specification_document?.length) {
+      console.log(
+        "buyer_specification_document",
+        record.buyer_specification_document
+      );
+      await cleanupFiles(record.buyer_specification_document);
+    }
+    if (record.drawing?.length) {
+      console.log("drawing", record.drawing);
+      await cleanupFiles(record.drawing);
+    }
 
     await transaction.commit();
     res

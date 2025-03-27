@@ -13,16 +13,12 @@ const create = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     const validateData = stateSchema.parse(req.body);
-    const filePaths = req.filePaths;
-
-    req.body.image = filePaths;
     req.body.slug = slugify(validateData.name);
 
     await table.StateModel.create(req, { transaction });
     await transaction.commit();
     res.code(status.CREATED).send({ message: message.HTTP_STATUS_CODE_201 });
   } catch (error) {
-    console.log(error);
     await transaction.rollback();
     throw error;
   }
@@ -66,7 +62,10 @@ const deleteById = async (req, res) => {
         .send({ status: false, message: "State not found!" });
 
     await table.StateModel.deleteById(req, 0, { transaction });
-    await cleanupFiles([record.image]);
+
+    if (record.image?.length) {
+      await cleanupFiles(record.image);
+    }
 
     await transaction.commit();
     res

@@ -13,9 +13,6 @@ const create = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     const validateData = citySchema.parse(req.body);
-    const filePaths = req.filePaths;
-
-    req.body.image = filePaths;
     req.body.slug = slugify(validateData.name);
     await table.CityModel.create(req, { transaction });
     await transaction.commit();
@@ -64,7 +61,9 @@ const deleteById = async (req, res) => {
         .send({ status: false, message: "City not found!" });
 
     await table.CityModel.deleteById(req, 0, { transaction });
-    await cleanupFiles([record.image]);
+    if (record.image?.length) {
+      await cleanupFiles(record.image);
+    }
 
     await transaction.commit();
     res

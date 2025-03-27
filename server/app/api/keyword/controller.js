@@ -12,9 +12,6 @@ const create = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     const validateData = keywordSchema.parse(req.body);
-    const filePaths = req.filePaths;
-
-    req.body.image = filePaths;
     req.body.slug = slugify(validateData.name);
 
     await table.KeywordModel.create(req, { transaction });
@@ -66,7 +63,9 @@ const deleteById = async (req, res) => {
         .send({ status: false, message: "Keyword not found!" });
 
     await table.KeywordModel.deleteById(req, 0, { transaction });
-    await cleanupFiles([record.image]);
+    if (record.image?.length) {
+      await cleanupFiles(record.image);
+    }
 
     await transaction.commit();
     res

@@ -75,14 +75,19 @@ const init = async (sequelize) => {
       delivery_days: { type: DataTypes.STRING, defaultValue: "" },
       distribution: { type: DataTypes.STRING, defaultValue: "" },
       pre_qualification_criteria: { type: DataTypes.STRING, defaultValue: "" },
-      mse_exemption_for_turnover: { type: DataTypes.STRING, defaultValue: "" },
-      startup_exemption_for_turnover: {
-        type: DataTypes.STRING,
-        defaultValue: "",
+
+      save_to_my_business: { type: DataTypes.BOOLEAN, defaultValue: false },
+      splitting_applied: { type: DataTypes.BOOLEAN, defaultValue: false },
+      mse_exemption_for_turnover: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
       },
-      bid_to_ra_enabled: { type: DataTypes.STRING, defaultValue: "" },
-      splitting_applied: { type: DataTypes.STRING, defaultValue: "" },
-      save_to_my_business: { type: DataTypes.STRING, defaultValue: "" },
+      startup_exemption_for_turnover: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      bid_to_ra_enabled: { type: DataTypes.BOOLEAN, defaultValue: false },
+
       authority_ids: {
         type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
