@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import React from "react";
+import Logo from "./logo";
 
 export default function Footer() {
   return (
@@ -9,7 +10,7 @@ export default function Footer() {
       <div className="container px-4 py-12 md:px-6 md:py-16 lg:py-20">
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">TenderBid</h3>
+            <Logo />
             <p className="text-sm text-slate-400">
               Your trusted partner for finding and winning tender opportunities
               across the country.
@@ -222,7 +223,9 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t border-slate-800 pt-8 text-center text-sm text-slate-400">
-          <p>© {new Date().getFullYear()} TenderBid. All rights reserved.</p>
+          <p>
+            © {new Date().getFullYear()} Bharat Shakti. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

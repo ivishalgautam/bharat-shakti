@@ -4,6 +4,7 @@ import QueryProvider from "@/providers/query-client-provider";
 import { usePathname } from "next/navigation";
 import Header from "../header";
 import Footer from "../footer";
+import { NuqsAdapter } from "nuqs/adapters/next";
 
 export default function Layout({ children }) {
   const pathname = usePathname();
@@ -24,8 +25,10 @@ export default function Layout({ children }) {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen">
-      <QueryProvider>{getContent()}</QueryProvider>
+    <div className="min-h-screen bg-primary/10">
+      <QueryProvider>
+        <NuqsAdapter>{getContent()}</NuqsAdapter>
+      </QueryProvider>
     </div>
   );
 }

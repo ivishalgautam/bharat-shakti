@@ -12,14 +12,14 @@ import { Button } from "./ui/button";
 
 export default function Hero() {
   return (
-    <section className="bg-gradient-to-b from-slate-50 to-slate-100 py-20">
+    <section className="bg-gradient-to-t from-primary/20 to-primary/5 py-20">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center space-y-4 text-center">
           <div className="space-y-2">
             <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
               Find the Perfect Tender Opportunities
             </h1>
-            <p className="mx-auto max-w-[700px] text-muted-foreground md:text-xl">
+            <p className="mx-auto max-w-[700px] text-balance text-muted-foreground md:text-xl">
               Access thousands of government and private tenders from across the
               country. Start your bidding journey today.
             </p>

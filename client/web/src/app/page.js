@@ -3,7 +3,6 @@ import ExploreByKeywords from "@/components/explore-by-keywords";
 import ExploreByAuthorities from "@/components/explore-by-authorities";
 import ExploreByStates from "@/components/explore-by-states";
 import Services from "@/components/services";
-import Footer from "@/components/footer";
 import { Suspense } from "react";
 
 export default function Home() {

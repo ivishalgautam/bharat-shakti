@@ -5,6 +5,18 @@ import axios from "axios";
 
 export const AuthContext = createContext(null);
 
+export async function handleLogout() {
+  try {
+    const resp = await axios.post("/api/logout");
+    if (resp.statusText === "OK") {
+      localStorage.clear();
+      window.location.href = "/";
+    }
+  } catch (error) {
+    console.log(error?.response?.data?.message ?? error?.message ?? "Error");
+  }
+}
+
 export default function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [isUserLoading, setIsUserLoading] = useState(true);
@@ -15,11 +27,9 @@ export default function AuthProvider({ children }) {
     async function fetchData() {
       try {
         // const user = await http().get(endpoints.profile);
-        const {
-          data: { user },
-        } = await axios.get("/api/profile");
-        setUser(user);
-        localStorage.setItem("user", JSON.stringify(user));
+        const { data } = await axios.get("/api/profile");
+        setUser(data.user);
+        localStorage.setItem("user", JSON.stringify(data.user));
       } catch (error) {
         setUser(null);
         console.log(error);

@@ -5,6 +5,11 @@ export const endpoints = {
     refresh: "/auth/refresh",
     username: "/auth/username",
   },
+  keywords: { getAll: "/keywords" },
+  states: { getAll: "/states" },
+  cities: { getAll: "/cities" },
+  sectors: { getAll: "/sectors" },
+  authorities: { getAll: "/authorities" },
   profile: "/users/me",
   files: {
     getFiles: "/upload",
