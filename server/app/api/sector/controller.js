@@ -13,7 +13,7 @@ const create = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     const validateData = sectorSchema.parse(req.body);
-    req.body.slug = slugify(validateData.name);
+    req.body.slug = slugify(validateData.name, { lower: true });
     await table.SectorModel.create(req, { transaction });
     await transaction.commit();
     res.code(status.CREATED).send({ message: message.HTTP_STATUS_CODE_201 });
@@ -26,8 +26,9 @@ const create = async (req, res) => {
 const update = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    const validateData = sectorSchema.parse(req.body);
-    req.body.slug = slugify(validateData.name);
+    if (req.body.name) {
+      req.body.slug = slugify(req.body.name, { lower: true });
+    }
 
     const record = await table.SectorModel.getById(req);
     if (!record)
@@ -37,9 +38,13 @@ const update = async (req, res) => {
 
     const existingGallery = record.image;
     const updatedGallery = req.body.image;
-    req.body.image = [...(req.filePaths ?? []), ...updatedGallery];
 
-    const documentsToDelete = getItemsToDelete(existingGallery, updatedGallery);
+    let documentsToDelete = [];
+    if (updatedGallery) {
+      req.body.image = [...(req.filePaths ?? []), ...updatedGallery];
+      documentsToDelete = getItemsToDelete(existingGallery, updatedGallery);
+    }
+
     await table.SectorModel.update(req, 0, { transaction });
 
     if (documentsToDelete.length) {

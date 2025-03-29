@@ -92,7 +92,7 @@ const get = async (req) => {
 
   let query = `
   SELECT
-      at.id, at.name, at.image, at.slug, at.created_at,
+      at.*,
       COUNT(tdr.id)::integer as tenders_count
     FROM ${constants.models.AUTHORITY_TABLE} at
     LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON at.id = ANY(tdr.authority_ids)

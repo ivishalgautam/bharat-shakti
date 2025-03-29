@@ -176,8 +176,74 @@ const get = async (req) => {
   const queryParams = {};
   let q = req.query.q;
   if (q) {
-    whereConditions.push(`tdr.name ILIKE :query`);
+    whereConditions.push(
+      `(tdr.name ILIKE :query OR tdr.bid_number ILIKE :query)`
+    );
     queryParams.query = `%${q}%`;
+  }
+
+  const authorities = req.query.authorities
+    ? String(req.query.authorities).split(".")
+    : null;
+  if (authorities) {
+    whereConditions.push(`tdr.authority_ids && :authorityIds`);
+    queryParams.authorityIds = `{${authorities.join(",")}}`;
+  }
+
+  const keywords = req.query.keywords
+    ? String(req.query.keywords).split(".")
+    : null;
+  if (keywords) {
+    whereConditions.push(`tdr.keyword_ids && :keywordIds`);
+    queryParams.keywordIds = `{${keywords.join(",")}}`;
+  }
+
+  const states = req.query.states ? String(req.query.states).split(".") : null;
+  if (states) {
+    whereConditions.push(`tdr.state_ids && :stateIds`);
+    queryParams.stateIds = `{${states.join(",")}}`;
+  }
+
+  const cities = req.query.cities ? String(req.query.cities).split(".") : null;
+  if (cities) {
+    whereConditions.push(`tdr.city_ids && :cityIds`);
+    queryParams.cityIds = `{${cities.join(",")}}`;
+  }
+
+  const sectors = req.query.sectors
+    ? String(req.query.sectors).split(".")
+    : null;
+  if (sectors) {
+    whereConditions.push(`tdr.sector_ids && :sectorIds`);
+    queryParams.sectorIds = `{${cities.join(",")}}`;
+  }
+
+  const startDate = req.query.start_date || null;
+  const endDate = req.query.end_date || null;
+  if (startDate && endDate) {
+    whereConditions.push(`tdr.date BETWEEN :startDate AND :endDate`);
+    queryParams.startDate = startDate;
+    queryParams.endDate = endDate;
+  } else if (startDate) {
+    whereConditions.push(`tdr.bid_end_date_time >= :startDate`);
+    queryParams.startDate = startDate;
+  } else if (endDate) {
+    whereConditions.push(`tdr.bid_end_date_time <= :endDate`);
+    queryParams.endDate = endDate;
+  }
+
+  const amountMin = req.query.amount_min || null;
+  const amountMax = req.query.amount_max || null;
+  if (amountMin && amountMax) {
+    whereConditions.push(`tdr.date BETWEEN :amountMin AND :amountMax`);
+    queryParams.amountMin = amountMin;
+    queryParams.amountMax = amountMax;
+  } else if (amountMin) {
+    whereConditions.push(`tdr.tender_amount >= :amountMin`);
+    queryParams.amountMin = amountMin;
+  } else if (amountMax) {
+    whereConditions.push(`tdr.tender_amount <= :amountMax`);
+    queryParams.amountMax = amountMax;
   }
 
   const featured = req.query.featured;
@@ -205,9 +271,20 @@ const get = async (req) => {
 
   let query = `
   SELECT
-      tdr.*
+      tdr.id, tdr.name, tdr.bid_number, tdr.tender_amount, tdr.quantity, tdr.created_at,
+      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', atr.id, 'name', atr.name)) FILTER (WHERE atr.id IS NOT NULL), '[]') as authorities,
+      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', ct.id, 'name', ct.name)) FILTER (WHERE ct.id IS NOT NULL), '[]') as cities,
+      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', kw.id, 'name', kw.name)) FILTER (WHERE kw.id IS NOT NULL), '[]') as keywords,
+      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', sct.id, 'name', sct.name)) FILTER (WHERE sct.id IS NOT NULL), '[]') as sectors,
+      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', st.id, 'name', st.name)) FILTER (WHERE st.id IS NOT NULL), '[]') as states
     FROM ${constants.models.TENDER_TABLE} tdr
+    LEFT JOIN ${constants.models.AUTHORITY_TABLE} atr ON atr.id = ANY(tdr.authority_ids)
+    LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = ANY(tdr.city_ids)
+    LEFT JOIN ${constants.models.KEYWORD_TABLE} kw ON kw.id = ANY(tdr.keyword_ids)
+    LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = ANY(tdr.sector_ids)
+    LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = ANY(tdr.state_ids)
     ${whereClause}
+    GROUP BY tdr.id
     ORDER BY tdr.created_at DESC
     LIMIT :limit OFFSET :offset
   `;
@@ -301,10 +378,28 @@ const getByPk = async (req, id) => {
 };
 
 const getBySlug = async (req, slug) => {
-  return await TenderModel.findOne({
-    where: {
-      slug: req.params?.slug || slug,
-    },
+  let query = `
+  SELECT
+      tdr.*,
+      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', atr.id, 'name', atr.name)) FILTER (WHERE atr.id IS NOT NULL), '[]') as authorities,
+      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', ct.id, 'name', ct.name)) FILTER (WHERE ct.id IS NOT NULL), '[]') as cities,
+      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', kw.id, 'name', kw.name)) FILTER (WHERE kw.id IS NOT NULL), '[]') as keywords,
+      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', sct.id, 'name', sct.name)) FILTER (WHERE sct.id IS NOT NULL), '[]') as sectors,
+      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', st.id, 'name', st.name)) FILTER (WHERE st.id IS NOT NULL), '[]') as states
+    FROM ${constants.models.TENDER_TABLE} tdr
+    LEFT JOIN ${constants.models.AUTHORITY_TABLE} atr ON atr.id = ANY(tdr.authority_ids)
+    LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = ANY(tdr.city_ids)
+    LEFT JOIN ${constants.models.KEYWORD_TABLE} kw ON kw.id = ANY(tdr.keyword_ids)
+    LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = ANY(tdr.sector_ids)
+    LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = ANY(tdr.state_ids)
+    WHERE tdr.slug = :slug
+    GROUP BY tdr.id
+  `;
+
+  return await TenderModel.sequelize.query(query, {
+    replacements: { slug: req.params?.slug || slug },
+    type: QueryTypes.SELECT,
+    plain: true,
     raw: true,
   });
 };

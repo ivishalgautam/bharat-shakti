@@ -89,12 +89,11 @@ const get = async (req) => {
     ${whereClause}
     GROUP BY sct.id
     ORDER BY sct.created_at DESC
-    LIMIT :limit OFFSET :offset
   `;
 
   let query = `
   SELECT
-      sct.id, sct.name, sct.image, sct.slug, sct.created_at,
+      sct.*,
       COUNT(tdr.id)::integer as tenders_count
     FROM ${constants.models.SECTOR_TABLE} sct
     LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON sct.id = ANY(tdr.sector_ids)
@@ -111,7 +110,7 @@ const get = async (req) => {
   });
 
   const count = await SectorModel.sequelize.query(countQuery, {
-    replacements: { ...queryParams, limit, offset },
+    replacements: { ...queryParams },
     type: QueryTypes.SELECT,
     raw: true,
   });

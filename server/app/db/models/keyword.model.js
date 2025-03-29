@@ -89,12 +89,11 @@ const get = async (req) => {
     ${whereClause}
     GROUP BY kw.id
     ORDER BY kw.created_at DESC
-    LIMIT :limit OFFSET :offset
   `;
 
   let query = `
   SELECT
-      kw.id, kw.name, kw.image, kw.slug, kw.created_at,
+      kw.*,
       COUNT(tdr.id)::integer as tenders_count
     FROM ${constants.models.KEYWORD_TABLE} kw
   LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON kw.id = ANY(tdr.keyword_ids)  
@@ -111,7 +110,7 @@ const get = async (req) => {
   });
 
   const count = await KeywordModel.sequelize.query(countQuery, {
-    replacements: { ...queryParams, limit, offset },
+    replacements: { ...queryParams },
     type: QueryTypes.SELECT,
     raw: true,
   });
