@@ -11,7 +11,9 @@ export const multipartPreHandler = async (
 
   for await (const part of parts) {
     if (part.file) {
+      // console.log(part);
       const filePath = await saveFile(part);
+      // console.log({ filePath });
       part.fieldname in body
         ? body[part.fieldname].push(filePath)
         : (body[part.fieldname] = [filePath]);
@@ -23,7 +25,7 @@ export const multipartPreHandler = async (
         : (body[part.fieldname] = part.value);
     }
   }
-
+  // console.log(body);
   req.body = body;
   req.filePaths = filePaths;
 };

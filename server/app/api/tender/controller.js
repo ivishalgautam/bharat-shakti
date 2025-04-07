@@ -12,9 +12,6 @@ const message = constants.http.message;
 const create = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    // const filePaths = req.filePaths;
-    // console.log({ filePaths });
-    console.log(req.body);
     const validateData = tenderSchema.parse(req.body);
     req.body.slug = slugify(validateData.name, { lower: true });
 
@@ -35,18 +32,33 @@ const update = async (req, res) => {
       return res
         .code(status.NOT_FOUND)
         .send({ status: false, message: "Tender not found!" });
-
-    const existingGallery = record.image;
-    const updatedGallery = req.body.image;
+    console.log({ record });
 
     let documentsToDelete = [];
-    if (updatedGallery) {
-      req.body.image = [...(req.filePaths ?? []), ...updatedGallery];
-      documentsToDelete = getItemsToDelete(existingGallery, updatedGallery);
+    const existingDocs = record.buyer_specification_document;
+    const updatedDocs = req.body.buyer_specification_document_urls;
+    console.log({ existingDocs, updatedDocs });
+
+    if (updatedDocs) {
+      req.body.buyer_specification_document = [
+        ...(req.body.buyer_specification_document ?? []),
+        ...updatedDocs,
+      ];
+      console.log("getItems", getItemsToDelete(existingDocs, updatedDocs));
+      documentsToDelete.push(...getItemsToDelete(existingDocs, updatedDocs));
     }
 
-    await table.TenderModel.update(req, 0, { transaction });
+    // const existingDrawings = record.drawing;
+    // const updatedDrawings = req.body.drawing_urls;
 
+    // if (updatedDrawings) {
+    //   req.body.drawing = [...(req.body.drawing ?? []), ...updatedDrawings];
+    //   documentsToDelete.push(
+    //     ...getItemsToDelete(existingDrawings, updatedDrawings)
+    //   );
+    // }
+
+    await table.TenderModel.update(req, 0, { transaction });
     if (documentsToDelete.length) {
       await cleanupFiles(documentsToDelete);
     }
@@ -115,10 +127,25 @@ const getById = async (req, res) => {
   }
 };
 
+const getBySlug = async (req, res) => {
+  try {
+    const record = await table.TenderModel.getBySlug(req);
+    if (!record)
+      return res
+        .code(status.NOT_FOUND)
+        .send({ status: false, message: "Tender not found!" });
+
+    res.code(status.ACCEPTED).send({ status: true, data: record });
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   create: create,
   update: update,
   deleteById: deleteById,
   get: get,
   getById: getById,
+  getBySlug: getBySlug,
 };

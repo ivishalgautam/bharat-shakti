@@ -83,11 +83,10 @@ const get = async (req) => {
 
   let countQuery = `
   SELECT
-      COUNT(at.id) OVER()::integer as total
+      COUNT(*) OVER()::integer as total
     FROM ${constants.models.AUTHORITY_TABLE} at
     LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON at.id = ANY(tdr.authority_ids)
     ${whereClause}
-    ORDER BY at.created_at DESC
   `;
 
   let query = `

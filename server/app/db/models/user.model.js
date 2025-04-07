@@ -1,7 +1,7 @@
 "use strict";
 import constants from "../../lib/constants/index.js";
 import hash from "../../lib/encryption/index.js";
-import sequelizeFwk from "sequelize";
+import sequelizeFwk, { QueryTypes } from "sequelize";
 import { Op } from "sequelize";
 import moment from "moment";
 
@@ -50,17 +50,15 @@ const init = async (sequelize) => {
         }),
         defaultValue: "user",
       },
-      birth_date: {
-        type: sequelizeFwk.DataTypes.DATE,
+      is_active: {
+        type: sequelizeFwk.DataTypes.BOOLEAN,
+        defaultValue: true,
       },
       is_verified: {
         type: sequelizeFwk.DataTypes.BOOLEAN,
         defaultValue: false,
       },
       image_url: {
-        type: sequelizeFwk.DataTypes.STRING,
-      },
-      address: {
         type: sequelizeFwk.DataTypes.STRING,
       },
       reset_password_token: {
@@ -89,18 +87,68 @@ const create = async (req) => {
     email: req.body?.email,
     mobile_number: req.body?.mobile_number,
     role: req.body?.role,
-    birth_date: req?.body?.birth_date,
     image_url: req?.body?.image_url,
-    address: req?.body?.address,
   });
 };
 
-const get = async () => {
-  return await UserModel.findAll({
-    attributes: {
-      exclude: ["password", "reset_password_token", "confirmation_token"],
-    },
+const get = async (req) => {
+  const whereConditions = ["usr.role != 'admin'"];
+  const queryParams = {};
+  const q = req.query.q ? req.query.q : null;
+  const roles = req.query.role ? req.query.role.split(".") : null;
+
+  if (q) {
+    whereConditions.push(
+      `(usr.first_name ILIKE :query OR usr.last_name ILIKE :query OR usr.email ILIKE :query)`
+    );
+    queryParams.query = `%${q}%`;
+  }
+
+  if (roles?.length) {
+    whereConditions.push(`usr.role = any(:roles)`);
+    queryParams.roles = `{${roles.join(",")}}`;
+  }
+
+  const page = req.query.page ? Number(req.query.page) : 1;
+  const limit = req.query.limit ? Number(req.query.limit) : null;
+  const offset = (page - 1) * limit;
+
+  let whereClause = "";
+  if (whereConditions.length) {
+    whereClause = `WHERE ${whereConditions.join(" AND ")}`;
+  }
+
+  const query = `
+  SELECT 
+    usr.id, CONCAT(usr.first_name, ' ', usr.last_name) as fullname, usr.username, 
+    usr.mobile_number, usr.email, usr.role, usr.is_active, usr.created_at
+  FROM ${constants.models.USER_TABLE} usr
+  ${whereClause}
+  ORDER BY usr.created_at DESC
+  LIMIT :limit OFFSET :offset
+  `;
+
+  const countQuery = `
+  SELECT 
+    COUNT(usr.id) OVER()::integer as total
+  FROM ${constants.models.USER_TABLE} usr
+  ${whereClause}
+  LIMIT :limit OFFSET :offset
+  `;
+
+  const users = await UserModel.sequelize.query(query, {
+    replacements: { ...queryParams, limit, offset },
+    type: QueryTypes.SELECT,
+    raw: true,
   });
+
+  const count = await UserModel.sequelize.query(countQuery, {
+    replacements: { ...queryParams, limit, offset },
+    type: QueryTypes.SELECT,
+    raw: true,
+  });
+
+  return { users, total: count?.[0]?.total ?? 0 };
 };
 
 const getById = async (req, user_id) => {
@@ -109,7 +157,7 @@ const getById = async (req, user_id) => {
       id: req?.params?.id || user_id,
     },
     attributes: {
-      exclude: ["reset_password_token", "confirmation_token"],
+      exclude: ["reset_password_token", "confirmation_token", "password"],
     },
     raw: true,
   });
@@ -132,7 +180,6 @@ const getByUsername = async (req, record = undefined) => {
       "mobile_number",
       "is_verified",
       "image_url",
-      "birth_date",
     ],
     raw: true,
   });
@@ -147,9 +194,8 @@ const update = async (req) => {
       role: req.body?.role,
       mobile_number: req.body?.mobile_number,
       image_url: req.body?.image_url,
-      profession: req.body?.profession,
-      birth_date: req?.body?.birth_date,
-      address: req?.body?.address,
+      is_active: req.body?.is_active,
+      is_verified: req.body?.is_verified,
     },
     {
       where: {
@@ -166,8 +212,6 @@ const update = async (req) => {
         "mobile_number",
         "is_verified",
         "image_url",
-        "profession",
-        "birth_date",
       ],
       plain: true,
     }
@@ -249,29 +293,6 @@ const getByUserIds = async (user_ids) => {
   });
 };
 
-const findUsersWithBirthdayToday = async () => {
-  const startIST = moment().startOf("day").toDate();
-  const endIST = moment().endOf("day").toDate();
-
-  try {
-    const usersWithBirthdayToday = await UserModel.findAll({
-      where: {
-        birth_date: {
-          [Op.between]: [startIST, endIST],
-        },
-        role: {
-          [Op.in]: ["teacher", "student"],
-        },
-      },
-    });
-
-    return usersWithBirthdayToday;
-  } catch (error) {
-    console.error("Error finding users with birthday today:", error);
-    throw error;
-  }
-};
-
 export default {
   init,
   create,
@@ -285,5 +306,4 @@ export default {
   getByEmailId,
   getByResetToken,
   getByUserIds,
-  findUsersWithBirthdayToday,
 };

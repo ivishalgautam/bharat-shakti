@@ -50,6 +50,11 @@ const constants = {
     AUTHORITY_TABLE: "authorities",
     KEYWORD_TABLE: "keywords",
     SECTOR_TABLE: "sectors",
+    COMPANY_PROFILE_TABLE: "company_profiles",
+    USER_CONTACT_TABLE: "user_key_contacts",
+    WISHLIST_TABLE: "wishlists",
+    VIEWED_TENDER_TABLE: "viewed_tenders",
+    APPLICATION_TABLE: "applications",
   },
   bcrypt: {
     SALT_ROUNDS: 10,

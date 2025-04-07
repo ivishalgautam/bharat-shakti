@@ -22,7 +22,7 @@ const init = async (sequelize) => {
         defaultValue: "",
       },
       tender_amount: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         defaultValue: 0,
       },
       // bid_start_date: {
@@ -87,7 +87,6 @@ const init = async (sequelize) => {
         defaultValue: false,
       },
       bid_to_ra_enabled: { type: DataTypes.BOOLEAN, defaultValue: false },
-
       authority_ids: {
         type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
@@ -107,6 +106,10 @@ const init = async (sequelize) => {
       state_ids: {
         type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
+      },
+      keywords: {
+        type: DataTypes.STRING,
+        defaultValue: "",
       },
       meta_title: { type: DataTypes.TEXT, defaultValue: "" },
       meta_description: { type: DataTypes.TEXT, defaultValue: "" },
@@ -163,6 +166,7 @@ const create = async (req, { transaction }) => {
       keyword_ids: req.body.keyword_ids,
       sector_ids: req.body.sector_ids,
       state_ids: req.body.state_ids,
+      keywords: req.body.keywords_str,
       meta_title: req.body.meta_title,
       meta_description: req.body.meta_description,
       meta_keywords: req.body.meta_keywords,
@@ -176,8 +180,18 @@ const get = async (req) => {
   const queryParams = {};
   let q = req.query.q;
   if (q) {
+    //     atr
+    // ct
+    // sct
+    // st
     whereConditions.push(
-      `(tdr.name ILIKE :query OR tdr.bid_number ILIKE :query)`
+      `(tdr.name ILIKE :query 
+        OR tdr.bid_number ILIKE :query OR tdr.keywords ILIKE :query 
+        OR EXISTS (SELECT 1 FROM ${constants.models.KEYWORD_TABLE} kw WHERE kw.id = ANY(tdr.keyword_ids) AND kw.name ILIKE :query)
+        OR EXISTS (SELECT 1 FROM ${constants.models.AUTHORITY_TABLE} atr WHERE atr.id = ANY(tdr.authority_ids) AND atr.name ILIKE :query)
+        OR EXISTS (SELECT 1 FROM ${constants.models.CITY_TABLE} ct WHERE ct.id = ANY(tdr.city_ids) AND ct.name ILIKE :query)
+        OR EXISTS (SELECT 1 FROM ${constants.models.SECTOR_TABLE} sct WHERE sct.id = ANY(tdr.sector_ids) AND sct.name ILIKE :query)
+        OR EXISTS (SELECT 1 FROM ${constants.models.STATE_TABLE} st WHERE st.id = ANY(tdr.state_ids) AND st.name ILIKE :query))`
     );
     queryParams.query = `%${q}%`;
   }
@@ -215,13 +229,15 @@ const get = async (req) => {
     : null;
   if (sectors) {
     whereConditions.push(`tdr.sector_ids && :sectorIds`);
-    queryParams.sectorIds = `{${cities.join(",")}}`;
+    queryParams.sectorIds = `{${sectors.join(",")}}`;
   }
 
   const startDate = req.query.start_date || null;
   const endDate = req.query.end_date || null;
   if (startDate && endDate) {
-    whereConditions.push(`tdr.date BETWEEN :startDate AND :endDate`);
+    whereConditions.push(
+      `tdr.bid_end_date_time BETWEEN :startDate AND :endDate`
+    );
     queryParams.startDate = startDate;
     queryParams.endDate = endDate;
   } else if (startDate) {
@@ -232,17 +248,19 @@ const get = async (req) => {
     queryParams.endDate = endDate;
   }
 
-  const amountMin = req.query.amount_min || null;
-  const amountMax = req.query.amount_max || null;
+  const amountMin = Number(req.query.amount_min) || null;
+  const amountMax = Number(req.query.amount_max) || null;
   if (amountMin && amountMax) {
-    whereConditions.push(`tdr.date BETWEEN :amountMin AND :amountMax`);
+    whereConditions.push(
+      `(tdr.tender_amount::integer BETWEEN :amountMin AND :amountMax)`
+    );
     queryParams.amountMin = amountMin;
     queryParams.amountMax = amountMax;
   } else if (amountMin) {
-    whereConditions.push(`tdr.tender_amount >= :amountMin`);
+    whereConditions.push(`(tdr.tender_amount::integer >= :amountMin)`);
     queryParams.amountMin = amountMin;
   } else if (amountMax) {
-    whereConditions.push(`tdr.tender_amount <= :amountMax`);
+    whereConditions.push(`(tdr.tender_amount::integer <= :amountMax)`);
     queryParams.amountMax = amountMax;
   }
 
@@ -252,7 +270,7 @@ const get = async (req) => {
   }
 
   const page = req.query.page ? Number(req.query.page) : 1;
-  const limit = req.query.limit ? Number(req.query.limit) : null;
+  const limit = req.query.limit ? Number(req.query.limit) : 10;
   const offset = (page - 1) * limit;
 
   let whereClause = "";
@@ -271,24 +289,23 @@ const get = async (req) => {
 
   let query = `
   SELECT
-      tdr.id, tdr.name, tdr.bid_number, tdr.tender_amount, tdr.quantity, tdr.created_at,
-      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', atr.id, 'name', atr.name)) FILTER (WHERE atr.id IS NOT NULL), '[]') as authorities,
-      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', ct.id, 'name', ct.name)) FILTER (WHERE ct.id IS NOT NULL), '[]') as cities,
-      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', kw.id, 'name', kw.name)) FILTER (WHERE kw.id IS NOT NULL), '[]') as keywords,
-      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', sct.id, 'name', sct.name)) FILTER (WHERE sct.id IS NOT NULL), '[]') as sectors,
-      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', st.id, 'name', st.name)) FILTER (WHERE st.id IS NOT NULL), '[]') as states
+      tdr.*,
+      CASE WHEN 
+        ws.tender_id IS NOT NULL THEN true
+        ELSE false
+      END as is_followed
     FROM ${constants.models.TENDER_TABLE} tdr
     LEFT JOIN ${constants.models.AUTHORITY_TABLE} atr ON atr.id = ANY(tdr.authority_ids)
     LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = ANY(tdr.city_ids)
     LEFT JOIN ${constants.models.KEYWORD_TABLE} kw ON kw.id = ANY(tdr.keyword_ids)
     LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = ANY(tdr.sector_ids)
     LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = ANY(tdr.state_ids)
+    LEFT JOIN ${constants.models.WISHLIST_TABLE} ws ON ws.tender_id = tdr.id
     ${whereClause}
-    GROUP BY tdr.id
+    GROUP BY tdr.id, ws.tender_id
     ORDER BY tdr.created_at DESC
     LIMIT :limit OFFSET :offset
   `;
-
   const data = await TenderModel.sequelize.query(query, {
     replacements: { ...queryParams, limit, offset },
     type: QueryTypes.SELECT,
@@ -346,13 +363,14 @@ const update = async (req, id, { transaction }) => {
       keyword_ids: req.body.keyword_ids,
       sector_ids: req.body.sector_ids,
       state_ids: req.body.state_ids,
+      keywords: req.body.keywords,
       meta_title: req.body.meta_title,
       meta_description: req.body.meta_description,
       meta_keywords: req.body.meta_keywords,
     },
     {
       where: {
-        id: req.params.id || id,
+        id: req?.params?.id || id,
       },
       returning: true,
       raw: true,
@@ -381,20 +399,34 @@ const getBySlug = async (req, slug) => {
   let query = `
   SELECT
       tdr.*,
-      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', atr.id, 'name', atr.name)) FILTER (WHERE atr.id IS NOT NULL), '[]') as authorities,
-      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', ct.id, 'name', ct.name)) FILTER (WHERE ct.id IS NOT NULL), '[]') as cities,
-      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', kw.id, 'name', kw.name)) FILTER (WHERE kw.id IS NOT NULL), '[]') as keywords,
-      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', sct.id, 'name', sct.name)) FILTER (WHERE sct.id IS NOT NULL), '[]') as sectors,
-      COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', st.id, 'name', st.name)) FILTER (WHERE st.id IS NOT NULL), '[]') as states
+      (
+        SELECT COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', atr.id, 'name', atr.name)), '[]')
+        FROM ${constants.models.AUTHORITY_TABLE} atr
+        WHERE atr.id = ANY(tdr.authority_ids)
+      ) AS authorities,
+      (
+        SELECT COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', ct.id, 'name', ct.name)), '[]')
+        FROM ${constants.models.CITY_TABLE} ct
+        WHERE ct.id = ANY(tdr.city_ids)
+      ) AS cities,
+      (
+        SELECT COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', kw.id, 'name', kw.name)), '[]')
+        FROM ${constants.models.KEYWORD_TABLE} kw
+        WHERE kw.id = ANY(tdr.keyword_ids)
+      ) AS keywords,
+      (
+        SELECT COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', sct.id, 'name', sct.name)), '[]')
+        FROM ${constants.models.SECTOR_TABLE} sct
+        WHERE sct.id = ANY(tdr.sector_ids)
+      ) AS sectors,
+      (
+        SELECT COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', st.id, 'name', st.name)), '[]')
+        FROM ${constants.models.STATE_TABLE} st
+        WHERE st.id = ANY(tdr.state_ids)
+      ) AS states
     FROM ${constants.models.TENDER_TABLE} tdr
-    LEFT JOIN ${constants.models.AUTHORITY_TABLE} atr ON atr.id = ANY(tdr.authority_ids)
-    LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = ANY(tdr.city_ids)
-    LEFT JOIN ${constants.models.KEYWORD_TABLE} kw ON kw.id = ANY(tdr.keyword_ids)
-    LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = ANY(tdr.sector_ids)
-    LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = ANY(tdr.state_ids)
     WHERE tdr.slug = :slug
-    GROUP BY tdr.id
-  `;
+`;
 
   return await TenderModel.sequelize.query(query, {
     replacements: { slug: req.params?.slug || slug },

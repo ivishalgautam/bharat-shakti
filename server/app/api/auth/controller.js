@@ -4,6 +4,7 @@ import hash from "../../lib/encryption/index.js";
 
 import table from "../../db/models.js";
 import authToken from "../../helpers/auth.js";
+import { userSchema } from "../../utils/schema/user.schema.js";
 
 const verifyUserCredentials = async (req, res) => {
   let userData;
@@ -44,10 +45,12 @@ const verifyUserCredentials = async (req, res) => {
 const createNewUser = async (req, res) => {
   let userData;
   try {
+    const validateData = userSchema.parse(req.body);
+
     userData = await table.UserModel.getByUsername(req);
     if (userData) {
       return res
-        .code(403)
+        .code(409)
         .send({ message: "User with this username already exists." });
     }
 

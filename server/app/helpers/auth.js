@@ -51,7 +51,7 @@ const verifyToken = async (req, res) => {
 
 const verifyRefreshToken = async (req, res) => {
   const refreshToken = req.body.refresh_token;
-
+  console.log({ refreshToken });
   try {
     const decoded = jwt.verify(refreshToken, config.jwt_refresh_secret);
     const [jwtToken, time] = generateAccessToken(decoded.user);

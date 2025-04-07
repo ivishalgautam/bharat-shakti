@@ -6,9 +6,17 @@ import stateRoutes from "../../api/state/routes.js";
 import cityRoutes from "../../api/city/routes.js";
 import sectorRoutes from "../../api/sector/routes.js";
 import keywordRoutes from "../../api/keyword/routes.js";
+import wishlistRoutes from "../../api/wishlist/routes.js";
+import viewTenderRoutes from "../../api/view-tender/routes.js";
+import companyProfileRoutes from "../../api/company-profile/routes.js";
+import userKeyContactRoutes from "../../api/user-key-contact/routes.js";
+import applicationRoutes from "../../api/application/routes.js";
 
 export default async function routes(fastify, options) {
   fastify.addHook("onRequest", jwtVerify.verifyToken);
+  fastify.addHook("preHandler", async (request, reply) => {
+    request.body && console.log("body", request.body);
+  });
   fastify.register(userRoutes, { prefix: "users" });
   fastify.register(tenderRoutes, { prefix: "tenders" });
   fastify.register(authorityRoutes, { prefix: "authorities" });
@@ -16,4 +24,9 @@ export default async function routes(fastify, options) {
   fastify.register(cityRoutes, { prefix: "cities" });
   fastify.register(keywordRoutes, { prefix: "keywords" });
   fastify.register(sectorRoutes, { prefix: "sectors" });
+  fastify.register(wishlistRoutes, { prefix: "wishlists" });
+  fastify.register(viewTenderRoutes, { prefix: "view-tenders" });
+  fastify.register(companyProfileRoutes, { prefix: "company-profiles" });
+  fastify.register(userKeyContactRoutes, { prefix: "user-key-contacts" });
+  fastify.register(applicationRoutes, { prefix: "applications" });
 }

@@ -53,7 +53,7 @@ const deleteById = async (req, res) => {
 
 const get = async (req, res) => {
   try {
-    return res.send(await table.UserModel.get());
+    return res.send({ status: true, data: await table.UserModel.get(req) });
   } catch (error) {
     console.error(error);
     return res.send(error);
@@ -68,7 +68,7 @@ const getById = async (req, res) => {
     }
     delete record.password;
 
-    return res.send(record);
+    return res.send({ status: true, data: record });
   } catch (error) {
     console.error(error);
     return res.send(error);

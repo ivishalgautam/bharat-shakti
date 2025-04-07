@@ -18,7 +18,18 @@ export default async function routes(fastify, opts) {
   );
   fastify.put(
     "/:id",
-    { preHandler: (req, res) => multipartPreHandler(req, res, ["image"]) },
+    {
+      preHandler: (req, res) =>
+        multipartPreHandler(req, res, [
+          "authority_ids",
+          "city_ids",
+          "keyword_ids",
+          "sector_ids",
+          "state_ids",
+          "buyer_specification_document_urls",
+          "drawing_urls",
+        ]),
+    },
     controller.update
   );
   fastify.get("/:id", {}, controller.getById);
@@ -27,4 +38,5 @@ export default async function routes(fastify, opts) {
 
 export async function tenderPublicRoutes(fastify, opts) {
   fastify.get("/", {}, controller.get);
+  fastify.get("/get-by-slug/:slug", {}, controller.getBySlug);
 }
