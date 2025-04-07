@@ -11,7 +11,6 @@ const filteredDynamicRoutes = sidebarData
       : [item.url]
   )
   .filter((url) => url.includes(":"));
-
 const AUTH_ROUTES = ["/", "/register"];
 const PRIVATE_ROUTES = [...new Set(filteredRoutes)];
 // const DYNAMIC_PRIVATE_ROUTES = filteredDynamicRoutes.map((url) =>

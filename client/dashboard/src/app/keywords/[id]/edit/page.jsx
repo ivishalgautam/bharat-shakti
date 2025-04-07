@@ -6,7 +6,7 @@ import React from "react";
 export default function KeywordEditPage({ params: { id } }) {
   return (
     <PageContainer>
-      <Heading title={"Edit Keyword"} description="Edit Keyword." />
+      <Heading title={"Edit Industry"} description="Edit Industry." />
       <KeywordForm type="edit" id={id} />
     </PageContainer>
   );

@@ -14,8 +14,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import TableImage from "@/components/ui/table-image";
+import { Switch } from "@/components/ui/switch";
 
-export const columns = (openModal, setId) => [
+export const columns = (openModal, setId, handleUpdate) => [
   {
     accessorKey: "image",
     header: "IMAGE",
@@ -44,6 +45,27 @@ export const columns = (openModal, setId) => [
     cell: ({ row }) => {
       const count = row.getValue("tenders_count");
       return <Badge>{count}</Badge>;
+    },
+  },
+  {
+    accessorKey: "is_featured",
+    header: ({ column }) => {
+      return <Button variant="ghost">FEATURED</Button>;
+    },
+    cell: ({ row }) => {
+      const id = row.original.id;
+      const featured = row.getValue("is_featured");
+      return (
+        <div className="flex items-center justify-start gap-2">
+          <Switch
+            checked={featured}
+            onCheckedChange={() => {
+              setId(id);
+              return handleUpdate({ is_featured: !featured });
+            }}
+          />
+        </div>
+      );
     },
   },
   {

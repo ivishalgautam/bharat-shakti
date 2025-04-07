@@ -7,7 +7,7 @@ export default function TenderCreatePage() {
   return (
     <PageContainer>
       <Heading title={"Create Tender"} description="Create tender." />
-      <TenderForm />
+      <TenderForm type="create" />
     </PageContainer>
   );
 }

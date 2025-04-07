@@ -8,18 +8,19 @@ export default function RoleContext({ children }) {
   const pathname = usePathname();
   const params = useParams();
   const router = useRouter();
-  const { user } = useContext(AuthContext);
-
+  const { user, isUserLoading } = useContext(AuthContext);
   useEffect(() => {
-    if (user) {
-      let currRoute = pathname.replace(params.id, ":id");
-      const protectedRoute = filteredRoutesWithRoles.find(
-        (fr) => fr.url === currRoute
-      );
-      const roles = protectedRoute.roles;
-      if (!roles.includes(user.role)) return router.replace("/unauthorized");
-    }
-  }, [user, params.id, pathname, router]);
+    if (isUserLoading) return;
+    let currRoute = pathname.replace(params.id, ":id");
+    const protectedRoute = filteredRoutesWithRoles.find(
+      (fr) => fr.url === currRoute
+    );
+
+    if (!protectedRoute) return;
+    const roles = protectedRoute.roles;
+
+    if (!roles.includes(user.role)) return router.replace("/unauthorized");
+  }, [user, params.id, pathname, router, isUserLoading]);
 
   return children;
 }

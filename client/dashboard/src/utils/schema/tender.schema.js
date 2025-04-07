@@ -35,11 +35,27 @@ export const TenderSchema = z.object({
   splitting_applied: z.boolean().default(false),
   startup_exemption_for_turnover: z.boolean().default(false),
 
-  authority_ids: z.array(z.string()).default([]),
-  city_ids: z.array(z.string()).default([]),
-  keyword_ids: z.array(z.string()).default([]),
-  sector_ids: z.array(z.string()).default([]),
-  state_ids: z.array(z.string()).default([]),
+  authority_ids: z
+    .array(z.object({ value: z.string(), label: z.string() }))
+    .transform((authority_ids) => authority_ids.map(({ value }) => value))
+    .default([]),
+  city_ids: z
+    .array(z.object({ value: z.string(), label: z.string() }))
+    .transform((city_ids) => city_ids.map(({ value }) => value))
+    .default([]),
+  keyword_ids: z
+    .array(z.object({ value: z.string(), label: z.string() }))
+    .transform((keyword_ids) => keyword_ids.map(({ value }) => value))
+    .default([]),
+  sector_ids: z
+    .array(z.object({ value: z.string(), label: z.string() }))
+    .transform((sector_ids) => sector_ids.map(({ value }) => value))
+    .default([]),
+  state_ids: z
+    .array(z.object({ value: z.string(), label: z.string() }))
+    .transform((state_ids) => state_ids.map(({ value }) => value))
+    .default([]),
+  keywords: z.string().default(""),
   meta_title: z.string().default(""),
   meta_description: z.string().default(""),
   meta_keywords: z.string().default(""),

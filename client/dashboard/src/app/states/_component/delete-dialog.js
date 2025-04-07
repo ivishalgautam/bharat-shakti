@@ -25,7 +25,7 @@ export function DeleteDialog({ isOpen, setIsOpen, deleteMutation, id }) {
           <Button
             variant="destructive"
             onClick={() => deleteMutation.mutate({ id })}
-            diabled={deleteMutation.isPending}
+            disabled={deleteMutation.isPending}
           >
             Delete
           </Button>

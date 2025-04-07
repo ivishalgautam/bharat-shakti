@@ -7,7 +7,7 @@ import React from "react";
 export default function KeywordCreatePage() {
   return (
     <PageContainer>
-      <Heading title={"Create Keyword"} description="Create keyword." />
+      <Heading title={"Create Industry"} description="Create Industry." />
       <KeywordForm />
     </PageContainer>
   );

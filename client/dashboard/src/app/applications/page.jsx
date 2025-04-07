@@ -1,20 +1,16 @@
 import { Suspense } from "react";
+import UserTableActions from "./_component/table-actions";
 import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
+import UserListing from "./_component/listing";
 import { searchParamsCache, serialize } from "@/lib/searchparams";
 import { Heading } from "@/components/ui/heading";
 import PageContainer from "@/components/layout/page-container";
-import TableActions from "./_component/table-actions";
-import Listing from "./_component/listing";
-import Link from "next/link";
-import { Plus } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
 
 export const metadata = {
-  title: "Keywords",
+  title: "Users",
 };
 
-export default async function Keywords({ searchParams }) {
+export default async function ApplicationsPage({ searchParams }) {
   searchParamsCache.parse(searchParams);
   const key = serialize({ ...searchParams });
 
@@ -22,22 +18,16 @@ export default async function Keywords({ searchParams }) {
     <PageContainer>
       <div className="flex items-start justify-between">
         <Heading
-          title="Industries"
-          description="Manage Industries (Create, Update, Delete)."
+          title="Applications"
+          description="Manage Applications (Update, Delete)."
         />
-        <Link
-          href={"/keywords/create"}
-          className={cn(buttonVariants({ variant: "outline" }), "h-7")}
-        >
-          <Plus /> Add
-        </Link>
       </div>
-      <TableActions />
+      <UserTableActions />
       <Suspense
         key={key}
         fallback={<DataTableSkeleton columnCount={4} rowCount={10} />}
       >
-        <Listing />
+        <UserListing />
       </Suspense>
     </PageContainer>
   );

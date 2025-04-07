@@ -23,7 +23,7 @@ export default function Listing() {
   const deleteMutation = useDeleteAuthority(() => {
     setIsModal(false);
   });
-  const updateMutation = useUpdateAuthority();
+  const updateMutation = useUpdateAuthority(id);
 
   const openModal = () => setIsModal(true);
   const handleUpdate = (data) => updateMutation.mutate(data);
@@ -45,8 +45,8 @@ export default function Listing() {
   return (
     <div className="w-full rounded-lg border-input">
       <DataTable
-        columns={columns(openModal, setId)}
-        data={data?.authorities}
+        columns={columns(openModal, setId, handleUpdate)}
+        data={data?.authorities ?? []}
         totalItems={data?.total ?? 0}
       />
       <DeleteDialog

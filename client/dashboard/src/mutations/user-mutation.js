@@ -1,34 +1,59 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import state from "@/services/state";
 import { toast } from "@/hooks/use-toast";
+import user from "@/services/user";
 
-export const useGetStates = (searchParams = "page=1") => {
+export const useGetUsers = (searchParams = "page=1") => {
   return useQuery({
-    queryKey: ["states", searchParams],
-    queryFn: () => state.get(searchParams),
+    queryKey: ["users", searchParams],
+    queryFn: () => user.get(searchParams),
     enabled: !!searchParams,
   });
 };
 
-export const useGetState = (id) => {
+export const useGetUserProfile = (id) => {
   return useQuery({
-    queryKey: ["states", id],
-    queryFn: () => state.getById(id),
+    queryKey: ["users", id],
+    queryFn: () => user.getById(id),
     enabled: !!id,
   });
 };
 
-export const useCreateState = (handleSuccess) => {
+export const useGetUserCompanyProfile = (id) => {
+  return useQuery({
+    queryKey: ["user-company-profile", id],
+    queryFn: () => user.getUserCompanyProfile(id),
+    enabled: !!id,
+  });
+};
+
+export const useGetUserContacts = (id) => {
+  return useQuery({
+    queryKey: ["user-key-contact", id],
+    queryFn: () => user.getUserContacts(id),
+    enabled: !!id,
+  });
+};
+
+export const useGetUser = (id) => {
+  return useQuery({
+    queryKey: ["users", id],
+    queryFn: () => user.getById(id),
+    enabled: !!id,
+  });
+};
+
+export const useCreateUser = (handleSuccess) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: state.create,
+    mutationFn: user.create,
     onSuccess: () => {
       toast({
         title: "Created",
-        description: "State created successfully.",
+        description: "User created successfully.",
       });
-      queryClient.invalidateQueries(["states"]);
+      queryClient.invalidateQueries(["users"]);
       typeof handleSuccess === "function" && handleSuccess();
     },
     onError: (error) => {
@@ -44,18 +69,18 @@ export const useCreateState = (handleSuccess) => {
   });
 };
 
-export const useUpdateState = (id) => {
+export const useUpdateUser = (id) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data) => state.update(id, data),
+    mutationFn: (data) => user.update(id, data),
     onSuccess: () => {
       toast({
         title: "Updated",
-        description: "State updated successfully.",
+        description: "User updated successfully.",
       });
 
-      queryClient.invalidateQueries(["states"]);
+      queryClient.invalidateQueries(["users"]);
     },
     onError: (error) => {
       console.error("Mutation Error:", error);
@@ -71,18 +96,18 @@ export const useUpdateState = (id) => {
   });
 };
 
-export const useDeleteState = (handleSuccess) => {
+export const useDeleteUser = (id, handleSuccess) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id }) => state.deleteById(id),
+    mutationFn: () => user.deleteById(id),
     onSuccess: () => {
       toast({
         title: "Deleted",
-        description: "State deleted successfully.",
+        description: "User deleted successfully.",
       });
 
-      queryClient.invalidateQueries(["states"]);
+      queryClient.invalidateQueries(["users"]);
       typeof handleSuccess === "function" && handleSuccess();
     },
     onError: (error) => {

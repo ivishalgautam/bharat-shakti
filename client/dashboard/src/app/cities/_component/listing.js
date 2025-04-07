@@ -23,7 +23,7 @@ export default function Listing() {
   const deleteMutation = useDeleteCity(() => {
     setIsModal(false);
   });
-  const updateMutation = useUpdateCity();
+  const updateMutation = useUpdateCity(id);
 
   const openModal = () => setIsModal(true);
   const handleUpdate = (data) => updateMutation.mutate(data);
@@ -45,8 +45,8 @@ export default function Listing() {
   return (
     <div className="w-full rounded-lg border-input">
       <DataTable
-        columns={columns(openModal, setId)}
-        data={data?.cities}
+        columns={columns(openModal, setId, handleUpdate)}
+        data={data?.cities ?? []}
         totalItems={data?.total ?? 0}
       />
       <DeleteDialog

@@ -47,7 +47,7 @@ export default function StateForm({ id, type = "create" }) {
     Object.entries(data).forEach(([key, value]) => formData.append(key, value));
 
     if (files && files?.length) {
-      files.forEach((file) => formData.append("file", file));
+      files.forEach((file) => formData.append("image", file));
     }
 
     if (type === "create") {

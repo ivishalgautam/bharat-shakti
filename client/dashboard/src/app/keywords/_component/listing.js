@@ -23,7 +23,7 @@ export default function Listing() {
   const deleteMutation = useDeleteKeyword(() => {
     setIsModal(false);
   });
-  const updateMutation = useUpdateKeyword();
+  const updateMutation = useUpdateKeyword(id);
 
   const openModal = () => setIsModal(true);
   const handleUpdate = (data) => updateMutation.mutate(data);
@@ -36,17 +36,15 @@ export default function Listing() {
       router.replace(`?${params.toString()}`);
     }
   }, [searchParamsStr, router]);
-
   if (isLoading || isFetching)
     return <DataTableSkeleton columnCount={4} rowCount={10} />;
-
   if (isError) return error?.message ?? "error";
 
   return (
     <div className="w-full rounded-lg border-input">
       <DataTable
-        columns={columns(openModal, setId)}
-        data={data?.keywords}
+        columns={columns(openModal, setId, handleUpdate)}
+        data={data?.keywords ?? []}
         totalItems={data?.total ?? 0}
       />
       <DeleteDialog

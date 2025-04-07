@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
 export const metadata = {
-  title: "Users",
+  title: "Authorities",
 };
 
 export default async function Users({ searchParams }) {

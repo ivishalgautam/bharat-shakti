@@ -2,10 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import tender from "@/services/tender";
 
-export const useGetTenders = (searchParams = "") => {
+export const useGetTenders = (searchParams = "page=1") => {
   return useQuery({
-    queryKey: ["tenders"],
+    queryKey: ["tenders", searchParams],
     queryFn: () => tender.get(searchParams),
+    enabled: !!searchParams,
   });
 };
 

@@ -2,10 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import keyword from "@/services/keyword";
 import { toast } from "@/hooks/use-toast";
 
-export const useGetKeywords = (searchParams) => {
+export const useGetKeywords = (searchParams = "page=1") => {
   return useQuery({
-    queryKey: ["keywords"],
+    queryKey: ["keywords", searchParams],
     queryFn: () => keyword.get(searchParams),
+    enabled: !!searchParams,
   });
 };
 

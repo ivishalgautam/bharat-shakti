@@ -2,10 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import city from "@/services/city";
 import { toast } from "@/hooks/use-toast";
 
-export const useGetCities = (searchParams = "") => {
+export const useGetCities = (searchParams = "page=1") => {
   return useQuery({
-    queryKey: ["cities"],
+    queryKey: ["cities", searchParams],
     queryFn: () => city.get(searchParams),
+    enabled: !!searchParams,
   });
 };
 

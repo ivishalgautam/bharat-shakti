@@ -13,6 +13,7 @@ import moment from "moment";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import { rupee } from "@/lib/Intl";
 
 export const columns = (openModal, setId) => [
   {
@@ -28,14 +29,22 @@ export const columns = (openModal, setId) => [
     },
   },
   {
-    accessorKey: "tenders_count",
+    accessorKey: "bid_number",
+    header: "BID NO.",
+  },
+  {
+    accessorKey: "tender_amount",
     header: ({ column }) => {
-      return <Button variant="ghost">TENDERS</Button>;
+      return <Button variant="ghost">TENDER AMT.</Button>;
     },
     cell: ({ row }) => {
-      const count = row.getValue("tenders_count");
-      return <Badge>{count}</Badge>;
+      const amount = row.getValue("tender_amount");
+      return <Badge> {rupee.format(amount)}</Badge>;
     },
+  },
+  {
+    accessorKey: "quantity",
+    header: "QUANTITY",
   },
   {
     accessorKey: "created_at",
@@ -66,7 +75,7 @@ export const columns = (openModal, setId) => [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Link href={`/states/${id}/edit`} className="w-full">
+              <Link href={`/tenders/${id}/edit`} className="w-full">
                 Edit
               </Link>
             </DropdownMenuItem>

@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-export const columns = (handleUserStatus, setUserId, openModal) => [
+export const columns = (updateMutation, setUserId, openModal) => [
   {
     accessorKey: "fullname",
     header: "FULLNAME",
@@ -75,7 +75,10 @@ export const columns = (handleUserStatus, setUserId, openModal) => [
         <div className="flex items-center justify-start gap-2">
           <Switch
             checked={is_active}
-            onCheckedChange={() => handleUserStatus(id, !is_active)}
+            onCheckedChange={(checked) => {
+              setUserId(id);
+              return updateMutation.mutate({ is_active: checked });
+            }}
           />
           <Small className={is_active ? "text-green-500" : "text-red-500"}>
             {is_active ? "active" : "inactive"}
@@ -115,14 +118,14 @@ export const columns = (handleUserStatus, setUserId, openModal) => [
             <DropdownMenuItem>
               <Link
                 href={
-                  role === "patient"
-                    ? `/users/edit/${id}/patient`
-                    : role === "doctor"
-                      ? `/users/edit/${id}/doctor`
+                  role === "user"
+                    ? `/users/view/${id}/user`
+                    : role === "subAdmin"
+                      ? `/users/view/${id}/sub-admin`
                       : "#"
                 }
               >
-                Edit
+                View
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />

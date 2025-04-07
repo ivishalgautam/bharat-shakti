@@ -2,10 +2,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import authority from "@/services/authority";
 import { toast } from "@/hooks/use-toast";
 
-export const useGetAuthorities = (searchParams = "") => {
+export const useGetAuthorities = (searchParams = "page=1") => {
   return useQuery({
-    queryKey: ["authorities"],
+    queryKey: ["authorities", searchParams],
     queryFn: () => authority.get(searchParams),
+    enabled: !!searchParams,
   });
 };
 

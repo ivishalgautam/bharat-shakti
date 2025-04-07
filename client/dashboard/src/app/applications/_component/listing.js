@@ -2,12 +2,6 @@
 
 import { DataTable } from "@/components/ui/table/data-table";
 import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
-import {
-  useDeleteUser,
-  useGetUsers,
-  useUpdateUser,
-} from "@/mutations/user-mutation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";
 import { columns } from "../columns";
 import { useEffect, useState } from "react";
@@ -21,6 +15,11 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import {
+  useDeleteApplication,
+  useGetApplications,
+  useUpdateApplication,
+} from "@/mutations/application-mutation";
 
 export default function UserListing() {
   const [isModal, setIsModal] = useState(false);
@@ -33,9 +32,9 @@ export default function UserListing() {
   const closeModal = () => setIsModal(false);
 
   const { data, isLoading, isFetching, isError, error } =
-    useGetUsers(searchParamsStr);
-  const deleteMutation = useDeleteUser(userId, closeModal);
-  const updateMutation = useUpdateUser(userId);
+    useGetApplications(searchParamsStr);
+  const deleteMutation = useDeleteApplication(userId, closeModal);
+  const updateMutation = useUpdateApplication(userId);
 
   useEffect(() => {
     if (!searchParamsStr) {
@@ -55,10 +54,11 @@ export default function UserListing() {
     <div className="w-full rounded-lg border-input">
       <DataTable
         columns={columns(updateMutation, setUserId, openModal)}
-        data={data?.users ?? []}
+        data={data?.applications ?? []}
         totalItems={data?.total}
       />
-      <UserDeleteDialog
+
+      <DeleteDialog
         deleteMutation={deleteMutation}
         isOpen={isModal}
         setIsOpen={setIsModal}
@@ -67,7 +67,7 @@ export default function UserListing() {
   );
 }
 
-export function UserDeleteDialog({ isOpen, setIsOpen, deleteMutation }) {
+export function DeleteDialog({ isOpen, setIsOpen, deleteMutation }) {
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogContent>

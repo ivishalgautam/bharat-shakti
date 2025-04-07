@@ -10,7 +10,7 @@ export const sectorSchema = z.object({
       z.object({
         name: z.string().min(1, "File name is required"),
         size: z.number().max(5 * 1024 * 1024, "File size must be under 5MB"), // Max 5MB
-        type: z.enum(["image/png", "image/jpeg", "image/jpg"]),
+        type: z.enum(["image/png", "image/jpeg", "image/jpg", "image/webp"]),
       })
     )
     .optional(),

@@ -56,6 +56,7 @@ export async function GET(request) {
 
     return NextResponse.json({ user: data }, { status: res.status });
   } catch (error) {
+    cookieStore.delete("token");
     return NextResponse.json(
       { message: error?.response?.data?.message ?? "Something went wrong" },
       { status: error.status }

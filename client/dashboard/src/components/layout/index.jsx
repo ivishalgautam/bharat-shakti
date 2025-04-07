@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { SidebarProvider, SidebarTrigger } from "../ui/sidebar";
 import { AppSidebar } from "../app-sidebar";
 import { Toaster } from "../ui/toaster";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 import RoleContext from "@/providers/role-context";
 import { Button } from "../ui/button";
 import { ChevronLeft } from "lucide-react";
@@ -48,9 +47,7 @@ export default function Layout({ children }) {
 
   return (
     <div className="bg-gray-50 min-h-screen">
-      <QueryProvider>
-        <NuqsAdapter>{getContent()}</NuqsAdapter>
-      </QueryProvider>
+      <QueryProvider>{getContent()}</QueryProvider>
     </div>
   );
 }

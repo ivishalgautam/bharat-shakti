@@ -1,6 +1,6 @@
 "use client";
 import { Controller, useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -19,8 +19,8 @@ import MySelect from "../my-select";
 import { H4 } from "../ui/typography";
 import { Separator } from "../ui/separator";
 import Dropzone from "../dropzone";
-import { useCreateTender } from "@/mutations/tender-mutation";
-import { useState } from "react";
+import { useCreateTender, useGetTender } from "@/mutations/tender-mutation";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
   Select,
@@ -29,6 +29,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import Image from "next/image";
+import config from "@/config";
+import { Link2, Trash, View } from "lucide-react";
 
 const defaultValues = {
   name: "",
@@ -68,13 +71,22 @@ const defaultValues = {
   keyword_ids: [],
   sector_ids: [],
   state_ids: [],
+  keywords: "",
   meta_title: "",
   meta_description: "",
   meta_keywords: "",
 };
 
-export default function TenderForm() {
-  const [files, setFiles] = useState({});
+export default function TenderForm({ type, updateMutation, id }) {
+  const [files, setFiles] = useState({
+    buyer_specification_document: [],
+    drawing: [],
+  });
+  const [fileUrls, setFileUrls] = useState({
+    buyer_specification_document_urls: [],
+    drawing_urls: [],
+  });
+  const [render, rerender] = useState(0);
   const {
     register,
     handleSubmit,
@@ -83,16 +95,8 @@ export default function TenderForm() {
     watch,
     setValue,
   } = useForm({ resolver: zodResolver(TenderSchema), defaultValues });
-
-  console.log({ errors });
-
   const createMutation = useCreateTender();
-
-  const selectedAuthorities = watch("authorities");
-  const selectedCities = watch("cities");
-  const selectedKeywords = watch("keywords");
-  const selectedSectors = watch("sectors");
-  const selectedStates = watch("states");
+  const { data } = useGetTender(id);
 
   const { data: { authorities } = {} } = useGetAuthorities();
   const { data: { cities } = {} } = useGetCities();
@@ -107,8 +111,6 @@ export default function TenderForm() {
   const formattedStates = useFormattedOptions(states);
 
   const onSubmit = (data) => {
-    // console.log(data);
-    // alert("Form submitted successfully!");
     const formData = new FormData();
     Object.entries(files).forEach(([key, files]) =>
       files.forEach((file) => formData.append(key, file))
@@ -118,10 +120,106 @@ export default function TenderForm() {
         ? formData.append(key, JSON.stringify(value))
         : formData.append(key, value);
     });
-    createMutation.mutate(formData);
-    // console.log(formData.get("buyer_specification_document"));
+    if (type === "create") {
+      createMutation.mutate(formData);
+    }
+    if (type === "edit") {
+      Object.entries(fileUrls).forEach(([key, value]) =>
+        formData.append(key, JSON.stringify(value))
+      );
+      // console.log(formData.get("buyer_specification_document"));
+      updateMutation.mutate(formData);
+    }
   };
+  console.log({ errors });
+  useEffect(() => {
+    if (data) {
+      console.log(data);
+      setValue("name", data.name);
+      setValue("tender_amount", data.tender_amount);
+      setValue("bid_start_date", data.bid_start_date);
+      setValue("bid_end_date", data.bid_end_date);
+      setValue("bid_number", data.bid_number);
+      setValue("dated", data.dated);
+      setValue("bid_end_date_time", data.bid_end_date_time);
+      setValue("department", data.department);
+      setValue("organisation", data.organisation);
+      setValue("office", data.office);
+      setValue("item_gem_parts", data.item_gem_parts);
+      setValue("quantity", data.quantity);
+      setValue("uom", data.uom);
+      setValue("no_of_items", data.no_of_items);
+      setValue(
+        "minimum_average_annual_turnover",
+        data.minimum_average_annual_turnover
+      );
+      setValue("years_of_past_experience", data.years_of_past_experience);
+      setValue("evaluation_method", data.evaluation_method);
+      setValue("emd_amount", data.emd_amount);
+      setValue("tender_value", data.tender_value);
+      setValue("ote_lte", data.ote_lte);
+      setValue("epbg_percentage", data.epbg_percentage);
+      setValue("consignee", data.consignee);
+      setValue("delivery_days", data.delivery_days);
+      setValue("distribution", data.distribution);
+      setValue("pre_qualification_criteria", data.pre_qualification_criteria);
+      setValue("save_to_my_business", data.save_to_my_business);
+      setValue("splitting_applied", data.splitting_applied);
+      setValue("mse_exemption_for_turnover", data.mse_exemption_for_turnover);
+      setValue(
+        "startup_exemption_for_turnover",
+        data.startup_exemption_for_turnover
+      );
+      setValue("bid_to_ra_enabled", data.bid_to_ra_enabled);
 
+      setValue("meta_title", data.meta_title);
+      setValue("meta_description", data.meta_description);
+      setValue("meta_keywords", data.meta_keywords);
+
+      setValue(
+        "authority_ids",
+        formattedAuthorities.filter((au) =>
+          data.authority_ids?.includes(au.value)
+        )
+      );
+      setValue(
+        "city_ids",
+        formattedCities.filter((au) => data.city_ids?.includes(au.value))
+      );
+      setValue(
+        "keyword_ids",
+        formattedKeywords.filter((au) => data.keyword_ids?.includes(au.value))
+      );
+      setValue(
+        "sector_ids",
+        formattedSectors.filter((au) => data.sector_ids?.includes(au.value))
+      );
+      setValue(
+        "state_ids",
+        formattedStates.filter((au) => data.state_ids?.includes(au.value))
+      );
+      setFileUrls((prev) => ({
+        ...prev,
+        buyer_specification_document_urls:
+          data?.buyer_specification_document ?? [],
+      }));
+      setFileUrls((prev) => ({
+        ...prev,
+        drawing_urls: data?.drawing ?? [],
+      }));
+      rerender((prev) => prev + 1);
+      // authority_ids city_ids keyword_ids sector_ids state_ids
+    }
+  }, [
+    data,
+    setValue,
+    formattedAuthorities,
+    formattedCities,
+    formattedKeywords,
+    formattedSectors,
+    formattedStates,
+  ]);
+  // console.log({ fileUrls });
   const handleDrop = (name, acceptedFiles) => {
     setFiles((prev) => ({ ...prev, [name]: acceptedFiles }));
   };
@@ -142,12 +240,12 @@ export default function TenderForm() {
                   <Label>Authorities</Label>
                   <Controller
                     control={control}
-                    name="authorities"
+                    name="authority_ids"
                     render={({ field: { onChange, value } }) => {
                       return (
                         <MySelect
                           options={formattedAuthorities}
-                          defaultValue={value}
+                          value={value}
                           isMulti
                           onChange={onChange}
                         />
@@ -161,12 +259,12 @@ export default function TenderForm() {
                   <Label>Cities</Label>
                   <Controller
                     control={control}
-                    name="cities"
+                    name="city_ids"
                     render={({ field: { onChange, value } }) => {
                       return (
                         <MySelect
                           options={formattedCities}
-                          defaultValue={value}
+                          value={value}
                           isMulti
                           onChange={onChange}
                         />
@@ -177,15 +275,15 @@ export default function TenderForm() {
 
                 {/* Keywords */}
                 <div>
-                  <Label>Keywords</Label>
+                  <Label>Industries</Label>
                   <Controller
                     control={control}
-                    name="keywords"
+                    name="keyword_ids"
                     render={({ field: { onChange, value } }) => {
                       return (
                         <MySelect
                           options={formattedKeywords}
-                          defaultValue={value}
+                          value={value}
                           isMulti
                           onChange={onChange}
                         />
@@ -199,12 +297,12 @@ export default function TenderForm() {
                   <Label>Sectors</Label>
                   <Controller
                     control={control}
-                    name="sectors"
+                    name="sector_ids"
                     render={({ field: { onChange, value } }) => {
                       return (
                         <MySelect
                           options={formattedSectors}
-                          defaultValue={value}
+                          value={value}
                           isMulti
                           onChange={onChange}
                         />
@@ -218,12 +316,12 @@ export default function TenderForm() {
                   <Label>States</Label>
                   <Controller
                     control={control}
-                    name="states"
+                    name="state_ids"
                     render={({ field: { onChange, value } }) => {
                       return (
                         <MySelect
                           options={formattedStates}
-                          defaultValue={value}
+                          value={value}
                           isMulti
                           onChange={onChange}
                         />
@@ -678,6 +776,15 @@ export default function TenderForm() {
                     </span>
                   </Label>
                 </div>
+
+                {/* keywords */}
+                <div className="space-y-1">
+                  <Label className="block text-sm font-medium">Keywords</Label>
+                  <Input
+                    {...register("keywords")}
+                    placeholder="Enter Keywords"
+                  />
+                </div>
               </div>
             </div>
 
@@ -694,12 +801,6 @@ export default function TenderForm() {
                   >
                     Buyer Specification Document
                   </Label>
-                  {/* <Input
-                    id="buyer_specification_document"
-                    {...register("buyer_specification_document")}
-                    placeholder="Enter document details"
-                    
-                  /> */}
 
                   <Dropzone
                     onDropFiles={(selectedFiles) =>
@@ -707,8 +808,58 @@ export default function TenderForm() {
                     }
                     multiple
                   />
-                </div>
 
+                  {type === "edit" &&
+                    fileUrls.buyer_specification_document_urls?.length > 0 && (
+                      <ul className="mt-4 flex items-center justify-start gap-2 flex-wrap">
+                        {fileUrls.buyer_specification_document_urls.map(
+                          (file, index) => {
+                            const fileName = file.split("\\").pop();
+                            return (
+                              <li
+                                key={index}
+                                className="text-sm text-gray-600 p-2 border-dashed border-2 rounded-lg space-y-1 flex items-center justify-start gap-2"
+                              >
+                                <span>{fileName}</span>
+                                <div className="flex items-start justify-center gap-2">
+                                  <a
+                                    href={`${config.file_base}/${file}`}
+                                    download={fileName}
+                                    target="_blank"
+                                    className={buttonVariants({
+                                      size: "icon",
+                                      variant: "outline",
+                                    })}
+                                  >
+                                    <Link2 />
+                                  </a>
+
+                                  <Button
+                                    type="button"
+                                    variant="destructive"
+                                    className="shadow-none"
+                                    size="icon"
+                                    onClick={() =>
+                                      setFileUrls((prev) => ({
+                                        ...prev,
+                                        buyer_specification_document_urls:
+                                          prev.buyer_specification_document_urls.filter(
+                                            (f) => f !== file
+                                          ),
+                                      }))
+                                    }
+                                  >
+                                    <Trash />
+                                  </Button>
+                                </div>
+                              </li>
+                            );
+                          }
+                        )}
+                      </ul>
+                    )}
+                </div>
+                <Separator className="my-4" />
                 <div className="space-y-1">
                   <Label
                     htmlFor="drawing"
@@ -716,12 +867,6 @@ export default function TenderForm() {
                   >
                     Drawing
                   </Label>
-                  {/* <Input
-                    id="drawing"
-                    {...register("drawing")}
-                    placeholder="Enter drawing details"
-                    
-                  /> */}
                   <Dropzone
                     onDropFiles={(selectedFiles) =>
                       handleDrop("drawing", selectedFiles)
@@ -729,6 +874,53 @@ export default function TenderForm() {
                     multiple
                   />
                 </div>
+
+                {type === "edit" && fileUrls.drawing_urls?.length > 0 && (
+                  <ul className="mt-4 flex items-center justify-start gap-2 flex-wrap">
+                    {fileUrls.drawing_urls.map((file, index) => {
+                      const fileName = file.split("\\").pop();
+
+                      return (
+                        <li
+                          key={index}
+                          className="text-sm text-gray-600 p-2 border-dashed border-2 rounded-lg space-y-1 flex items-center justify-start gap-2"
+                        >
+                          <span>{fileName}</span>
+                          <div className="flex items-start justify-center gap-2">
+                            <a
+                              href={`${config.file_base}/${file}`}
+                              download={fileName}
+                              target="_blank"
+                              className={buttonVariants({
+                                size: "icon",
+                                variant: "outline",
+                              })}
+                            >
+                              <Link2 />
+                            </a>
+
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              className="shadow-none"
+                              size="icon"
+                              onClick={() =>
+                                setFileUrls((prev) => ({
+                                  ...prev,
+                                  drawing_urls: prev.drawing_urls.filter(
+                                    (f) => f !== file
+                                  ),
+                                }))
+                              }
+                            >
+                              <Trash />
+                            </Button>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
               </div>
             </div>
 
