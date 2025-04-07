@@ -51,7 +51,12 @@ export function FilterBox({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className="flex w-full items-center justify-start border-dashed"
+          className={cn(
+            "flex w-full items-center justify-start border-dashed",
+            {
+              "border-primary bg-primary/20": selectedValuesSet.size > 0,
+            },
+          )}
         >
           <PlusCircleIcon className="mr-1 h-4 w-4" />
           {title}
@@ -67,7 +72,7 @@ export function FilterBox({
               <div className="hidden space-x-1 lg:flex">
                 {selectedValuesSet.size > 0 ? (
                   <Badge
-                    variant="secondary"
+                    // variant="primary"
                     className="rounded-sm px-1 font-normal"
                   >
                     {selectedValuesSet.size} selected

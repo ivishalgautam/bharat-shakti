@@ -1,6 +1,7 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import Layout from "@/components/layout";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,6 +27,7 @@ export default function RootLayout({ children }) {
         suppressHydrationWarning={true}
       >
         <Layout>{children}</Layout>
+        <Toaster />
       </body>
     </html>
   );

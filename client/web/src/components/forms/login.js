@@ -1,21 +1,14 @@
 "use client";
-import { useState } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { Label } from "../ui/label";
-
-const login = async (data) => {
-  await axios.post("/api/login", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-};
+import { LoaderCircle } from "lucide-react";
+import auth from "@/services/auth";
 
 export default function LoginForm() {
   const {
@@ -24,13 +17,13 @@ export default function LoginForm() {
     register,
   } = useForm();
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
   const loginMutation = useMutation({
-    mutationFn: login,
+    mutationFn: auth.login,
     onSuccess: () => {
       router.replace("/");
     },
     onError: (error) => {
+      console.log(error);
       toast.error(
         error?.response?.data?.message ??
           error?.message ??
@@ -51,11 +44,8 @@ export default function LoginForm() {
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           {"Don't have an account? "}
-          <Link
-            href={`/sign-up`}
-            className={"font-medium text-blue-600 hover:text-blue-500"}
-          >
-            Sign up
+          <Link href={`/register`} className={"font-medium text-primary"}>
+            Register
           </Link>
         </p>
       </div>
@@ -67,14 +57,13 @@ export default function LoginForm() {
               htmlFor="username"
               className="block text-sm font-medium text-gray-700"
             >
-              Email address
+              Username
             </Label>
             <Input
               id="username"
               name="username"
               type="username"
               autoComplete="username"
-              className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
               placeholder="username address"
               {...register("username", {
                 required: true,
@@ -142,12 +131,16 @@ export default function LoginForm() {
               )} */}
 
         <div>
-          <button
+          <Button
+            disabled={loginMutation.isPending}
             type="submit"
-            className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="w-full"
           >
+            {loginMutation.isPending && (
+              <LoaderCircle className="size-10 animate-spin" />
+            )}
             Sign in
-          </button>
+          </Button>
         </div>
       </form>
     </div>

@@ -1,22 +1,28 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Search, Filter } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { mockTenders } from "@/lib/mock-data";
 import useGetAuthorities from "@/hooks/use-get-authorities";
 import { useFormattedOptions } from "@/hooks/use-formatted-options";
 import useGetKeywords from "@/hooks/use-get-keywords";
 import useGetStates from "@/hooks/use-get-states";
 import useGetCities from "@/hooks/use-get-cities";
 import useGetSectors from "@/hooks/use-get-sectors";
-import { parseAsString, useQueryState } from "nuqs";
+import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { FilterBox } from "./filter-box";
 import { DatePickerWithRange } from "./date-range-selector";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
-export default function TendersFilters({ setFilteredTenders }) {
+export default function TendersFilters() {
   const { data: authoritiesData } = useGetAuthorities();
   const formattedAuthorities = useFormattedOptions(authoritiesData);
 
@@ -32,7 +38,6 @@ export default function TendersFilters({ setFilteredTenders }) {
   const { data: sectorsData } = useGetSectors();
   const formattedSectors = useFormattedOptions(sectorsData);
 
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useQueryState(
     "q",
     parseAsString.withDefault(""),
@@ -115,7 +120,7 @@ export default function TendersFilters({ setFilteredTenders }) {
     setAmountMin("");
     setAmountMax("");
   };
-  console.log({ isAnyFilterActive });
+
   return (
     <Card>
       <CardHeader>
@@ -125,12 +130,9 @@ export default function TendersFilters({ setFilteredTenders }) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="relative grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+        <div className="relative grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4">
           {/* search */}
           <div className="col-span-full space-y-2">
-            {/* <label htmlFor="search" className="text-sm font-medium">
-              Search
-            </label> */}
             <div className="relative">
               <Search className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
               <Input
@@ -145,9 +147,6 @@ export default function TendersFilters({ setFilteredTenders }) {
 
           {/* authorities */}
           <div className="space-y-2">
-            {/* <label htmlFor="authorities" className="text-sm font-medium">
-              Authorities
-            </label> */}
             <div>
               <FilterBox
                 filterKey={"authorities"}
@@ -161,9 +160,6 @@ export default function TendersFilters({ setFilteredTenders }) {
 
           {/* sectors */}
           <div className="space-y-2">
-            {/* <label htmlFor="sectors" className="text-sm font-medium">
-              Sectors
-            </label> */}
             <div>
               <FilterBox
                 filterKey={"sectors"}
@@ -177,25 +173,19 @@ export default function TendersFilters({ setFilteredTenders }) {
 
           {/* keyword */}
           <div className="space-y-2">
-            {/* <label htmlFor="keywords" className="text-sm font-medium">
-              Keyword
-            </label> */}
             <div>
               <FilterBox
                 filterKey={"keywords"}
                 options={formattedKeywords}
                 filterValue={keywords}
                 setFilterValue={setKeywords}
-                title={"Keywords"}
+                title={"Industries"}
               />
             </div>
           </div>
 
           {/* states */}
           <div className="space-y-2">
-            {/* <label htmlFor="states" className="text-sm font-medium">
-              States
-            </label> */}
             <div>
               <FilterBox
                 filterKey={"states"}
@@ -209,9 +199,6 @@ export default function TendersFilters({ setFilteredTenders }) {
 
           {/* cities */}
           <div className="space-y-2">
-            {/* <label htmlFor="cities" className="text-sm font-medium">
-              Cities
-            </label> */}
             <div>
               <FilterBox
                 filterKey={"cities"}
@@ -223,37 +210,70 @@ export default function TendersFilters({ setFilteredTenders }) {
             </div>
           </div>
 
-          {/* tender range */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Tender Value Range</label>
-            <div className="flex space-x-2">
+          <div className="col-span-full flex flex-wrap items-center justify-start gap-2">
+            {/* tender range */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Tender Value Range</label>
               <div className="flex space-x-2">
-                <Input
-                  type="number"
-                  placeholder="Min"
+                <Select
+                  onValueChange={(value) => setAmountMin(value)}
                   value={amountMin}
-                  onChange={(e) => setAmountMin(e.target.value)}
-                />
-                <Input
-                  type="number"
-                  placeholder="Max"
+                >
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="Select minimum amount" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0">0</SelectItem>
+                    <SelectItem value="1000">1 thousand</SelectItem>
+                    <SelectItem value="50000">50 thousand</SelectItem>
+                    <SelectItem value="100000">1 Lac</SelectItem>
+                    <SelectItem value="500000">5 Lac</SelectItem>
+                    <SelectItem value="1000000">10 Lac</SelectItem>
+                    <SelectItem value="2000000">20 Lac</SelectItem>
+                    <SelectItem value="2500000">25 Lac</SelectItem>
+                    <SelectItem value="5000000">50 Lac</SelectItem>
+                    <SelectItem value="10000000">1 Crore</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  onValueChange={(value) => setAmountMax(value)}
                   value={amountMax}
-                  onChange={(e) => setAmountMax(e.target.value)}
-                />
+                >
+                  <SelectTrigger className="">
+                    <SelectValue placeholder="Select maximum amount" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="500000">5 Lac</SelectItem>
+                    <SelectItem value="1000000">10 Lac</SelectItem>
+                    <SelectItem value="5000000">50 Lac</SelectItem>
+                    <SelectItem value="10000000">1 Crore</SelectItem>
+                    <SelectItem value="20000000">2 Crore</SelectItem>
+                    <SelectItem value="50000000">5 Crore</SelectItem>
+                    <SelectItem value="100000000">10 Crore</SelectItem>
+                    <SelectItem value="200000000">20 Crore</SelectItem>
+                    <SelectItem value="250000000">25 Crore</SelectItem>
+                    <SelectItem value="500000000">50 Crore</SelectItem>
+                    <SelectItem value="1000000000">100 Crore</SelectItem>
+                    <SelectItem value="5000000000">500 Crore</SelectItem>
+                    <SelectItem value="10000000000">1000 Crore</SelectItem>
+                    <SelectItem value="100000000000">10000 Crore</SelectItem>
+                    <SelectItem value="1000000000000">100000 Crore</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-          </div>
-
-          {/* tander date range */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Bid End Date Range</label>
-            <div className="flex space-x-2">
-              <DatePickerWithRange
-                startDate={dateFrom}
-                setStartDate={setDateFrom}
-                endDate={dateTo}
-                setEndDate={setDateTo}
-              />
+            {/* tander date range */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Bid End Date Range</label>
+              <div className="flex space-x-2">
+                <DatePickerWithRange
+                  startDate={dateFrom}
+                  setStartDate={setDateFrom}
+                  endDate={dateTo}
+                  setEndDate={setDateTo}
+                />
+              </div>
             </div>
           </div>
 

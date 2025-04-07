@@ -14,7 +14,7 @@ export async function GET(request) {
     if (!refresh_token) {
       return NextResponse.json(
         { message: "No user logged in" },
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -48,9 +48,10 @@ export async function GET(request) {
 
     return NextResponse.json({ user: data }, { status: res.status });
   } catch (error) {
+    cookieStore.delete("token");
     return NextResponse.json(
       { message: error?.response?.data?.message ?? "Something went wrong" },
-      { status: error.status }
+      { status: error.status },
     );
   }
 }

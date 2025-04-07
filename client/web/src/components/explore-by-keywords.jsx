@@ -18,7 +18,7 @@ export default function ExploreByKeywords() {
     queryKey: ["featured-keywords"],
     staleTime: 1000 * 60 * 2,
   });
-
+  console.log({ data });
   if (isError) return <ErrorMessage error={error} />;
 
   return (
@@ -28,7 +28,7 @@ export default function ExploreByKeywords() {
           <div className="flex items-center">
             <Tag className="mr-2 h-5 w-5" />
             <h2 className="text-2xl font-bold tracking-tight">
-              Explore by Keywords
+              Explore by Industries
             </h2>
           </div>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
@@ -46,7 +46,7 @@ export default function ExploreByKeywords() {
             icon={ArrowRight}
             iconPlacement="right"
           >
-            View all keywords
+            View all industries
           </Button>
         </div>
       </div>

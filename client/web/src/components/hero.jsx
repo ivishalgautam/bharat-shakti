@@ -34,7 +34,7 @@ export default function Hero() {
                   className="w-full bg-white pl-8 shadow-sm"
                 />
               </div>
-              <DropdownMenu>
+              {/* <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" className="bg-white shadow-sm">
                     Category <ChevronDown className="ml-2 h-4 w-4" />
@@ -48,7 +48,7 @@ export default function Hero() {
                   <DropdownMenuItem>Infrastructure</DropdownMenuItem>
                   <DropdownMenuItem>Defense</DropdownMenuItem>
                 </DropdownMenuContent>
-              </DropdownMenu>
+              </DropdownMenu> */}
               <Button type="submit" className="shrink-0">
                 Search
               </Button>

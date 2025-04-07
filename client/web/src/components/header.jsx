@@ -19,17 +19,17 @@ export default function Header() {
           <Logo />
         </div>
         <nav className="hidden gap-6 md:flex">
-          <Link href="#" className="text-sm font-medium hover:text-primary">
+          <Link href="/" className="text-sm font-medium hover:text-primary">
             Home
           </Link>
-          <Link href="#" className="text-sm font-medium hover:text-primary">
+          <Link
+            href="/tenders"
+            className="text-sm font-medium hover:text-primary"
+          >
             Tenders
           </Link>
           <Link href="#" className="text-sm font-medium hover:text-primary">
             Services
-          </Link>
-          <Link href="#" className="text-sm font-medium hover:text-primary">
-            Resources
           </Link>
           <Link href="#" className="text-sm font-medium hover:text-primary">
             About Us
@@ -54,7 +54,7 @@ export default function Header() {
                 Log In
               </Link>
               <Link
-                href="#"
+                href="/register"
                 className={buttonVariants({ effect: "shineHover", size: "sm" })}
               >
                 Register

@@ -2,6 +2,8 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import axios from "axios";
+import { endpoints } from "@/utils/endpoints";
+import http from "@/utils/http";
 
 export const AuthContext = createContext(null);
 
@@ -27,7 +29,12 @@ export default function AuthProvider({ children }) {
     async function fetchData() {
       try {
         // const user = await http().get(endpoints.profile);
+        // delete user.password;
+        // setUser(user);
+        // localStorage.setItem("user", JSON.stringify(user));
+
         const { data } = await axios.get("/api/profile");
+        delete data.user.password;
         setUser(data.user);
         localStorage.setItem("user", JSON.stringify(data.user));
       } catch (error) {
@@ -37,12 +44,8 @@ export default function AuthProvider({ children }) {
         setIsUserLoading(false);
       }
     }
-    // if (!["/login"].includes(pathname)) {
     fetchData();
-    // } else {
-    //   setIsUserLoading(false);
-    // }
-  }, [pathname]);
+  }, []);
 
   return (
     <AuthContext.Provider

@@ -13,9 +13,12 @@ import config from "@/config";
 import { handleLogout, useAuth } from "@/providers/auth-provider";
 
 import { LayoutDashboard, LogOutIcon } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function UserDropdown() {
   const { user } = useAuth();
+  const router = useRouter();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -25,7 +28,7 @@ export default function UserDropdown() {
         >
           <Avatar>
             <AvatarImage src={`${config.file_base}/${user.image_url}`} />
-            <AvatarFallback className="uppercase">
+            <AvatarFallback className="border border-primary bg-primary/20 uppercase">
               {user.first_name.charAt(0) + user.last_name.charAt(0)}
             </AvatarFallback>
           </Avatar>
@@ -42,7 +45,7 @@ export default function UserDropdown() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="dark:bg-white/8" />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push("/dashboard")}>
             <LayoutDashboard
               size={16}
               className="opacity-60"

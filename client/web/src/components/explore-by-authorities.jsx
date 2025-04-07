@@ -10,6 +10,7 @@ import config from "@/config";
 import { Skeleton } from "./ui/skeleton";
 import ErrorMessage from "./ui/error";
 import Section from "./layout/section";
+import AuthorityCard from "./cards/authority";
 
 export default function ExploreByAuthorities() {
   const { data, isLoading, isError, error } = useQuery({
@@ -25,7 +26,7 @@ export default function ExploreByAuthorities() {
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center gap-4">
           <div className="flex items-center">
-            <Building2 className="mr-2 h-5 w-5" />
+            {/* <Building2 className="mr-2 h-5 w-5" /> */}
             <h2 className="text-2xl font-bold tracking-tight">
               Explore by Authorities
             </h2>
@@ -36,22 +37,7 @@ export default function ExploreByAuthorities() {
                   <Skeleton key={i} className={"h-16 w-64 bg-gray-200"} />
                 ))
               : data?.map((authority) => (
-                  <Link
-                    key={authority.id}
-                    href="#"
-                    className="flex items-center gap-2 rounded-lg border bg-card p-4 shadow-sm transition-colors hover:border-primary hover:bg-primary/10"
-                  >
-                    <figure className="size-10">
-                      <Image
-                        width={50}
-                        height={50}
-                        src={`${config.file_base}/${authority.image}`}
-                        alt={authority.name}
-                        className="h-full w-full object-cover object-center"
-                      />
-                    </figure>
-                    <span className="font-medium">{authority.name}</span>
-                  </Link>
+                  <AuthorityCard key={authority.id} authority={authority} />
                 ))}
           </div>
           <Button
