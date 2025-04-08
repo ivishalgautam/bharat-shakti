@@ -39,7 +39,13 @@ export default (app) => {
   });
   app.register(formbody);
   app.register(cors, {
-    origin: ["http://localhost:3000", "http://localhost:4000"],
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:4000",
+      "https://bs.bwdemo.in",
+      "https://bsdashboard.bwdemo.in",
+      "https://bsapi.bwdemo.in",
+    ],
     credentials: true,
   });
 
