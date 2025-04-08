@@ -1,5 +1,5 @@
 import axios from "axios";
-const API_ROOT = "http://localhost:3001/v1";
+const API_ROOT = process.env.NEXT_PUBLIC_BHARAT_SHAKTI_API_URL;
 
 const http = (headerType = "json", baseURL = API_ROOT) => {
   // Create the axios instance
