@@ -197,7 +197,7 @@ export const sidebarData = [
     url: "/profile",
     icon: User,
     roles: [ROLES.ADMIN, ROLES.STAFF],
-    isVisible: true,
+    isVisible: false,
     items: [],
   },
 ];
