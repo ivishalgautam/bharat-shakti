@@ -3,12 +3,12 @@ import "dotenv/config";
 
 // Set the NODE_ENV to 'development' by default
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
-process.env.PORT = process.env.PORT || 3001;
+process.env.PORT = process.env.PORT2 || 6001;
 
 const config = {
-  port: parseInt(process.env.PORT, 10),
+  port: parseInt(process.env.PORT2, 10),
   // postgres creds
-  pg_database_name: process.env.PG_DATABASE_NAME,
+  pg_database_name: process.env.BHARAT_SHAKTI_PG_DATABASE_NAME,
   pg_username: process.env.PG_USERNAME,
   pg_password: process.env.PG_PASSWORD,
   pg_host: process.env.PG_HOST,
