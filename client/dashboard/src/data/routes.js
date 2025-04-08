@@ -36,7 +36,7 @@ export const sidebarData = [
         title: "Create",
         url: "/users/create",
         roles: [ROLES.ADMIN],
-        isVisible: true,
+        isVisible: false,
       },
       {
         title: "Edit User",
