@@ -192,14 +192,14 @@ export const sidebarData = [
     isVisible: true,
     items: [],
   },
-  {
-    title: "Profile Overview",
-    url: "/profile",
-    icon: User,
-    roles: [ROLES.ADMIN, ROLES.STAFF],
-    isVisible: false,
-    items: [],
-  },
+  // {
+  //   title: "Profile Overview",
+  //   url: "/profile",
+  //   icon: User,
+  //   roles: [ROLES.ADMIN, ROLES.STAFF],
+  //   isVisible: false,
+  //   items: [],
+  // },
 ];
 
 export const filteredRoutes = sidebarData.flatMap((item) =>
