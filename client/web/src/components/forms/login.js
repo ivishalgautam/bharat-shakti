@@ -64,7 +64,7 @@ export default function LoginForm() {
               name="username"
               type="username"
               autoComplete="username"
-              placeholder="username address"
+              placeholder="username"
               {...register("username", {
                 required: true,
               })}
