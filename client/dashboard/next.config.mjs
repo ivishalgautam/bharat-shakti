@@ -7,6 +7,11 @@ const nextConfig = {
         hostname: "localhost",
         port: "3001",
       },
+      {
+        protocol: "https",
+        hostname: "bsapi.bwdemo.in",
+        port: "",
+      },
     ],
   },
 };
