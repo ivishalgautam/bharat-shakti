@@ -17,6 +17,7 @@ export async function POST(request) {
     });
     const json = await res.json();
     if (res.ok) {
+      console.log({ json });
       cookieStore.set("token", json.token, {
         path: "/",
         expires: new Date(json.expire_time),

@@ -2,6 +2,7 @@ import config from "@/config";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 import auth from "@/services/auth";
+import { cookies } from "next/headers";
 
 export const authOptions = {
   providers: [
@@ -15,7 +16,7 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ profile, account }) {
+    async signIn({ user, account, profile }) {
       const payload = {
         email: profile.email,
         username: profile.email,
@@ -25,15 +26,30 @@ export const authOptions = {
         provider_account_id: account.providerAccountId,
       };
 
-      console.log({ payload });
       try {
-        const resp = await auth.login(payload);
-        console.log({ resp });
+        const { data } = await auth.login(payload);
+        const cookieStore = await cookies();
+
+        cookieStore.set("token", data.token, {
+          path: "/",
+          expires: new Date(data.expire_time),
+          httpOnly: true,
+          sameSite: "lax",
+          secure: process.env.NODE_ENV === "production",
+        });
+
+        cookieStore.set("refresh_token", data.refresh_token, {
+          path: "/",
+          expires: new Date(data.refresh_expire_time),
+          httpOnly: true,
+          sameSite: "lax",
+          secure: process.env.NODE_ENV === "production",
+        });
+
+        return true;
       } catch (error) {
         console.log(error);
       }
-
-      return true;
     },
   },
 };

@@ -18,7 +18,6 @@ export default function ExploreByKeywords() {
     queryKey: ["featured-keywords"],
     staleTime: 1000 * 60 * 2,
   });
-  console.log({ data });
   if (isError) return <ErrorMessage error={error} />;
 
   return (

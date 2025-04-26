@@ -266,7 +266,7 @@ export default function Register() {
         <div className="flex flex-wrap items-center justify-center gap-2">
           <Button
             type="button"
-            onClick={() => signIn("google")}
+            onClick={() => signIn("google", { callbackUrl: "/" })}
             variant="outline"
             aria-label="Login with Google"
             size="icon"
@@ -279,7 +279,7 @@ export default function Register() {
           </Button>
           <Button
             type="button"
-            onClick={() => signIn("google")}
+            onClick={() => signIn("google", { callbackUrl: "/" })}
             variant="outline"
             aria-label="Login with Facebook"
             size="icon"

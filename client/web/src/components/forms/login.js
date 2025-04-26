@@ -168,7 +168,7 @@ export default function LoginForm() {
         <div className="flex flex-wrap items-center justify-center gap-2">
           <Button
             type="button"
-            onClick={() => signIn("google")}
+            onClick={() => signIn("google", { callbackUrl: "/" })}
             variant="outline"
             aria-label="Login with Google"
             size="icon"
