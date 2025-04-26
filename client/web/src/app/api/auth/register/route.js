@@ -15,7 +15,6 @@ export async function POST(request) {
       JSON.parse(data.body),
     );
     const json = res.data;
-    console.log({ json });
     // Return the same response as the external backend.
     return NextResponse.json(json, { status: res.status });
   } catch (err) {

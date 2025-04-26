@@ -5,8 +5,8 @@ import Logo from "@/components/logo";
 
 export default function AuthLayout({ children }) {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex min-h-screen">
+    <div className="max-h-screen">
+      <div className="flex min-h-screen bg-gray-50">
         {/* Image Section */}
         <div className="hidden flex-col items-center justify-center bg-gradient-to-br from-primary to-secondary p-12 text-white lg:flex lg:w-1/2">
           <div className="max-w-md">

@@ -9,7 +9,7 @@ export const AuthContext = createContext(null);
 
 export async function handleLogout() {
   try {
-    const resp = await axios.post("/api/logout");
+    const resp = await axios.post("/api/auth/logout");
     if (resp.statusText === "OK") {
       localStorage.clear();
       window.location.href = "/";
@@ -33,7 +33,7 @@ export default function AuthProvider({ children }) {
         // setUser(user);
         // localStorage.setItem("user", JSON.stringify(user));
 
-        const { data } = await axios.get("/api/profile");
+        const { data } = await axios.get("/api/auth/profile");
         delete data.user.password;
         setUser(data.user);
         localStorage.setItem("user", JSON.stringify(data.user));

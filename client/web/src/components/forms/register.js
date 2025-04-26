@@ -15,6 +15,9 @@ import auth from "@/services/auth";
 import { isValidPhoneNumber } from "react-phone-number-input";
 import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
+import { RiFacebookFill, RiGoogleFill, RiTwitterXFill } from "@remixicon/react";
+import { Separator } from "../ui/separator";
+import { signIn } from "next-auth/react";
 
 // Define the validation schema using Zod
 const userFormSchema = z
@@ -246,6 +249,61 @@ export default function Register() {
           )}
           Register
         </Button>
+
+        {/* separator */}
+        <div className="relative my-6">
+          <div className="absolute inset-0 flex items-center">
+            <Separator className="w-full" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-gray-50 px-2 text-muted-foreground">
+              Or continue with
+            </span>
+          </div>
+        </div>
+
+        {/* social login */}
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <Button
+            type="button"
+            onClick={() => signIn("google")}
+            variant="outline"
+            aria-label="Login with Google"
+            size="icon"
+          >
+            <RiGoogleFill
+              className="text-[#DB4437] dark:text-primary"
+              size={16}
+              aria-hidden="true"
+            />
+          </Button>
+          <Button
+            type="button"
+            onClick={() => signIn("google")}
+            variant="outline"
+            aria-label="Login with Facebook"
+            size="icon"
+          >
+            <RiFacebookFill
+              className="text-[#1877f2] dark:text-primary"
+              size={16}
+              aria-hidden="true"
+            />
+          </Button>
+          <Button
+            type="button"
+            onClick={() => signIn("google")}
+            variant="outline"
+            aria-label="Login with X"
+            size="icon"
+          >
+            <RiTwitterXFill
+              className="text-[#14171a] dark:text-primary"
+              size={16}
+              aria-hidden="true"
+            />
+          </Button>
+        </div>
       </form>
     </div>
   );
