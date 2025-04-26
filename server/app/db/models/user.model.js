@@ -1,7 +1,7 @@
 "use strict";
 import constants from "../../lib/constants/index.js";
 import hash from "../../lib/encryption/index.js";
-import sequelizeFwk, { QueryTypes } from "sequelize";
+import { DataTypes, QueryTypes } from "sequelize";
 import { Op } from "sequelize";
 import moment from "moment";
 
@@ -14,58 +14,68 @@ const init = async (sequelize) => {
       id: {
         allowNull: false,
         primaryKey: true,
-        type: sequelizeFwk.DataTypes.UUID,
-        defaultValue: sequelizeFwk.DataTypes.UUIDV4,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
       },
       username: {
-        type: sequelizeFwk.DataTypes.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
         unique: true,
       },
       email: {
-        type: sequelizeFwk.DataTypes.STRING,
+        type: DataTypes.STRING,
         allowNull: false,
       },
       mobile_number: {
-        type: sequelizeFwk.DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.STRING,
+        allowNull: true,
       },
       first_name: {
-        type: sequelizeFwk.DataTypes.STRING,
+        type: DataTypes.STRING,
       },
       last_name: {
-        type: sequelizeFwk.DataTypes.STRING,
+        type: DataTypes.STRING,
       },
       password: {
-        type: sequelizeFwk.DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.STRING,
+        allowNull: true,
       },
       blocked: {
-        type: sequelizeFwk.DataTypes.BOOLEAN,
+        type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
       role: {
-        type: sequelizeFwk.DataTypes.ENUM({
+        type: DataTypes.ENUM({
           values: ["admin", "user"],
         }),
         defaultValue: "user",
       },
       is_active: {
-        type: sequelizeFwk.DataTypes.BOOLEAN,
+        type: DataTypes.BOOLEAN,
         defaultValue: true,
       },
       is_verified: {
-        type: sequelizeFwk.DataTypes.BOOLEAN,
+        type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
       image_url: {
-        type: sequelizeFwk.DataTypes.STRING,
+        type: DataTypes.STRING,
       },
+
+      provider: {
+        type: DataTypes.STRING,
+        defaultValue: "credentials",
+      },
+      provider_account_id: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+
       reset_password_token: {
-        type: sequelizeFwk.DataTypes.STRING,
+        type: DataTypes.STRING,
       },
       confirmation_token: {
-        type: sequelizeFwk.DataTypes.STRING,
+        type: DataTypes.STRING,
       },
     },
     {
@@ -78,7 +88,9 @@ const init = async (sequelize) => {
 };
 
 const create = async (req) => {
-  const hash_password = hash.encrypt(req.body.password);
+  const hash_password = req.body.password
+    ? hash.encrypt(req.body.password)
+    : "";
   return await UserModel.create({
     username: req.body.username,
     password: hash_password,
@@ -88,6 +100,8 @@ const create = async (req) => {
     mobile_number: req.body?.mobile_number,
     role: req.body?.role,
     image_url: req?.body?.image_url,
+    provider: req?.body?.provider,
+    provider_account_id: req?.body?.provider_account_id,
   });
 };
 

@@ -40,6 +40,9 @@ export const tenderSchema = z.object({
   keyword_ids: z.array(z.string().uuid()).default([]),
   sector_ids: z.array(z.string().uuid()).default([]),
   state_ids: z.array(z.string().uuid()).default([]),
+
+  keywords: z.array(z.string()),
+
   meta_title: z.string().default(""),
   meta_description: z.string().default(""),
   meta_keywords: z.string().default(""),

@@ -7,39 +7,63 @@ import authToken from "../../helpers/auth.js";
 import { userSchema } from "../../utils/schema/user.schema.js";
 
 const verifyUserCredentials = async (req, res) => {
-  let userData;
+  const { username, password, provider, provider_account_id } = req.body;
+
+  let userData = null;
 
   try {
-    userData = await table.UserModel.getByUsername(req);
+    if (username && password) {
+      userData = await table.UserModel.getByUsername(req);
+
+      if (!userData) {
+        return res
+          .code(404)
+          .send({ message: "User with that username does not exist" });
+      }
+
+      // 🚨 If user registered via social, tell them to use social login
+      if (userData.provider && userData.provider !== "credentials") {
+        return res.code(400).send({
+          message: `Please login using ${userData.provider} instead of username and password.`,
+        });
+      }
+
+      const passwordIsValid = await hash.verify(password, userData.password);
+
+      if (!passwordIsValid) {
+        return res.code(401).send({
+          message: "Incorrect password. Please enter a valid password",
+        });
+      }
+    } else if (provider && provider_account_id && email) {
+      userData = await table.UserModel.getByEmailId(req);
+
+      if (!userData) {
+        userData = await table.UserModel.create(req);
+      } else {
+        if (!userData.provider) {
+          await userData.update({ body: { provider, provider_account_id } });
+        }
+      }
+    } else {
+      return res.code(400).send({ message: "Invalid login request." });
+    }
+
+    const [jwtToken, expiresIn] = authToken.generateAccessToken(userData);
+    const [refreshToken, refreshExpireTime] =
+      authToken.generateRefreshToken(userData);
+
+    return res.send({
+      token: jwtToken,
+      expire_time: Date.now() + expiresIn,
+      refresh_token: refreshToken,
+      refresh_expire_time: Date.now() + refreshExpireTime,
+      user_data: userData,
+    });
   } catch (error) {
     console.log(error);
-    return res.send(error);
+    return res.code(500).send({ message: "Internal Server Error", error });
   }
-
-  if (!userData) {
-    return res
-      .code(404)
-      .send({ message: "User with that username does not exist" });
-  }
-
-  let passwordIsValid = await hash.verify(req.body.password, userData.password);
-
-  if (!passwordIsValid) {
-    return res.code(401).send({
-      message: "Incorrect password. Please enter a valid password",
-    });
-  }
-
-  const [jwtToken, expiresIn] = authToken.generateAccessToken(userData);
-  const [refreshToken, refreshExpireTime] =
-    authToken.generateRefreshToken(userData);
-  return res.send({
-    token: jwtToken,
-    expire_time: Date.now() + expiresIn,
-    refresh_token: refreshToken,
-    refresh_expire_time: Date.now() + refreshExpireTime,
-    user_data: userData,
-  });
 };
 
 const createNewUser = async (req, res) => {
