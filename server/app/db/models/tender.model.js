@@ -154,7 +154,7 @@ const init = async (sequelize) => {
       { replacements: { id: tender.id } }
     );
   });
-
+  //
   await TenderModel.sync({ alter: true });
 };
 
