@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const login = async (data) => {
-  return await axios.post("/api/auth/login", {
+  return await axios.post(`${process.env.NEXTAUTH_URL}/api/auth/login`, {
     method: "POST",
     body: JSON.stringify(data),
   });
