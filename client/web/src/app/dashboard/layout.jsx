@@ -44,7 +44,7 @@ function NavigationList() {
       icon: User,
     },
     {
-      label: "Favourites tenders",
+      label: "Favourite tenders",
       href: "/dashboard/favourite-tenders",
       icon: BookHeart,
     },
