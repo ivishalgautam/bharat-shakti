@@ -114,12 +114,46 @@ const init = async (sequelize) => {
       meta_title: { type: DataTypes.TEXT, defaultValue: "" },
       meta_description: { type: DataTypes.TEXT, defaultValue: "" },
       meta_keywords: { type: DataTypes.TEXT, defaultValue: "" },
+      search_vector: {
+        type: DataTypes.TSVECTOR,
+        allowNull: true,
+      },
     },
     {
       createdAt: "created_at",
       updatedAt: "updated_at",
     }
   );
+
+  await TenderModel.sync({ alter: true });
+
+  TenderModel.afterCreate(async (tender, options) => {
+    await sequelize.query(
+      `
+      UPDATE "${constants.models.TENDER_TABLE}"
+      SET search_vector = 
+        setweight(to_tsvector('english', coalesce(name, '')), 'A') ||
+        setweight(to_tsvector('english', coalesce(keywords, '')), 'B') ||
+        setweight(to_tsvector('english', coalesce(bid_number, '')), 'C')
+      WHERE id = :id
+    `,
+      { replacements: { id: tender.id } }
+    );
+  });
+
+  TenderModel.afterUpdate(async (tender, options) => {
+    await sequelize.query(
+      `
+      UPDATE "${constants.models.TENDER_TABLE}"
+      SET search_vector = 
+        setweight(to_tsvector('english', coalesce(name, '')), 'A') ||
+        setweight(to_tsvector('english', coalesce(keywords, '')), 'B') ||
+        setweight(to_tsvector('english', coalesce(bid_number, '')), 'C')
+      WHERE id = :id
+    `,
+      { replacements: { id: tender.id } }
+    );
+  });
 
   await TenderModel.sync({ alter: true });
 };
@@ -180,10 +214,6 @@ const get = async (req) => {
   const queryParams = {};
   let q = req.query.q;
   if (q) {
-    //     atr
-    // ct
-    // sct
-    // st
     whereConditions.push(
       `(tdr.name ILIKE :query 
         OR tdr.bid_number ILIKE :query OR tdr.keywords ILIKE :query 
@@ -300,14 +330,14 @@ const get = async (req) => {
     LEFT JOIN ${constants.models.KEYWORD_TABLE} kw ON kw.id = ANY(tdr.keyword_ids)
     LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = ANY(tdr.sector_ids)
     LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = ANY(tdr.state_ids)
-    LEFT JOIN ${constants.models.WISHLIST_TABLE} ws ON ws.tender_id = tdr.id
+    LEFT JOIN ${constants.models.WISHLIST_TABLE} ws ON ws.user_id = :userId AND ws.tender_id = tdr.id
     ${whereClause}
     GROUP BY tdr.id, ws.tender_id
     ORDER BY tdr.created_at DESC
     LIMIT :limit OFFSET :offset
   `;
   const data = await TenderModel.sequelize.query(query, {
-    replacements: { ...queryParams, limit, offset },
+    replacements: { ...queryParams, userId: req.user_data.id, limit, offset },
     type: QueryTypes.SELECT,
     raw: true,
   });

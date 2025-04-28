@@ -156,9 +156,13 @@ const get = async (req) => {
   let query = `
   SELECT
       tdr.*,
-      true as is_followed
+      CASE WHEN 
+        ws.tender_id IS NOT NULL THEN true
+        ELSE false
+      END as is_followed
     FROM ${constants.models.VIEWED_TENDER_TABLE} vt
     LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON tdr.id = vt.tender_id
+    LEFT JOIN ${constants.models.WISHLIST_TABLE} ws ON ws.tender_id = vt.tender_id AND ws.user_id = :userId
     ${whereClause}
     ORDER BY vt.created_at DESC
     LIMIT :limit OFFSET :offset
@@ -176,7 +180,7 @@ const get = async (req) => {
     raw: true,
   });
 
-  return { wishlists: data, total: count?.[0]?.total ?? 0 };
+  return { data: data, total: count?.[0]?.total ?? 0 };
 };
 
 const getByUserAndTenderId = async (req) => {

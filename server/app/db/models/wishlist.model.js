@@ -182,7 +182,7 @@ const get = async (req) => {
     raw: true,
   });
 
-  return { wishlists: data, total: count?.[0]?.total ?? 0 };
+  return { data: data, total: count?.[0]?.total ?? 0 };
 };
 
 const getByUserAndTenderId = async (req) => {

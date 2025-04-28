@@ -96,8 +96,8 @@ const get = async (req) => {
   let query = `
   SELECT
       apl.id, usr.id as user_id, CONCAT(usr.first_name, ' ', usr.last_name) as fullname, usr.username, 
-      usr.mobile_number, usr.email, usr.role, usr.is_active, usr.created_at,
-      tdr.id AS tender_id, tdr.name AS tender_name
+      usr.mobile_number, usr.email, usr.role, usr.is_active, apl.created_at,
+      tdr.id AS tender_id, tdr.name AS tender_name, tdr.bid_end_date_time, tdr.tender_value
     FROM ${constants.models.APPLICATION_TABLE} apl
     LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON tdr.id = apl.tender_id
     LEFT JOIN ${constants.models.USER_TABLE} usr ON usr.id = apl.user_id
@@ -118,7 +118,7 @@ const get = async (req) => {
     raw: true,
   });
 
-  return { applications: data, total: count?.[0]?.total ?? 0 };
+  return { data: data, total: count?.[0]?.total ?? 0 };
 };
 
 const getByUserAndTenderId = async (req) => {

@@ -7,7 +7,7 @@ import authToken from "../../helpers/auth.js";
 import { userSchema } from "../../utils/schema/user.schema.js";
 
 const verifyUserCredentials = async (req, res) => {
-  const { username, password, provider, provider_account_id } = req.body;
+  const { username, password, provider, provider_account_id, email } = req.body;
 
   let userData = null;
 
