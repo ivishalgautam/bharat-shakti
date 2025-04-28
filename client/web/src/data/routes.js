@@ -10,6 +10,18 @@ export const allRoutes = [
   },
   {
     link: "/dashboard",
-    roles: [ROLES.USER, ROLES.ADMIN],
+    roles: [ROLES.USER],
+  },
+  {
+    link: "/dashboard/viewed-tenders",
+    roles: [ROLES.USER],
+  },
+  {
+    link: "/dashboard/favourite-tenders",
+    roles: [ROLES.USER],
+  },
+  {
+    link: "/dashboard/applied-tenders",
+    roles: [ROLES.USER],
   },
 ];

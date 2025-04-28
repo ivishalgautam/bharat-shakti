@@ -10,6 +10,7 @@ export const searchParams = {
   page: parseAsInteger.withDefault(1),
   limit: parseAsInteger.withDefault(10),
   q: parseAsString,
+  categories: parseAsString,
   start_date: parseAsString,
   end_date: parseAsString,
 };

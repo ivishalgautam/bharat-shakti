@@ -1,12 +1,9 @@
 "use client";
 import { ArrowRight, Tag } from "lucide-react";
-import Link from "next/link";
 import React from "react";
 import { Button } from "./ui/button";
-import Image from "next/image";
 import keywords from "@/services/keyword";
 import { useQuery } from "@tanstack/react-query";
-import config from "@/config";
 import ErrorMessage from "./ui/error";
 import { Skeleton } from "./ui/skeleton";
 import Section from "./layout/section";

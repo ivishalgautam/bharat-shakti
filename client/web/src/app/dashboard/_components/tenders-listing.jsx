@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import TendersPagination from "@/components/tenders/tenders-pagination";
 import TenderCardPremium from "@/components/cards/tender-card-premium";
 import viewTenders from "@/services/view-tender";
+import application from "@/services/application";
 
 export default function TendersListing({ type }) {
   const searchParams = useSearchParams();
@@ -25,7 +26,11 @@ export default function TendersListing({ type }) {
     queryFn: () =>
       type === "favourite"
         ? wishlists.get(searchParamsStr)
-        : viewTenders.get(searchParamsStr),
+        : type === "viewed"
+          ? viewTenders.get(searchParamsStr)
+          : type === "applied"
+            ? application.get(searchParamsStr)
+            : [],
     queryKey:
       type === "favourite"
         ? ["favourite-tenders", searchParamsStr]
@@ -99,7 +104,7 @@ export default function TendersListing({ type }) {
       ) : (
         <div className="space-y-4">
           <div className="grid grid-cols-[repeat(auto-fill,minmax(400px,1fr))] gap-4">
-            {data?.wishlists.map((tender) => (
+            {data?.data?.map((tender) => (
               <TenderCardPremium
                 tender={tender}
                 key={tender.id}

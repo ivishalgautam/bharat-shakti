@@ -179,7 +179,7 @@ export default function LoginForm() {
               aria-hidden="true"
             />
           </Button>
-          <Button
+          {/* <Button
             type="button"
             onClick={() => signIn("google")}
             variant="outline"
@@ -204,7 +204,7 @@ export default function LoginForm() {
               size={16}
               aria-hidden="true"
             />
-          </Button>
+          </Button> */}
         </div>
       </form>
     </div>

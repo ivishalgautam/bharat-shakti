@@ -49,7 +49,7 @@ export default function TenderCardPremium({
               </p>
             </div>
             <h3 className="line-clamp-2 text-lg font-bold text-primary">
-              {tender.name}
+              {tender?.name || tender?.tender_name}
             </h3>
           </div>
           <Badge

@@ -277,7 +277,7 @@ export default function Register() {
               aria-hidden="true"
             />
           </Button>
-          <Button
+          {/* <Button
             type="button"
             onClick={() => signIn("google", { callbackUrl: "/" })}
             variant="outline"
@@ -302,7 +302,7 @@ export default function Register() {
               size={16}
               aria-hidden="true"
             />
-          </Button>
+          </Button> */}
         </div>
       </form>
     </div>
