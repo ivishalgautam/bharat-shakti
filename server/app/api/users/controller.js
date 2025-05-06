@@ -125,7 +125,7 @@ const getUser = async (req, res) => {
   try {
     const record = await table.UserModel.getById(undefined, req.user_data.id);
     if (!record) {
-      return res.code(401).send({ message: "unauthorized!" });
+      return res.code(404).send({ message: "unauthorized!" });
     }
     return res.send(req.user_data);
   } catch (error) {

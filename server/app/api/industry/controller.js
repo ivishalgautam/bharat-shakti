@@ -15,7 +15,7 @@ const create = async (req, res) => {
     const validateData = keywordSchema.parse(req.body);
     req.body.slug = slugify(validateData.name, { lower: true });
 
-    await table.KeywordModel.create(req, { transaction });
+    await table.IndustryModel.create(req, { transaction });
     await transaction.commit();
     res.code(status.CREATED).send({ message: message.HTTP_STATUS_CODE_201 });
   } catch (error) {
@@ -27,7 +27,7 @@ const create = async (req, res) => {
 const update = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    const record = await table.KeywordModel.getById(req);
+    const record = await table.IndustryModel.getById(req);
     if (!record)
       return res
         .code(status.NOT_FOUND)
@@ -42,7 +42,7 @@ const update = async (req, res) => {
       documentsToDelete = getItemsToDelete(existingGallery, updatedGallery);
     }
 
-    await table.KeywordModel.update(req, 0, { transaction });
+    await table.IndustryModel.update(req, 0, { transaction });
 
     if (documentsToDelete.length) {
       await cleanupFiles(documentsToDelete);
@@ -61,13 +61,13 @@ const update = async (req, res) => {
 const deleteById = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    const record = await table.KeywordModel.getById(req);
+    const record = await table.IndustryModel.getById(req);
     if (!record)
       return res
         .code(status.NOT_FOUND)
         .send({ status: false, message: "Keyword not found!" });
 
-    await table.KeywordModel.deleteById(req, 0, { transaction });
+    await table.IndustryModel.deleteById(req, 0, { transaction });
     if (record.image?.length) {
       await cleanupFiles(record.image);
     }
@@ -84,7 +84,7 @@ const deleteById = async (req, res) => {
 
 const get = async (req, res) => {
   try {
-    const data = await table.KeywordModel.get(req);
+    const data = await table.IndustryModel.get(req);
     res.code(status.OK).send({ status: true, data });
   } catch (error) {
     throw error;
@@ -93,7 +93,7 @@ const get = async (req, res) => {
 
 const getById = async (req, res) => {
   try {
-    const record = await table.KeywordModel.getById(req);
+    const record = await table.IndustryModel.getById(req);
     if (!record)
       return res
         .code(status.NOT_FOUND)

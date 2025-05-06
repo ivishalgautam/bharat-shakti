@@ -11,16 +11,14 @@ export const multipartPreHandler = async (
 
   for await (const part of parts) {
     if (part.file) {
-      // console.log(part);
       const filePath = await saveFile(part);
-      // console.log({ filePath });
       part.fieldname in body
         ? body[part.fieldname].push(filePath)
         : (body[part.fieldname] = [filePath]);
 
       filePaths.push(filePath);
     } else {
-      checkForArrayElements.includes(part.fieldname)
+      checkForArrayElements.some((item) => item === part.fieldname)
         ? (body[part.fieldname] = JSON.parse(part.value))
         : (body[part.fieldname] = part.value);
     }

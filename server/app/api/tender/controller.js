@@ -32,33 +32,31 @@ const update = async (req, res) => {
       return res
         .code(status.NOT_FOUND)
         .send({ status: false, message: "Tender not found!" });
-    console.log({ record });
 
     let documentsToDelete = [];
     const existingDocs = record.buyer_specification_document;
     const updatedDocs = req.body.buyer_specification_document_urls;
-    console.log({ existingDocs, updatedDocs });
 
     if (updatedDocs) {
       req.body.buyer_specification_document = [
-        ...(req.body.buyer_specification_document ?? []),
+        ...(req.body?.buyer_specification_document ?? []),
         ...updatedDocs,
       ];
-      console.log("getItems", getItemsToDelete(existingDocs, updatedDocs));
       documentsToDelete.push(...getItemsToDelete(existingDocs, updatedDocs));
     }
 
-    // const existingDrawings = record.drawing;
-    // const updatedDrawings = req.body.drawing_urls;
+    const existingDrawings = record.drawing;
+    const updatedDrawings = req.body.drawing_urls;
 
-    // if (updatedDrawings) {
-    //   req.body.drawing = [...(req.body.drawing ?? []), ...updatedDrawings];
-    //   documentsToDelete.push(
-    //     ...getItemsToDelete(existingDrawings, updatedDrawings)
-    //   );
-    // }
+    if (updatedDrawings) {
+      req.body.drawing = [...(req.body.drawing ?? []), ...updatedDrawings];
+      documentsToDelete.push(
+        ...getItemsToDelete(existingDrawings, updatedDrawings)
+      );
+    }
 
     await table.TenderModel.update(req, 0, { transaction });
+    // await table.TenderModel.updateVector(record.id, { transaction });
     if (documentsToDelete.length) {
       await cleanupFiles(documentsToDelete);
     }
@@ -73,6 +71,7 @@ const update = async (req, res) => {
 
 const deleteById = async (req, res) => {
   const transaction = await sequelize.transaction();
+
   try {
     const record = await table.TenderModel.getById(req);
     if (!record)
@@ -83,14 +82,9 @@ const deleteById = async (req, res) => {
     await table.TenderModel.deleteById(req, 0, { transaction });
 
     if (record.buyer_specification_document?.length) {
-      console.log(
-        "buyer_specification_document",
-        record.buyer_specification_document
-      );
       await cleanupFiles(record.buyer_specification_document);
     }
     if (record.drawing?.length) {
-      console.log("drawing", record.drawing);
       await cleanupFiles(record.drawing);
     }
 
@@ -105,6 +99,7 @@ const deleteById = async (req, res) => {
 };
 
 const get = async (req, res) => {
+  console.log(req.cookies);
   try {
     const data = await table.TenderModel.get(req);
     res.code(status.OK).send({ status: true, data });

@@ -4,11 +4,11 @@ import constants from "../../lib/constants/index.js";
 import sequelizeFwk, { Op, QueryTypes } from "sequelize";
 const { DataTypes } = sequelizeFwk;
 
-let CityModel = null;
+let CategoryModel = null;
 
 const init = async (sequelize) => {
-  CityModel = sequelize.define(
-    constants.models.CITY_TABLE,
+  CategoryModel = sequelize.define(
+    constants.models.CATEGORY_TABLE,
     {
       id: {
         primaryKey: true,
@@ -21,11 +21,15 @@ const init = async (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      type: {
+        type: DataTypes.ENUM("goods", "services", "works"),
+        allowNull: false,
+      },
       slug: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: {
-          msg: "City exist with this name!",
+          msg: "Sector exist with this name!",
         },
       },
       is_featured: { type: DataTypes.BOOLEAN, defaultValue: false },
@@ -40,13 +44,14 @@ const init = async (sequelize) => {
     }
   );
 
-  await CityModel.sync({ alter: true });
+  await CategoryModel.sync({ alter: true });
 };
 
 const create = async (req, { transaction }) => {
-  return await CityModel.create(
+  return await CategoryModel.create(
     {
       name: req.body.name,
+      type: req.body.type,
       slug: req.body.slug,
       is_featured: req.body.is_featured,
       image: req.body.image,
@@ -63,13 +68,13 @@ const get = async (req) => {
   const queryParams = {};
   let q = req.query.q;
   if (q) {
-    whereConditions.push(`ct.name ILIKE :query`);
+    whereConditions.push(`sct.name ILIKE :query`);
     queryParams.query = `%${q}%`;
   }
 
   const featured = req.query.featured;
   if (featured) {
-    whereConditions.push(`ct.is_featured = true`);
+    whereConditions.push(`sct.is_featured = true`);
   }
 
   const page = req.query.page ? Number(req.query.page) : 1;
@@ -83,45 +88,46 @@ const get = async (req) => {
 
   let countQuery = `
   SELECT
-      COUNT(ct.id) OVER()::integer as total
-    FROM ${constants.models.CITY_TABLE} ct
-    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON ct.id = ANY(tdr.city_ids)
+      COUNT(sct.id) OVER()::integer as total
+    FROM ${constants.models.CATEGORY_TABLE} sct
+    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON sct.id = ANY(tdr.sector_ids)
     ${whereClause}
-    GROUP BY ct.id
-    ORDER BY ct.created_at DESC
+    GROUP BY sct.id
+    ORDER BY sct.created_at DESC
   `;
 
   let query = `
   SELECT
-      ct.*,
+      sct.*,
       COUNT(tdr.id)::integer as tenders_count
-    FROM ${constants.models.CITY_TABLE} ct
-    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON ct.id = ANY(tdr.city_ids)
+    FROM ${constants.models.CATEGORY_TABLE} sct
+    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON sct.id = ANY(tdr.sector_ids)
     ${whereClause}
-    GROUP BY ct.id
-    ORDER BY ct.created_at DESC
+    GROUP BY sct.id
+    ORDER BY sct.created_at DESC
     LIMIT :limit OFFSET :offset
   `;
 
-  const data = await CityModel.sequelize.query(query, {
+  const data = await CategoryModel.sequelize.query(query, {
     replacements: { ...queryParams, limit, offset },
     type: QueryTypes.SELECT,
     raw: true,
   });
 
-  const count = await CityModel.sequelize.query(countQuery, {
+  const count = await CategoryModel.sequelize.query(countQuery, {
     replacements: { ...queryParams },
     type: QueryTypes.SELECT,
     raw: true,
   });
 
-  return { cities: data, total: count?.[0]?.total ?? 0 };
+  return { sectors: data, total: count?.[0]?.total ?? 0 };
 };
 
 const update = async (req, id) => {
-  const [rowCount, rows] = await CityModel.update(
+  const [rowCount, rows] = await CategoryModel.update(
     {
       name: req.body.name,
+      type: req.body.type,
       slug: req.body.slug,
       is_featured: req.body.is_featured,
       image: req.body.image,
@@ -142,7 +148,7 @@ const update = async (req, id) => {
 };
 
 const getById = async (req, id) => {
-  return await CityModel.findOne({
+  return await CategoryModel.findOne({
     where: {
       id: req.params.id || id,
     },
@@ -151,11 +157,11 @@ const getById = async (req, id) => {
 };
 
 const getByPk = async (req, id) => {
-  return await CityModel.findByPk(req?.params?.id || id);
+  return await CategoryModel.findByPk(req?.params?.id || id);
 };
 
 const getBySlug = async (req, slug) => {
-  return await CityModel.findOne({
+  return await CategoryModel.findOne({
     where: {
       slug: req.params?.slug || slug,
     },
@@ -164,7 +170,7 @@ const getBySlug = async (req, slug) => {
 };
 
 const deleteById = async (req, id, { transaction }) => {
-  return await CityModel.destroy({
+  return await CategoryModel.destroy({
     where: { id: req.params.id || id },
     transaction,
   });
@@ -182,7 +188,7 @@ const count = async (last_30_days = false) => {
     };
   }
 
-  return await CityModel.count({
+  return await CategoryModel.count({
     where: where_query,
     raw: true,
   });

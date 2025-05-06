@@ -166,36 +166,42 @@ const get = async (req) => {
 };
 
 const getById = async (req, user_id) => {
-  return await UserModel.findOne({
-    where: {
-      id: req?.params?.id || user_id,
-    },
-    attributes: {
-      exclude: ["reset_password_token", "confirmation_token", "password"],
-    },
+  let query = `
+  SELECT
+      usr.id, usr.username, usr.first_name, usr.last_name, usr.blocked, usr.role, usr.mobile_number, usr.is_verified, usr.image_url,
+      COALESCE(sbs.plan_tier, 'free') as plan_tier
+    FROM ${constants.models.USER_TABLE} usr
+    LEFT JOIN ${constants.models.SUBSCRIPTION_TABLE} sbs ON sbs.user_id = usr.id AND sbs.status = 'active'
+    WHERE usr.id = :user_id
+    GROUP BY usr.id, sbs.plan_tier
+  `;
+  const data = await UserModel.sequelize.query(query, {
+    type: QueryTypes.SELECT,
+    replacements: { user_id: req?.params?.id || user_id },
     raw: true,
+    plain: true,
   });
+
+  return data;
 };
 
 const getByUsername = async (req, record = undefined) => {
-  return await UserModel.findOne({
-    where: {
+  let query = `
+  SELECT
+      usr.id, usr.username, usr.email, usr.first_name, usr.last_name, usr.password, usr.blocked, usr.role, usr.mobile_number, usr.is_verified, usr.image_url,
+      COALESCE(sbs.plan_tier, 'free') as plan_tier
+    FROM ${constants.models.USER_TABLE} usr
+    LEFT JOIN ${constants.models.SUBSCRIPTION_TABLE} sbs ON sbs.user_id = usr.id AND sbs.status = 'active'
+    WHERE usr.username = :username
+    GROUP BY usr.id, sbs.plan_tier
+  `;
+
+  return await UserModel.sequelize.query(query, {
+    replacements: {
       username: req?.body?.username || record?.user?.username,
     },
-    attributes: [
-      "id",
-      "username",
-      "email",
-      "first_name",
-      "last_name",
-      "password",
-      "blocked",
-      "role",
-      "mobile_number",
-      "is_verified",
-      "image_url",
-    ],
     raw: true,
+    plain: true,
   });
 };
 

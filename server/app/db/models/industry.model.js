@@ -8,7 +8,7 @@ let KeywordModel = null;
 
 const init = async (sequelize) => {
   KeywordModel = sequelize.define(
-    constants.models.KEYWORD_TABLE,
+    constants.models.INDUSTRY_TABLE,
     {
       id: {
         primaryKey: true,
@@ -63,13 +63,13 @@ const get = async (req) => {
   const queryParams = {};
   let q = req.query.q;
   if (q) {
-    whereConditions.push(`kw.name ILIKE :query`);
+    whereConditions.push(`ind.name ILIKE :query`);
     queryParams.query = `%${q}%`;
   }
 
   const featured = req.query.featured;
   if (featured) {
-    whereConditions.push(`kw.is_featured = true`);
+    whereConditions.push(`ind.is_featured = true`);
   }
 
   const page = req.query.page ? Number(req.query.page) : 1;
@@ -83,23 +83,23 @@ const get = async (req) => {
 
   let countQuery = `
   SELECT
-      COUNT(kw.id) OVER()::integer as total
-    FROM ${constants.models.KEYWORD_TABLE} kw
-    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON kw.id = ANY(tdr.keyword_ids)
+      COUNT(ind.id) OVER()::integer as total
+    FROM ${constants.models.INDUSTRY_TABLE} ind
+    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON ind.id = ANY(tdr.industry_ids)
     ${whereClause}
-    GROUP BY kw.id
-    ORDER BY kw.created_at DESC
+    GROUP BY ind.id
+    ORDER BY ind.created_at DESC
   `;
 
   let query = `
   SELECT
-      kw.*,
+      ind.*,
       COUNT(tdr.id)::integer as tenders_count
-    FROM ${constants.models.KEYWORD_TABLE} kw
-  LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON kw.id = ANY(tdr.keyword_ids)  
+    FROM ${constants.models.INDUSTRY_TABLE} ind
+  LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON ind.id = ANY(tdr.industry_ids)  
     ${whereClause}
-    GROUP BY kw.id
-    ORDER BY kw.created_at DESC
+    GROUP BY ind.id
+    ORDER BY ind.created_at DESC
     LIMIT :limit OFFSET :offset
   `;
 
@@ -115,7 +115,7 @@ const get = async (req) => {
     raw: true,
   });
 
-  return { keywords: data, total: count?.[0]?.total ?? 0 };
+  return { industries: data, total: count?.[0]?.total ?? 0 };
 };
 
 const update = async (req, id) => {

@@ -22,6 +22,7 @@ async function postgresConnection(fastify, options) {
     fastify.log.info(`Postgres Database connection OK!`);
     fastify.log.info(`Initializing sequelize connection and models...`);
     await new Promise((resolve) => {
+      // enableExtensions(sequelize);
       migration.init(sequelize);
       resolve(`Migration sucessfully completed...`);
     }).then((data) => fastify.log.info(data));

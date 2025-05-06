@@ -95,7 +95,7 @@ const init = async (sequelize) => {
         type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
       },
-      keyword_ids: {
+      industry_ids: {
         type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
       },
@@ -108,16 +108,15 @@ const init = async (sequelize) => {
         defaultValue: [],
       },
       keywords: {
-        type: DataTypes.STRING,
-        defaultValue: "",
+        type: DataTypes.ARRAY(DataTypes.STRING),
       },
       meta_title: { type: DataTypes.TEXT, defaultValue: "" },
       meta_description: { type: DataTypes.TEXT, defaultValue: "" },
       meta_keywords: { type: DataTypes.TEXT, defaultValue: "" },
-      search_vector: {
-        type: DataTypes.TSVECTOR,
-        allowNull: true,
-      },
+      // search_vector: {
+      //   type: DataTypes.TSVECTOR,
+      //   allowNull: true,
+      // },
     },
     {
       createdAt: "created_at",
@@ -126,36 +125,12 @@ const init = async (sequelize) => {
   );
 
   await TenderModel.sync({ alter: true });
-
-  TenderModel.afterCreate(async (tender, options) => {
-    await sequelize.query(
-      `
-      UPDATE "${constants.models.TENDER_TABLE}"
-      SET search_vector = 
-        setweight(to_tsvector('english', coalesce(name, '')), 'A') ||
-        setweight(to_tsvector('english', coalesce(keywords, '')), 'B') ||
-        setweight(to_tsvector('english', coalesce(bid_number, '')), 'C')
-      WHERE id = :id
-    `,
-      { replacements: { id: tender.id } }
-    );
-  });
-
-  TenderModel.afterUpdate(async (tender, options) => {
-    await sequelize.query(
-      `
-      UPDATE "${constants.models.TENDER_TABLE}"
-      SET search_vector = 
-        setweight(to_tsvector('english', coalesce(name, '')), 'A') ||
-        setweight(to_tsvector('english', coalesce(keywords, '')), 'B') ||
-        setweight(to_tsvector('english', coalesce(bid_number, '')), 'C')
-      WHERE id = :id
-    `,
-      { replacements: { id: tender.id } }
-    );
-  });
-  //
-  await TenderModel.sync({ alter: true });
+  // await sequelize.query(`
+  //     UPDATE "${constants.models.TENDER_TABLE}"
+  //     SET search_vector =
+  //       setweight(to_tsvector('english', coalesce(name, '')), 'A') ||
+  //       setweight(to_tsvector('english', coalesce(array_to_string(keywords, ''), '')), 'B') ||
+  //       setweight(to_tsvector('english', coalesce(bid_number, '')), 'C')`);
 };
 
 const create = async (req, { transaction }) => {
@@ -197,7 +172,7 @@ const create = async (req, { transaction }) => {
       save_to_my_business: req.body.save_to_my_business,
       authority_ids: req.body.authority_ids,
       city_ids: req.body.city_ids,
-      keyword_ids: req.body.keyword_ids,
+      industry_ids: req.body.industry_ids,
       sector_ids: req.body.sector_ids,
       state_ids: req.body.state_ids,
       keywords: req.body.keywords_str,
@@ -215,15 +190,10 @@ const get = async (req) => {
   let q = req.query.q;
   if (q) {
     whereConditions.push(
-      `(tdr.name ILIKE :query 
-        OR tdr.bid_number ILIKE :query OR tdr.keywords ILIKE :query 
-        OR EXISTS (SELECT 1 FROM ${constants.models.KEYWORD_TABLE} kw WHERE kw.id = ANY(tdr.keyword_ids) AND kw.name ILIKE :query)
-        OR EXISTS (SELECT 1 FROM ${constants.models.AUTHORITY_TABLE} atr WHERE atr.id = ANY(tdr.authority_ids) AND atr.name ILIKE :query)
-        OR EXISTS (SELECT 1 FROM ${constants.models.CITY_TABLE} ct WHERE ct.id = ANY(tdr.city_ids) AND ct.name ILIKE :query)
-        OR EXISTS (SELECT 1 FROM ${constants.models.SECTOR_TABLE} sct WHERE sct.id = ANY(tdr.sector_ids) AND sct.name ILIKE :query)
-        OR EXISTS (SELECT 1 FROM ${constants.models.STATE_TABLE} st WHERE st.id = ANY(tdr.state_ids) AND st.name ILIKE :query))`
+      `(tdr.name ILIKE :query
+        OR tdr.bid_number ILIKE :query OR array_to_string(tdr.keywords, '') ILIKE :ilikeQuery`
     );
-    queryParams.query = `%${q}%`;
+    queryParams.ilikeQuery = `%${q}%`;
   }
 
   const authorities = req.query.authorities
@@ -234,12 +204,153 @@ const get = async (req) => {
     queryParams.authorityIds = `{${authorities.join(",")}}`;
   }
 
-  const keywords = req.query.keywords
-    ? String(req.query.keywords).split(".")
+  const industries = req.query.industries
+    ? String(req.query.industries).split(".")
     : null;
-  if (keywords) {
-    whereConditions.push(`tdr.keyword_ids && :keywordIds`);
-    queryParams.keywordIds = `{${keywords.join(",")}}`;
+  if (industries) {
+    whereConditions.push(`tdr.industry_ids && :industryIds`);
+    queryParams.industryIds = `{${industries.join(",")}}`;
+  }
+
+  const states = req.query.states ? String(req.query.states).split(".") : null;
+  if (states) {
+    whereConditions.push(`tdr.state_ids && :stateIds`);
+    queryParams.stateIds = `{${states.join(",")}}`;
+  }
+
+  const cities = req.query.cities ? String(req.query.cities).split(".") : null;
+  if (cities) {
+    whereConditions.push(`tdr.city_ids && :cityIds`);
+    queryParams.cityIds = `{${cities.join(",")}}`;
+  }
+
+  const sectors = req.query.sectors
+    ? String(req.query.sectors).split(".")
+    : null;
+  if (sectors) {
+    whereConditions.push(`tdr.sector_ids && :sectorIds`);
+    queryParams.sectorIds = `{${sectors.join(",")}}`;
+  }
+
+  const startDate = req.query.start_date || null;
+  const endDate = req.query.end_date || null;
+  if (startDate && endDate) {
+    whereConditions.push(
+      `tdr.bid_end_date_time BETWEEN :startDate AND :endDate`
+    );
+    queryParams.startDate = startDate;
+    queryParams.endDate = endDate;
+  } else if (startDate) {
+    whereConditions.push(`tdr.bid_end_date_time >= :startDate`);
+    queryParams.startDate = startDate;
+  } else if (endDate) {
+    whereConditions.push(`tdr.bid_end_date_time <= :endDate`);
+    queryParams.endDate = endDate;
+  }
+
+  const amountMin = Number(req.query.amount_min) || null;
+  const amountMax = Number(req.query.amount_max) || null;
+  if (amountMin && amountMax) {
+    whereConditions.push(
+      `(tdr.tender_amount::integer BETWEEN :amountMin AND :amountMax)`
+    );
+    queryParams.amountMin = amountMin;
+    queryParams.amountMax = amountMax;
+  } else if (amountMin) {
+    whereConditions.push(`(tdr.tender_amount::integer >= :amountMin)`);
+    queryParams.amountMin = amountMin;
+  } else if (amountMax) {
+    whereConditions.push(`(tdr.tender_amount::integer <= :amountMax)`);
+    queryParams.amountMax = amountMax;
+  }
+
+  const featured = req.query.featured;
+  if (featured) {
+    whereConditions.push(`tdr.is_featured = true`);
+  }
+
+  const page = req.query.page ? Number(req.query.page) : 1;
+  const limit = req.query.limit ? Number(req.query.limit) : 10;
+  const offset = (page - 1) * limit;
+
+  let whereClause = "";
+  if (whereConditions.length > 0) {
+    whereClause = "WHERE " + whereConditions.join(" AND ");
+  }
+
+  let countQuery = `
+  SELECT
+      COUNT(tdr.id) OVER()::integer as total
+    FROM ${constants.models.TENDER_TABLE} tdr
+    ${whereClause}
+    GROUP BY tdr.id
+    ORDER BY tdr.created_at DESC
+  `;
+
+  let query = `
+  SELECT
+      tdr.*
+    FROM ${constants.models.TENDER_TABLE} tdr
+    LEFT JOIN ${constants.models.AUTHORITY_TABLE} atr ON atr.id = ANY(tdr.authority_ids)
+    LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = ANY(tdr.city_ids)
+    LEFT JOIN ${constants.models.INDUSTRY_TABLE} ind ON ind.id = ANY(tdr.industry_ids)
+    LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = ANY(tdr.sector_ids)
+    LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = ANY(tdr.state_ids)
+    ${whereClause}
+    GROUP BY tdr.id
+    ORDER BY tdr.created_at DESC
+    LIMIT :limit OFFSET :offset
+  `;
+
+  const data = await TenderModel.sequelize.query(query, {
+    replacements: { ...queryParams, limit, offset },
+    type: QueryTypes.SELECT,
+    raw: true,
+  });
+
+  const count = await TenderModel.sequelize.query(countQuery, {
+    replacements: { ...queryParams },
+    type: QueryTypes.SELECT,
+    raw: true,
+  });
+
+  return { tenders: data, total: count?.[0]?.total ?? 0 };
+};
+
+const getWithPlan = async (req) => {
+  let whereConditions = [];
+  const queryParams = {};
+  let q = req.query.q;
+  if (q) {
+    whereConditions.push(
+      `(tdr.name ILIKE :query
+        OR tdr.bid_number ILIKE :query OR array_to_string(tdr.keywords, '') ILIKE :ilikeQuery
+        OR EXISTS (SELECT 1 FROM ${constants.models.INDUSTRY_TABLE} ind WHERE ind.id = ANY(tdr.industry_ids) AND ind.name ILIKE :ilikeQuery)
+        OR EXISTS (SELECT 1 FROM ${constants.models.AUTHORITY_TABLE} atr WHERE atr.id = ANY(tdr.authority_ids) AND atr.name ILIKE :ilikeQuery)
+        OR EXISTS (SELECT 1 FROM ${constants.models.CITY_TABLE} ct WHERE ct.id = ANY(tdr.city_ids) AND ct.name ILIKE :ilikeQuery)
+        OR EXISTS (SELECT 1 FROM ${constants.models.SECTOR_TABLE} sct WHERE sct.id = ANY(tdr.sector_ids) AND sct.name ILIKE :ilikeQuery)
+        OR EXISTS (SELECT 1 FROM ${constants.models.STATE_TABLE} st WHERE st.id = ANY(tdr.state_ids) AND st.name ILIKE :ilikeQuery))`
+    );
+    queryParams.ilikeQuery = `%${q}%`;
+
+    // whereConditions.push(`(to_tsvector('english', unaccent(coalesce(tdr.name, ''))) @@ plainto_tsquery('english', unaccent(:query)))`);
+    // queryParams.query = q;
+  }
+
+  const authorities = req.query.authorities
+    ? String(req.query.authorities).split(".")
+    : null;
+  if (authorities) {
+    whereConditions.push(`tdr.authority_ids && :authorityIds`);
+    queryParams.authorityIds = `{${authorities.join(",")}}`;
+  }
+
+  const industries = req.query.industries
+    ? String(req.query.industries).split(".")
+    : null;
+  if (industries) {
+    whereConditions.push(`tdr.industry_ids && :industryIds`);
+    queryParams.industryIds = `{${industries.join(",")}}`;
   }
 
   const states = req.query.states ? String(req.query.states).split(".") : null;
@@ -327,7 +438,7 @@ const get = async (req) => {
     FROM ${constants.models.TENDER_TABLE} tdr
     LEFT JOIN ${constants.models.AUTHORITY_TABLE} atr ON atr.id = ANY(tdr.authority_ids)
     LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = ANY(tdr.city_ids)
-    LEFT JOIN ${constants.models.KEYWORD_TABLE} kw ON kw.id = ANY(tdr.keyword_ids)
+    LEFT JOIN ${constants.models.INDUSTRY_TABLE} ind ON ind.id = ANY(tdr.industry_ids)
     LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = ANY(tdr.sector_ids)
     LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = ANY(tdr.state_ids)
     LEFT JOIN ${constants.models.WISHLIST_TABLE} ws ON ws.user_id = :userId AND ws.tender_id = tdr.id
@@ -390,7 +501,7 @@ const update = async (req, id, { transaction }) => {
       save_to_my_business: req.body.save_to_my_business,
       authority_ids: req.body.authority_ids,
       city_ids: req.body.city_ids,
-      keyword_ids: req.body.keyword_ids,
+      industry_ids: req.body.industry_ids,
       sector_ids: req.body.sector_ids,
       state_ids: req.body.state_ids,
       keywords: req.body.keywords,
@@ -410,6 +521,21 @@ const update = async (req, id, { transaction }) => {
   );
 
   return rows;
+};
+
+const updateVector = async (id, { transaction }) => {
+  let query = `
+    UPDATE "${constants.models.TENDER_TABLE}"
+    SET search_vector = 
+      setweight(to_tsvector('english', coalesce(name, '')), 'A') ||
+      setweight(to_tsvector('english', coalesce(bid_number, '')), 'C') ||
+      setweight(to_tsvector('english', coalesce(array_to_string(keywords, ''), '')), 'B')
+    WHERE id = :id`;
+
+  return await TenderModel.sequelize.query(query, {
+    replacements: { id: id },
+    transaction,
+  });
 };
 
 const getById = async (req, id) => {
@@ -440,9 +566,9 @@ const getBySlug = async (req, slug) => {
         WHERE ct.id = ANY(tdr.city_ids)
       ) AS cities,
       (
-        SELECT COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', kw.id, 'name', kw.name)), '[]')
-        FROM ${constants.models.KEYWORD_TABLE} kw
-        WHERE kw.id = ANY(tdr.keyword_ids)
+        SELECT COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', ind.id, 'name', ind.name)), '[]')
+        FROM ${constants.models.INDUSTRY_TABLE} ind
+        WHERE ind.id = ANY(tdr.industry_ids)
       ) AS keywords,
       (
         SELECT COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', sct.id, 'name', sct.name)), '[]')
@@ -495,7 +621,9 @@ export default {
   init: init,
   create: create,
   get: get,
+  getWithPlan: getWithPlan,
   update: update,
+  updateVector: updateVector,
   getById: getById,
   getByPk: getByPk,
   getBySlug: getBySlug,
