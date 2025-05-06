@@ -16,7 +16,7 @@ export default function StateCard({ state }) {
         <Image
           width={150}
           height={150}
-          src={`${config.file_base}/${state.image}`}
+          src={`${config.file_base}${state.image}`}
           alt={state.name}
           className="h-full w-full object-contain object-center mix-blend-multiply drop-shadow-xl transition-transform group-hover:scale-110"
         />

@@ -15,23 +15,19 @@ import ErrorMessage from "../ui/error";
 import { Skeleton } from "../ui/skeleton";
 import wishlists from "@/services/wishlist";
 import { toast } from "@/hooks/use-toast";
-import TenderCardDashboard from "../cards/tender-card-dashboard";
-import TenderCardHighlightBar from "../cards/tender-card-highlight-bar";
-import TenderCardMinimalist from "../cards/tender-card-minimalist";
-import TenderCardModernSplit from "../cards/tender-card-modern-split";
 import TenderCardPremium from "../cards/tender-card-premium";
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { AuthContext } from "@/providers/auth-provider";
 
 export default function AllTendersListing() {
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const searchParamsStr = searchParams.toString();
-  const { user } = useContext(AuthContext);
+  const { user, isUserLoading } = useContext(AuthContext);
 
   const { data, isLoading, isError, error } = useQuery({
-    queryFn: () => tender.get(searchParamsStr),
-    queryKey: ["tenders", searchParamsStr],
+    queryFn: () => tender.get(searchParamsStr, user),
+    queryKey: ["tenders", searchParamsStr, user],
   });
 
   const followMutation = useMutation({
@@ -102,7 +98,7 @@ export default function AllTendersListing() {
         <div className="space-y-4">
           <div className="grid grid-cols-[repeat(auto-fill,minmax(400px,1fr))] gap-4">
             {data?.tenders.map((tender, ind) => (
-              <>
+              <React.Fragment key={tender.id}>
                 {/* <TenderCard
                   tender={tender}
                   key={tender.id}
@@ -140,7 +136,7 @@ export default function AllTendersListing() {
                   unfollowMutation={unfollowMutation}
                   user={user}
                 />
-              </>
+              </React.Fragment>
             ))}
           </div>
 

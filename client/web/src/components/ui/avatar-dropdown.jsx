@@ -31,7 +31,7 @@ export default function AvatarDropdown() {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-auto p-0 hover:bg-transparent">
           <Avatar>
-            <AvatarImage src={`${config.file_base}/${user.image_url}`} />
+            <AvatarImage src={`${config.file_base}${user.image_url}`} />
             <AvatarFallback className="uppercase">
               {user.first_name.charAt(0) + user.last_name.charAt(0)}
             </AvatarFallback>

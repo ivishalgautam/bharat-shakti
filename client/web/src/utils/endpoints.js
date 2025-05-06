@@ -11,6 +11,7 @@ export const endpoints = {
     favourite: "/wishlists",
   },
   keywords: { getAll: "/keywords" },
+  industries: { getAll: "/industries" },
   states: { getAll: "/states" },
   cities: { getAll: "/cities" },
   sectors: { getAll: "/sectors" },
@@ -20,6 +21,8 @@ export const endpoints = {
   userKeyContacts: { getAll: "/user-key-contacts" },
   viewTenders: { getAll: "/view-tenders" },
   applications: { getAll: "/applications" },
+  plans: { getAll: "/plans" },
+  subscriptions: { getAll: "/subscriptions" },
   profile: "/users/me",
   files: {
     getFiles: "/upload",

@@ -27,7 +27,7 @@ export default function UserDropdown() {
           className="h-auto rounded-full p-0 hover:bg-transparent"
         >
           <Avatar>
-            <AvatarImage src={`${config.file_base}/${user.image_url}`} />
+            <AvatarImage src={`${config.file_base}${user.image_url}`} />
             <AvatarFallback className="border border-primary bg-primary/20 uppercase">
               {user.first_name.charAt(0) + user.last_name.charAt(0)}
             </AvatarFallback>

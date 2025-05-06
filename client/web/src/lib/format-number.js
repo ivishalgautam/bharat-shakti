@@ -1,4 +1,4 @@
-export function formatNumber(value) {
-  if (!value) return "0";
-  return Number.parseInt(value).toLocaleString("en-IN");
-}
+export const formatNumber = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+});

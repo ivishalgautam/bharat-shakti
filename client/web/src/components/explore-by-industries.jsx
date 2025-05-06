@@ -2,17 +2,17 @@
 import { ArrowRight, Tag } from "lucide-react";
 import React from "react";
 import { Button } from "./ui/button";
-import keywords from "@/services/keyword";
 import { useQuery } from "@tanstack/react-query";
 import ErrorMessage from "./ui/error";
 import { Skeleton } from "./ui/skeleton";
 import Section from "./layout/section";
-import KeywordCard from "./cards/keyword";
+import industries from "@/services/industry";
+import IndustryCard from "./cards/keyword";
 
-export default function ExploreByKeywords() {
+export default function ExploreByIndustries() {
   const { data, isLoading, isError, error } = useQuery({
-    queryFn: keywords.getFeatured,
-    queryKey: ["featured-keywords"],
+    queryFn: industries.getFeatured,
+    queryKey: ["featured-industries"],
     staleTime: 1000 * 60 * 2,
   });
   if (isError) return <ErrorMessage error={error} />;
@@ -32,8 +32,8 @@ export default function ExploreByKeywords() {
               ? Array.from({ length: 12 }).map((_, i) => (
                   <Skeleton key={i} className={"h-32 w-44 bg-gray-200"} />
                 ))
-              : data?.map((keyword) => (
-                  <KeywordCard keyword={keyword} key={keyword.id} />
+              : data?.map((industry) => (
+                  <IndustryCard industry={industry} key={industry.id} />
                 ))}
           </div>
           <Button

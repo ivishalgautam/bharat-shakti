@@ -16,7 +16,7 @@ export default function AuthorityCard({ authority }) {
         <Image
           width={200}
           height={200}
-          src={`${config.file_base}/${authority.image}`}
+          src={`${config.file_base}${authority.image}`}
           alt={authority.name}
           className="h-full w-full rounded-sm object-cover object-center"
         />

@@ -45,7 +45,6 @@ export async function GET(request) {
       },
     });
     const data = res.data;
-
     return NextResponse.json({ user: data }, { status: res.status });
   } catch (error) {
     cookieStore.delete("token");

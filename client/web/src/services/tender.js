@@ -11,7 +11,8 @@ const getBySlug = async (slug) => {
   return data;
 };
 
-const get = async (searchParams = "") => {
+const get = async (searchParams = "", user) => {
+  console.log({ user });
   const { data } = await http().get(
     `${endpoints.tenders.getAll}?${searchParams}`,
   );

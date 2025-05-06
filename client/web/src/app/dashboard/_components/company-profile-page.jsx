@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserContactsList } from "./user-contact-list";
 import { CompanyProfileForm } from "../../../components/forms/company-profile-form";

@@ -820,7 +820,7 @@ export default function TenderDetails({ data }) {
                             <a
                               target="_blank"
                               download
-                              href={`${config.file_base}/${doc}`}
+                              href={`${config.file_base}${doc}`}
                               className={cn(
                                 buttonVariants({ size: "sm" }),
                                 "bg-amber-500 text-white hover:bg-amber-600",
@@ -861,7 +861,7 @@ export default function TenderDetails({ data }) {
                           <a
                             target="_blank"
                             download
-                            href={`${config.file_base}/${doc}`}
+                            href={`${config.file_base}${doc}`}
                             className={cn(
                               buttonVariants({ size: "sm" }),
                               "bg-orange-500 text-white hover:bg-orange-600",

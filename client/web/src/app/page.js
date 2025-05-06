@@ -1,11 +1,10 @@
-import ExploreByKeywords from "@/components/explore-by-keywords";
+import ExploreByIndustries from "@/components/explore-by-industries";
 import ExploreByAuthorities from "@/components/explore-by-authorities";
 import ExploreByStates from "@/components/explore-by-states";
 import Services from "@/components/services";
+import PlanPricingSection from "@/components/plan-pricing-section";
 import { Suspense } from "react";
 import { HeroOne } from "@/components/hero-one";
-import { HeroTwo } from "@/components/hero-two";
-import HeroThree from "@/components/hero-three";
 
 export default function Home() {
   return (
@@ -20,7 +19,7 @@ export default function Home() {
         <HeroThree />
       </Suspense> */}
       <Suspense fallback={"Loading..."}>
-        <ExploreByKeywords />
+        <ExploreByIndustries />
       </Suspense>
       <Suspense fallback={"Loading..."}>
         <ExploreByStates />
@@ -30,6 +29,9 @@ export default function Home() {
       </Suspense>
       <Suspense fallback={"Loading..."}>
         <Services />
+      </Suspense>
+      <Suspense fallback={"Loading..."}>
+        <PlanPricingSection />
       </Suspense>
     </div>
   );

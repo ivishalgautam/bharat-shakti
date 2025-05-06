@@ -1,7 +1,10 @@
+import config from "@/config";
 import axios from "axios";
 
 const login = async (data) => {
-  return await axios.post(`${process.env.NEXTAUTH_URL}/api/auth/login`, {
+  const url = `${config.next_public_url}/api/auth/login`;
+
+  return await axios.post(url, {
     method: "POST",
     body: JSON.stringify(data),
   });

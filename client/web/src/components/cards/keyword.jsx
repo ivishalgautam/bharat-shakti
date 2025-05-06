@@ -6,24 +6,24 @@ import { Muted } from "../ui/typography";
 import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 
-export default function KeywordCard({ keyword }) {
+export default function IndustryCard({ industry }) {
   return (
     <Link
-      href={`/tenders?keywords=${keyword.id}`}
+      href={`/tenders?industries=${industry.id}`}
       className="group overflow-hidden rounded-lg border bg-white text-center shadow-sm transition-colors"
     >
       <div className="mx-auto aspect-video">
         <Image
           width={200}
           height={200}
-          src={`${config.file_base}/${keyword.image}`}
-          alt={keyword.name}
+          src={`${config.file_base}${industry.image}`}
+          alt={industry.name}
           className="h-full w-full object-cover object-center"
         />
       </div>
       <div className="p-4 font-medium">
-        <span>{keyword.name}</span>
-        <Muted>{keyword.tenders_count ?? 0} Tenders</Muted>
+        <span>{industry.name}</span>
+        <Muted>{industry.tenders_count ?? 0} Tenders</Muted>
         <Button
           size="sm"
           type="button"

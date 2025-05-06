@@ -49,7 +49,6 @@ export function UserContactsList({ onDelete }) {
   const updateMutation = useMutation({
     mutationFn: (data) => userKeyContact.update(id, data),
     onSuccess: () => {
-      console.log("object");
       toast({ title: "Success", description: "Contact updated successfully." });
       setIsUpdateDialogOpen(false);
       queryClient.invalidateQueries(["user-key-contacts"]);
