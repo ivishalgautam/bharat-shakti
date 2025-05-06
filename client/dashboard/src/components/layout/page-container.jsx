@@ -4,7 +4,10 @@ import React from "react";
 export default function PageContainer({ children, className = "" }) {
   return (
     <div
-      className={cn("rounded-lg bg-white p-8 shadow-md space-y-2", className)}
+      className={cn(
+        "rounded-lg bg-white p-6 shadow-md space-y-2 h-[calc(100dvh-80px)]",
+        className
+      )}
     >
       {children}
     </div>

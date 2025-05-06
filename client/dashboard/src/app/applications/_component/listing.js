@@ -54,7 +54,7 @@ export default function UserListing() {
     <div className="w-full rounded-lg border-input">
       <DataTable
         columns={columns(updateMutation, setUserId, openModal)}
-        data={data?.applications ?? []}
+        data={data?.data ?? []}
         totalItems={data?.total}
       />
 

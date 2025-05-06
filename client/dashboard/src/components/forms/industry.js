@@ -8,21 +8,20 @@ import { Checkbox } from "../ui/checkbox";
 import { Textarea } from "../ui/textarea";
 import Dropzone from "../dropzone";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { sectorSchema } from "@/utils/schema/sector.schema";
-import { useCreateSector } from "@/mutations/sector-mutation";
-import {
-  useCreateKeyword,
-  useGetKeyword,
-  useUpdateKeyword,
-} from "@/mutations/keyword-mutation";
 import { useRouter } from "next/navigation";
 import Spinner from "../ui/spinner";
 import ErrorMessage from "../ui/error";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import config from "@/config";
+import {
+  useCreateIndustry,
+  useGetIndustry,
+  useUpdateIndustry,
+} from "@/mutations/industry-mutation";
+import { industrySchema } from "@/utils/schema/keyword.schema";
 
-export default function KeywordForm({ id, type = "create" }) {
+export default function IndustryForm({ id, type = "create" }) {
   const [images, setImages] = useState([]);
 
   const {
@@ -32,7 +31,7 @@ export default function KeywordForm({ id, type = "create" }) {
     reset,
     control,
     setValue,
-  } = useForm({ resolver: zodResolver(sectorSchema) });
+  } = useForm({ resolver: zodResolver(industrySchema) });
 
   const files = useWatch({ control, name: "files" }) ?? [];
   const router = useRouter();
@@ -41,9 +40,9 @@ export default function KeywordForm({ id, type = "create" }) {
     router.replace("/keywords?limit=10");
   };
 
-  const createMutation = useCreateKeyword(handleSuccess);
-  const updateMutation = useUpdateKeyword(id);
-  const { data, isLoading, isError, error } = useGetKeyword(id);
+  const createMutation = useCreateIndustry(handleSuccess);
+  const updateMutation = useUpdateIndustry(id);
+  const { data, isLoading, isError, error } = useGetIndustry(id);
   const onSubmit = async (data) => {
     const formData = new FormData();
     Object.entries(data).forEach(([key, value]) => formData.append(key, value));
@@ -97,7 +96,7 @@ export default function KeywordForm({ id, type = "create" }) {
                 className="text-sm text-gray-600 p-2 border shadow rounded-lg space-y-1"
               >
                 <Image
-                  src={`${config.file_base}/${file}`}
+                  src={`${config.file_base}${file}`}
                   width={50}
                   height={50}
                   alt="file"

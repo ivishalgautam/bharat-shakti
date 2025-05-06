@@ -94,7 +94,7 @@ export default function AuthorityForm({ id, type = "create" }) {
                 className="text-sm text-gray-600 p-2 border shadow rounded-lg space-y-1"
               >
                 <Image
-                  src={`${config.file_base}/${file}`}
+                  src={`${config.file_base}${file}`}
                   width={50}
                   height={50}
                   alt="file"

@@ -7,10 +7,10 @@ import { columns } from "../columns";
 import { useEffect, useState } from "react";
 import { DeleteDialog } from "./delete-dialog";
 import {
-  useDeleteKeyword,
-  useGetKeywords,
-  useUpdateKeyword,
-} from "@/mutations/keyword-mutation";
+  useDeletePlan,
+  useGetPlans,
+  useUpdatePlan,
+} from "@/mutations/plan-mutation";
 
 export default function Listing() {
   const [id, setId] = useState(null);
@@ -18,12 +18,11 @@ export default function Listing() {
   const searchParams = useSearchParams();
   const searchParamsStr = searchParams.toString();
   const router = useRouter();
-  const { data, isLoading, isFetching, isError, error } =
-    useGetKeywords(searchParamsStr);
-  const deleteMutation = useDeleteKeyword(() => {
+  const { data, isLoading, isError, error } = useGetPlans(searchParamsStr);
+  const deleteMutation = useDeletePlan(() => {
     setIsModal(false);
   });
-  const updateMutation = useUpdateKeyword(id);
+  const updateMutation = useUpdatePlan(id);
 
   const openModal = () => setIsModal(true);
   const handleUpdate = (data) => updateMutation.mutate(data);
@@ -36,15 +35,15 @@ export default function Listing() {
       router.replace(`?${params.toString()}`);
     }
   }, [searchParamsStr, router]);
-  if (isLoading || isFetching)
-    return <DataTableSkeleton columnCount={4} rowCount={10} />;
+
+  if (isLoading) return <DataTableSkeleton columnCount={7} rowCount={10} />;
   if (isError) return error?.message ?? "error";
 
   return (
     <div className="w-full rounded-lg border-input">
       <DataTable
         columns={columns(openModal, setId, handleUpdate)}
-        data={data?.keywords ?? []}
+        data={data?.plans ?? []}
         totalItems={data?.total ?? 0}
       />
       <DeleteDialog

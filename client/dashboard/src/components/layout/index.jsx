@@ -25,7 +25,7 @@ export default function Layout({ children }) {
             <AppSidebar />
             <main className="w-full bg-gray-100">
               <SidebarTrigger />
-              <div className="min-h-[calc(100vh-135px)] p-4 pt-0">
+              <div className="min-h-[calc(100vh-135px)] px-4">
                 <Button
                   type="button"
                   variant="outline"

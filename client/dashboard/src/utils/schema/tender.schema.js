@@ -43,9 +43,9 @@ export const TenderSchema = z.object({
     .array(z.object({ value: z.string(), label: z.string() }))
     .transform((city_ids) => city_ids.map(({ value }) => value))
     .default([]),
-  keyword_ids: z
+  industry_ids: z
     .array(z.object({ value: z.string(), label: z.string() }))
-    .transform((keyword_ids) => keyword_ids.map(({ value }) => value))
+    .transform((industry_ids) => industry_ids.map(({ value }) => value))
     .default([]),
   sector_ids: z
     .array(z.object({ value: z.string(), label: z.string() }))
@@ -55,7 +55,7 @@ export const TenderSchema = z.object({
     .array(z.object({ value: z.string(), label: z.string() }))
     .transform((state_ids) => state_ids.map(({ value }) => value))
     .default([]),
-  keywords: z.string().default(""),
+  keywords: z.array(z.string()),
   meta_title: z.string().default(""),
   meta_description: z.string().default(""),
   meta_keywords: z.string().default(""),

@@ -1,6 +1,5 @@
 "use client";
 import { Switch } from "@/components/ui/switch";
-import { Small } from "@/components/ui/typography";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import {
   DropdownMenu,
@@ -14,7 +13,6 @@ import {
 import moment from "moment";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 import TableImage from "@/components/ui/table-image";
 
@@ -99,7 +97,7 @@ export const columns = (openModal, setId, handleUpdate) => [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-              <Link href={`/keywords/${id}/edit`} className="w-full">
+              <Link href={`/industries/${id}/edit`} className="w-full">
                 Edit
               </Link>
             </DropdownMenuItem>

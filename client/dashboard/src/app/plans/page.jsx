@@ -11,10 +11,10 @@ import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
 
 export const metadata = {
-  title: "Keywords",
+  title: "Plans",
 };
 
-export default async function Keywords({ searchParams }) {
+export default async function Plans({ searchParams }) {
   searchParamsCache.parse(searchParams);
   const key = serialize({ ...searchParams });
 
@@ -22,11 +22,11 @@ export default async function Keywords({ searchParams }) {
     <PageContainer>
       <div className="flex items-start justify-between">
         <Heading
-          title="Industries"
-          description="Manage Industries (Create, Update, Delete)."
+          title="Plans"
+          description="Manage Plans (Create, Update, Delete)."
         />
         <Link
-          href={"/keywords/create"}
+          href={"/plans/create"}
           className={cn(buttonVariants({ variant: "outline" }), "h-7")}
         >
           <Plus /> Add
@@ -35,7 +35,7 @@ export default async function Keywords({ searchParams }) {
       <TableActions />
       <Suspense
         key={key}
-        fallback={<DataTableSkeleton columnCount={4} rowCount={10} />}
+        fallback={<DataTableSkeleton columnCount={7} rowCount={10} />}
       >
         <Listing />
       </Suspense>

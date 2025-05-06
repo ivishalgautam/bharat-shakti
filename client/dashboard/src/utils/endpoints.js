@@ -13,8 +13,10 @@ export const endpoints = {
   userKeyContacts: { getAll: "/user-key-contacts" },
   authorities: { getAll: "/authorities" },
   tenders: { getAll: "/tenders" },
+  plans: { getAll: "/plans" },
   sectors: { getAll: "/sectors" },
   keywords: { getAll: "/keywords" },
+  industries: { getAll: "/industries" },
   states: { getAll: "/states" },
   cities: { getAll: "/cities" },
   files: {

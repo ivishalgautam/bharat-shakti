@@ -1,4 +1,5 @@
 import {
+  BadgeIndianRupee,
   Landmark,
   LayoutDashboard,
   LetterText,
@@ -144,20 +145,20 @@ export const sidebarData = [
   },
   {
     title: "Industries",
-    url: "/keywords",
+    url: "/industries",
     icon: LetterText,
     roles: [ROLES.ADMIN],
     isVisible: true,
     items: [
       {
         title: "Create",
-        url: "/keywords/create",
+        url: "/industries/create",
         roles: [ROLES.ADMIN],
         isVisible: true,
       },
       {
         title: "Edit",
-        url: "/keywords/:id/edit",
+        url: "/industries/:id/edit",
         roles: [ROLES.ADMIN],
         isVisible: false,
       },
@@ -179,6 +180,27 @@ export const sidebarData = [
       {
         title: "Edit",
         url: "/sectors/:id/edit",
+        roles: [ROLES.ADMIN],
+        isVisible: false,
+      },
+    ],
+  },
+  {
+    title: "Plans",
+    url: "/plans",
+    icon: BadgeIndianRupee,
+    roles: [ROLES.ADMIN],
+    isVisible: true,
+    items: [
+      {
+        title: "Create",
+        url: "/plans/create",
+        roles: [ROLES.ADMIN],
+        isVisible: true,
+      },
+      {
+        title: "Edit",
+        url: "/plans/:id/edit",
         roles: [ROLES.ADMIN],
         isVisible: false,
       },

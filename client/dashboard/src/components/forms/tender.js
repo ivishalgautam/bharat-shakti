@@ -11,16 +11,14 @@ import { TenderSchema } from "@/utils/schema/tender.schema";
 import { useGetSectors } from "@/mutations/sector-mutation";
 import { useGetAuthorities } from "@/mutations/authority-mutation";
 import { useGetCities } from "@/mutations/city-mutation";
-import { useGetKeywords } from "@/mutations/keyword-mutation";
 import { useGetStates } from "@/mutations/state-mutation";
 import { useFormattedOptions } from "@/hooks/use-formatted-options";
-import ReactSelect from "react-select";
 import MySelect from "../my-select";
 import { H4 } from "../ui/typography";
 import { Separator } from "../ui/separator";
 import Dropzone from "../dropzone";
 import { useCreateTender, useGetTender } from "@/mutations/tender-mutation";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { cn } from "@/lib/utils";
 import {
   Select,
@@ -32,6 +30,8 @@ import {
 import Image from "next/image";
 import config from "@/config";
 import { Link2, Trash, View } from "lucide-react";
+import { TagInput } from "emblor";
+import { useGetIndustries } from "@/mutations/industry-mutation";
 
 const defaultValues = {
   name: "",
@@ -68,10 +68,11 @@ const defaultValues = {
 
   authority_ids: [],
   city_ids: [],
-  keyword_ids: [],
+  industry_ids: [],
   sector_ids: [],
   state_ids: [],
-  keywords: "",
+
+  keywords: [],
   meta_title: "",
   meta_description: "",
   meta_keywords: "",
@@ -86,6 +87,8 @@ export default function TenderForm({ type, updateMutation, id }) {
     buyer_specification_document_urls: [],
     drawing_urls: [],
   });
+  const keywordsInputId = useId();
+
   const [render, rerender] = useState(0);
   const {
     register,
@@ -95,18 +98,22 @@ export default function TenderForm({ type, updateMutation, id }) {
     watch,
     setValue,
   } = useForm({ resolver: zodResolver(TenderSchema), defaultValues });
+  const keywordsArray = watch("keywords");
+  const [exampleTags, setExampleTags] = useState(keywordsArray ?? []);
+  const [activeTagIndex, setActiveTagIndex] = useState(null);
+  console.log({ keywordsArray });
   const createMutation = useCreateTender();
   const { data } = useGetTender(id);
 
   const { data: { authorities } = {} } = useGetAuthorities();
   const { data: { cities } = {} } = useGetCities();
-  const { data: { keywords } = {} } = useGetKeywords();
+  const { data: { industries } = {} } = useGetIndustries();
   const { data: { sectors } = {} } = useGetSectors();
   const { data: { states } = {} } = useGetStates();
 
   const formattedAuthorities = useFormattedOptions(authorities);
   const formattedCities = useFormattedOptions(cities);
-  const formattedKeywords = useFormattedOptions(keywords);
+  const formattedIndustries = useFormattedOptions(industries);
   const formattedSectors = useFormattedOptions(sectors);
   const formattedStates = useFormattedOptions(states);
 
@@ -131,7 +138,6 @@ export default function TenderForm({ type, updateMutation, id }) {
       updateMutation.mutate(formData);
     }
   };
-  console.log({ errors });
   useEffect(() => {
     if (data) {
       console.log(data);
@@ -171,6 +177,7 @@ export default function TenderForm({ type, updateMutation, id }) {
         data.startup_exemption_for_turnover
       );
       setValue("bid_to_ra_enabled", data.bid_to_ra_enabled);
+      setValue("keywords", data.keywords);
 
       setValue("meta_title", data.meta_title);
       setValue("meta_description", data.meta_description);
@@ -187,8 +194,10 @@ export default function TenderForm({ type, updateMutation, id }) {
         formattedCities.filter((au) => data.city_ids?.includes(au.value))
       );
       setValue(
-        "keyword_ids",
-        formattedKeywords.filter((au) => data.keyword_ids?.includes(au.value))
+        "industry_ids",
+        formattedIndustries.filter((au) =>
+          data.industry_ids?.includes(au.value)
+        )
       );
       setValue(
         "sector_ids",
@@ -203,19 +212,22 @@ export default function TenderForm({ type, updateMutation, id }) {
         buyer_specification_document_urls:
           data?.buyer_specification_document ?? [],
       }));
+      setExampleTags(
+        data?.keywords?.map((tag) => ({ id: tag, text: tag })) ?? []
+      );
       setFileUrls((prev) => ({
         ...prev,
         drawing_urls: data?.drawing ?? [],
       }));
       rerender((prev) => prev + 1);
-      // authority_ids city_ids keyword_ids sector_ids state_ids
+      // authority_ids city_ids industry_ids sector_ids state_ids
     }
   }, [
     data,
     setValue,
     formattedAuthorities,
     formattedCities,
-    formattedKeywords,
+    formattedIndustries,
     formattedSectors,
     formattedStates,
   ]);
@@ -273,16 +285,16 @@ export default function TenderForm({ type, updateMutation, id }) {
                   />
                 </div>
 
-                {/* Keywords */}
+                {/* Industry */}
                 <div>
                   <Label>Industries</Label>
                   <Controller
                     control={control}
-                    name="keyword_ids"
+                    name="industry_ids"
                     render={({ field: { onChange, value } }) => {
                       return (
                         <MySelect
-                          options={formattedKeywords}
+                          options={formattedIndustries}
                           value={value}
                           isMulti
                           onChange={onChange}
@@ -778,12 +790,42 @@ export default function TenderForm({ type, updateMutation, id }) {
                 </div>
 
                 {/* keywords */}
-                <div className="space-y-1">
+                <div className="space-y-1 col-span-full">
                   <Label className="block text-sm font-medium">Keywords</Label>
-                  <Input
-                    {...register("keywords")}
-                    placeholder="Enter Keywords"
+                  <TagInput
+                    id={keywordsInputId}
+                    tags={exampleTags}
+                    setTags={(newTags) => {
+                      console.log({ newTags });
+                      setExampleTags(newTags);
+                      setValue(
+                        "keywords",
+                        newTags.map(({ text }) => text)
+                      );
+                    }}
+                    placeholder="Add a tag"
+                    styleClasses={{
+                      tagList: {
+                        container: "gap-1 mt-2",
+                      },
+                      input:
+                        "rounded-md transition-[color,box-shadow] placeholder:text-muted-foreground/70 focus-visible:border-ring outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+                      tag: {
+                        body: "relative h-7 bg-background border border-input hover:bg-background rounded-md font-medium text-xs ps-2 text-black pe-7",
+                        closeButton:
+                          "absolute -inset-y-px -end-px p-0 rounded-s-none rounded-e-md flex size-7 transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] text-muted-foreground/80 hover:text-foreground",
+                      },
+                    }}
+                    activeTagIndex={activeTagIndex}
+                    setActiveTagIndex={setActiveTagIndex}
+                    inlineTags={false}
+                    inputFieldPosition="top"
                   />
+                  {errors.keywords && (
+                    <span className="text-red-500 text-sm">
+                      {errors.keywords.message}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -823,7 +865,7 @@ export default function TenderForm({ type, updateMutation, id }) {
                                 <span>{fileName}</span>
                                 <div className="flex items-start justify-center gap-2">
                                   <a
-                                    href={`${config.file_base}/${file}`}
+                                    href={`${config.file_base}${file}`}
                                     download={fileName}
                                     target="_blank"
                                     className={buttonVariants({
@@ -888,7 +930,7 @@ export default function TenderForm({ type, updateMutation, id }) {
                           <span>{fileName}</span>
                           <div className="flex items-start justify-center gap-2">
                             <a
-                              href={`${config.file_base}/${file}`}
+                              href={`${config.file_base}${file}`}
                               download={fileName}
                               target="_blank"
                               className={buttonVariants({
