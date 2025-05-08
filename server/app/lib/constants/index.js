@@ -58,6 +58,8 @@ const constants = {
     PLAN_TABLE: "plans",
     SUBSCRIPTION_TABLE: "subscriptions",
     CATEGORY_TABLE: "categories",
+    SUB_CATEGORY_TABLE: "sub_categories",
+    PREFERENCE_TABLE: "preferences",
   },
   bcrypt: {
     SALT_ROUNDS: 10,

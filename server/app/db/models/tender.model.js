@@ -87,6 +87,10 @@ const init = async (sequelize) => {
         defaultValue: false,
       },
       bid_to_ra_enabled: { type: DataTypes.BOOLEAN, defaultValue: false },
+      subcategory_ids: {
+        type: DataTypes.ARRAY(DataTypes.UUID),
+        defaultValue: [],
+      },
       authority_ids: {
         type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
@@ -138,8 +142,6 @@ const create = async (req, { transaction }) => {
     {
       name: req.body.name,
       tender_amount: req.body.tender_amount,
-      bid_start_date: req.body.bid_start_date,
-      bid_end_date: req.body.bid_end_date,
       slug: req.body.slug,
       unique: req.body.unique,
       bid_number: req.body.bid_number,
@@ -170,18 +172,83 @@ const create = async (req, { transaction }) => {
       bid_to_ra_enabled: req.body.bid_to_ra_enabled,
       splitting_applied: req.body.splitting_applied,
       save_to_my_business: req.body.save_to_my_business,
+
+      subcategory_ids: req.body.subcategory_ids,
       authority_ids: req.body.authority_ids,
       city_ids: req.body.city_ids,
       industry_ids: req.body.industry_ids,
       sector_ids: req.body.sector_ids,
       state_ids: req.body.state_ids,
       keywords: req.body.keywords_str,
+
       meta_title: req.body.meta_title,
       meta_description: req.body.meta_description,
       meta_keywords: req.body.meta_keywords,
     },
     { transaction }
   );
+};
+
+const update = async (req, id, { transaction }) => {
+  const [rowCount, rows] = await TenderModel.update(
+    {
+      name: req.body.name,
+      tender_amount: req.body.tender_amount,
+      slug: req.body.slug,
+      unique: req.body.unique,
+      bid_number: req.body.bid_number,
+      dated: req.body.dated,
+      bid_end_date_time: req.body.bid_end_date_time,
+      department: req.body.department,
+      organisation: req.body.organisation,
+      office: req.body.office,
+      item_gem_parts: req.body.item_gem_parts,
+      quantity: req.body.quantity,
+      uom: req.body.uom,
+      no_of_items: req.body.no_of_items,
+      minimum_average_annual_turnover: req.body.minimum_average_annual_turnover,
+      years_of_past_experience: req.body.years_of_past_experience,
+      evaluation_method: req.body.evaluation_method,
+      emd_amount: req.body.emd_amount,
+      tender_value: req.body.tender_value,
+      ote_lte: req.body.ote_lte,
+      epbg_percentage: req.body.epbg_percentage,
+      buyer_specification_document: req.body.buyer_specification_document,
+      drawing: req.body.drawing,
+      consignee: req.body.consignee,
+      delivery_days: req.body.delivery_days,
+      distribution: req.body.distribution,
+      pre_qualification_criteria: req.body.pre_qualification_criteria,
+      mse_exemption_for_turnover: req.body.mse_exemption_for_turnover,
+      startup_exemption_for_turnover: req.body.startup_exemption_for_turnover,
+      bid_to_ra_enabled: req.body.bid_to_ra_enabled,
+      splitting_applied: req.body.splitting_applied,
+      save_to_my_business: req.body.save_to_my_business,
+
+      subcategory_ids: req.body.subcategory_ids,
+      authority_ids: req.body.authority_ids,
+      city_ids: req.body.city_ids,
+      industry_ids: req.body.industry_ids,
+      sector_ids: req.body.sector_ids,
+      state_ids: req.body.state_ids,
+      keywords: req.body.keywords,
+
+      meta_title: req.body.meta_title,
+      meta_description: req.body.meta_description,
+      meta_keywords: req.body.meta_keywords,
+    },
+    {
+      where: {
+        id: req?.params?.id || id,
+      },
+      returning: true,
+      raw: true,
+      plain: true,
+      transaction,
+    }
+  );
+
+  return rows;
 };
 
 const get = async (req) => {
@@ -300,6 +367,7 @@ const get = async (req) => {
     GROUP BY tdr.id
     ORDER BY tdr.created_at DESC
     LIMIT :limit OFFSET :offset
+    
   `;
 
   const data = await TenderModel.sequelize.query(query, {
@@ -460,67 +528,6 @@ const getWithPlan = async (req) => {
   });
 
   return { tenders: data, total: count?.[0]?.total ?? 0 };
-};
-
-const update = async (req, id, { transaction }) => {
-  const [rowCount, rows] = await TenderModel.update(
-    {
-      name: req.body.name,
-      tender_amount: req.body.tender_amount,
-      bid_start_date: req.body.bid_start_date,
-      bid_end_date: req.body.bid_end_date,
-      slug: req.body.slug,
-      unique: req.body.unique,
-      bid_number: req.body.bid_number,
-      dated: req.body.dated,
-      bid_end_date_time: req.body.bid_end_date_time,
-      department: req.body.department,
-      organisation: req.body.organisation,
-      office: req.body.office,
-      item_gem_parts: req.body.item_gem_parts,
-      quantity: req.body.quantity,
-      uom: req.body.uom,
-      no_of_items: req.body.no_of_items,
-      minimum_average_annual_turnover: req.body.minimum_average_annual_turnover,
-      years_of_past_experience: req.body.years_of_past_experience,
-      evaluation_method: req.body.evaluation_method,
-      emd_amount: req.body.emd_amount,
-      tender_value: req.body.tender_value,
-      ote_lte: req.body.ote_lte,
-      epbg_percentage: req.body.epbg_percentage,
-      buyer_specification_document: req.body.buyer_specification_document,
-      drawing: req.body.drawing,
-      consignee: req.body.consignee,
-      delivery_days: req.body.delivery_days,
-      distribution: req.body.distribution,
-      pre_qualification_criteria: req.body.pre_qualification_criteria,
-      mse_exemption_for_turnover: req.body.mse_exemption_for_turnover,
-      startup_exemption_for_turnover: req.body.startup_exemption_for_turnover,
-      bid_to_ra_enabled: req.body.bid_to_ra_enabled,
-      splitting_applied: req.body.splitting_applied,
-      save_to_my_business: req.body.save_to_my_business,
-      authority_ids: req.body.authority_ids,
-      city_ids: req.body.city_ids,
-      industry_ids: req.body.industry_ids,
-      sector_ids: req.body.sector_ids,
-      state_ids: req.body.state_ids,
-      keywords: req.body.keywords,
-      meta_title: req.body.meta_title,
-      meta_description: req.body.meta_description,
-      meta_keywords: req.body.meta_keywords,
-    },
-    {
-      where: {
-        id: req?.params?.id || id,
-      },
-      returning: true,
-      raw: true,
-      plain: true,
-      transaction,
-    }
-  );
-
-  return rows;
 };
 
 const updateVector = async (id, { transaction }) => {

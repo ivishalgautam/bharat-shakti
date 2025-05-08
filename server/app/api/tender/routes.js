@@ -7,6 +7,7 @@ export default async function routes(fastify, opts) {
     {
       preHandler: (req, res) =>
         multipartPreHandler(req, res, [
+          "subcategory_ids",
           "authority_ids",
           "city_ids",
           "industry_ids",
@@ -22,6 +23,7 @@ export default async function routes(fastify, opts) {
     {
       preHandler: (req, res) =>
         multipartPreHandler(req, res, [
+          "subcategory_ids",
           "authority_ids",
           "city_ids",
           "industry_ids",

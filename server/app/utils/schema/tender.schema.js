@@ -35,6 +35,7 @@ export const tenderSchema = z.object({
   splitting_applied: z.coerce.boolean().default(false),
   startup_exemption_for_turnover: z.coerce.boolean().default(false),
 
+  subcategory_ids: z.array(z.string().uuid()).default([]),
   authority_ids: z.array(z.string().uuid()).default([]),
   city_ids: z.array(z.string().uuid()).default([]),
   keyword_ids: z.array(z.string().uuid()).default([]),

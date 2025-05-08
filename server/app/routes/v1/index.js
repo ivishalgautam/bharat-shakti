@@ -13,6 +13,9 @@ import userKeyContactRoutes from "../../api/user-key-contact/routes.js";
 import applicationRoutes from "../../api/application/routes.js";
 import planRoutes from "../../api/plan/routes.js";
 import subscriptionRoutes from "../../api/subscription/routes.js";
+import categoryRoutes from "../../api/category/routes.js";
+import subCategoryRoutes from "../../api/sub-category/routes.js";
+import preferenceRoutes from "../../api/preference/routes.js";
 
 export default async function routes(fastify, options) {
   fastify.addHook("onRequest", jwtVerify.verifyToken);
@@ -33,4 +36,7 @@ export default async function routes(fastify, options) {
   fastify.register(applicationRoutes, { prefix: "applications" });
   fastify.register(planRoutes, { prefix: "plans" });
   fastify.register(subscriptionRoutes, { prefix: "subscriptions" });
+  fastify.register(categoryRoutes, { prefix: "categories" });
+  fastify.register(subCategoryRoutes, { prefix: "sub-categories" });
+  fastify.register(preferenceRoutes, { prefix: "preferences" });
 }

@@ -8,6 +8,9 @@ const { message, status } = constants.http;
 const create = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
+    if (!["premium", "elite"].includes(req.user_data.plan_tier))
+      return res.code(status.CREATED);
+
     const record = await table.ViewedTenderModel.getByUserAndTenderId(req);
     if (record) return res.code(status.CREATED);
 

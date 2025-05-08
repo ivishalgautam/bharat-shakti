@@ -11,7 +11,7 @@ import path from "path";
 
 // import internal modules
 import authRoutes from "./app/api/auth/routes.js";
-import pg_database from "./app/db/postgres.js";
+import pg_database, { sequelize } from "./app/db/postgres.js";
 import routes from "./app/routes/v1/index.js";
 import publicRoutes from "./app/routes/v1/public.js";
 import uploadFileRoutes from "./app/api/upload_files/routes.js";

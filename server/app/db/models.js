@@ -13,6 +13,9 @@ import applicationModel from "./models/application.model.js";
 import industryModel from "./models/industry.model.js";
 import planModel from "./models/plan.model.js";
 import subscriptionModel from "./models/subscription.model.js";
+import categoryModel from "./models/category.model.js";
+import subCategoryModel from "./models/sub-category.model.js";
+import preferenceModel from "./models/preference.model.js";
 
 export default {
   UserModel: userModel,
@@ -30,4 +33,7 @@ export default {
   ApplicationModel: applicationModel,
   PlanModel: planModel,
   SubscriptionModel: subscriptionModel,
+  CategoryModel: categoryModel,
+  SubCategoryModel: subCategoryModel,
+  PreferenceModel: preferenceModel,
 };

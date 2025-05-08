@@ -1,13 +1,13 @@
 "use strict";
 import moment from "moment";
 import constants from "../../lib/constants/index.js";
-import { DataTypes, Op, QueryTypes } from "sequelize";
+import { DataTypes, Deferrable, Op, QueryTypes } from "sequelize";
 
-let CategoryModel = null;
+let SubCategoryModel = null;
 
 const init = async (sequelize) => {
-  CategoryModel = sequelize.define(
-    constants.models.CATEGORY_TABLE,
+  SubCategoryModel = sequelize.define(
+    constants.models.SUB_CATEGORY_TABLE,
     {
       id: {
         primaryKey: true,
@@ -20,15 +20,21 @@ const init = async (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      type: {
-        type: DataTypes.ENUM(["goods", "services", "works"]),
-        allowNull: false,
-      },
       slug: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: {
           msg: "Category exist with this name!",
+        },
+      },
+      category_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        onDelete: "CASCADE",
+        references: {
+          model: constants.models.CATEGORY_TABLE,
+          key: "id",
+          deferrable: Deferrable.INITIALLY_IMMEDIATE,
         },
       },
       is_featured: { type: DataTypes.BOOLEAN, defaultValue: false },
@@ -43,35 +49,41 @@ const init = async (sequelize) => {
     }
   );
 
-  await CategoryModel.sync({ alter: true });
+  await SubCategoryModel.sync({ alter: true });
 };
 
 const create = async (req, { transaction }) => {
-  const data = await CategoryModel.create(
+  return await SubCategoryModel.create(
     {
       name: req.body.name,
-      type: req.body.type,
       slug: req.body.slug,
       is_featured: req.body.is_featured,
       image: req.body.image,
+      category_id: req.body.category_id,
       meta_title: req.body.meta_title,
       meta_description: req.body.meta_description,
       meta_keywords: req.body.meta_keywords,
     },
-    { returning: true, raw: true, transaction }
+    { transaction }
   );
+};
 
-  return data.dataValues;
+const bulkCreate = async (subcategories, { transaction } = {}) => {
+  return await SubCategoryModel.bulkCreate(subcategories, {
+    transaction,
+    validate: true,
+    returning: true,
+  });
 };
 
 const update = async (req, id) => {
-  const [rowCount, rows] = await CategoryModel.update(
+  const [rowCount, rows] = await SubCategoryModel.update(
     {
       name: req.body.name,
-      type: req.body.type,
       slug: req.body.slug,
       is_featured: req.body.is_featured,
       image: req.body.image,
+      category_id: req.body.category_id,
       meta_title: req.body.meta_title,
       meta_description: req.body.meta_description,
       meta_keywords: req.body.meta_keywords,
@@ -93,13 +105,13 @@ const get = async (req) => {
   const queryParams = {};
   let q = req.query.q;
   if (q) {
-    whereConditions.push(`cat.name ILIKE :query`);
+    whereConditions.push(`sbcat.name ILIKE :query`);
     queryParams.query = `%${q}%`;
   }
 
   const featured = req.query.featured;
   if (featured) {
-    whereConditions.push(`cat.is_featured = true`);
+    whereConditions.push(`sbcat.is_featured = true`);
   }
 
   const page = req.query.page ? Number(req.query.page) : 1;
@@ -113,55 +125,59 @@ const get = async (req) => {
 
   let countQuery = `
   SELECT
-      COUNT(cat.id) OVER()::integer as total
-    FROM ${constants.models.CATEGORY_TABLE} cat
-    LEFT JOIN ${constants.models.SUB_CATEGORY_TABLE} sbcat ON sbcat.category_id = cat.id
+      COUNT(sbcat.id) OVER()::integer as total
+    FROM ${constants.models.SUB_CATEGORY_TABLE} sbcat
+    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON sbcat.id = ANY(tdr.sector_ids)
+    LEFT JOIN ${constants.models.CATEGORY_TABLE} cat ON cat.id = sbcat.category_id
     ${whereClause}
-    GROUP BY cat.id
-    ORDER BY cat.created_at DESC
+    GROUP BY sbcat.id, cat.name
+    ORDER BY sbcat.created_at DESC
   `;
 
   let query = `
   SELECT
-      cat.*,
-      COUNT(cat.id) as subcategory_count
-    FROM ${constants.models.CATEGORY_TABLE} cat
-    LEFT JOIN ${constants.models.SUB_CATEGORY_TABLE} sbcat ON sbcat.category_id = cat.id
+      sbcat.*,
+      COUNT(tdr.id)::integer as tenders_count,
+      cat.name as category_name
+    FROM ${constants.models.SUB_CATEGORY_TABLE} sbcat
+    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON sbcat.id = ANY(tdr.sector_ids)
+    LEFT JOIN ${constants.models.CATEGORY_TABLE} cat ON cat.id = sbcat.category_id
     ${whereClause}
-    GROUP BY cat.id
-    ORDER BY cat.created_at DESC
+    GROUP BY sbcat.id, cat.name
+    ORDER BY sbcat.created_at DESC
     LIMIT :limit OFFSET :offset
   `;
 
-  const data = await CategoryModel.sequelize.query(query, {
+  const data = await SubCategoryModel.sequelize.query(query, {
     replacements: { ...queryParams, limit, offset },
     type: QueryTypes.SELECT,
     raw: true,
   });
 
-  const count = await CategoryModel.sequelize.query(countQuery, {
+  const count = await SubCategoryModel.sequelize.query(countQuery, {
     replacements: { ...queryParams },
     type: QueryTypes.SELECT,
     raw: true,
   });
 
-  return { categories: data, total: count?.[0]?.total ?? 0 };
+  return { subcategories: data, total: count?.[0]?.total ?? 0 };
 };
+
 const getById = async (req, id) => {
-  return await CategoryModel.findOne({
+  return await SubCategoryModel.findOne({
     where: {
-      id: req.params.id || id,
+      id: req?.params?.id || id,
     },
     raw: true,
   });
 };
 
 const getByPk = async (req, id) => {
-  return await CategoryModel.findByPk(req?.params?.id || id);
+  return await SubCategoryModel.findByPk(req?.params?.id || id);
 };
 
 const getBySlug = async (req, slug) => {
-  return await CategoryModel.findOne({
+  return await SubCategoryModel.findOne({
     where: {
       slug: req.params?.slug || slug,
     },
@@ -170,7 +186,7 @@ const getBySlug = async (req, slug) => {
 };
 
 const deleteById = async (req, id, { transaction }) => {
-  return await CategoryModel.destroy({
+  return await SubCategoryModel.destroy({
     where: { id: req.params.id || id },
     transaction,
   });
@@ -188,7 +204,7 @@ const count = async (last_30_days = false) => {
     };
   }
 
-  return await CategoryModel.count({
+  return await SubCategoryModel.count({
     where: where_query,
     raw: true,
   });
@@ -197,6 +213,7 @@ const count = async (last_30_days = false) => {
 export default {
   init: init,
   create: create,
+  bulkCreate: bulkCreate,
   get: get,
   update: update,
   getById: getById,
