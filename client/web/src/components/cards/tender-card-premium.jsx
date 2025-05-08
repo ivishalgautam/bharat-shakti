@@ -144,7 +144,9 @@ export default function TenderCardPremium({
             href={`/tenders/${tender.slug}`}
             className={cn(buttonVariants(), "w-full sm:w-auto")}
             onClick={() =>
-              user && viewMutation.mutate({ tender_id: tender.id })
+              user &&
+              ["premium", "elite"].includes(user.plan_tier) &&
+              viewMutation.mutate({ tender_id: tender.id })
             }
           >
             View Details

@@ -1,0 +1,28 @@
+import { z } from "zod";
+
+export const preferenceSchema = z.object({
+  subcategory_ids: z
+    .array(z.object({ value: z.string(), label: z.string() }))
+    .transform((subcategory_ids) => subcategory_ids.map(({ value }) => value))
+    .default([]),
+  authority_ids: z
+    .array(z.object({ value: z.string(), label: z.string() }))
+    .transform((authority_ids) => authority_ids.map(({ value }) => value))
+    .default([]),
+  city_ids: z
+    .array(z.object({ value: z.string(), label: z.string() }))
+    .transform((city_ids) => city_ids.map(({ value }) => value))
+    .default([]),
+  industry_ids: z
+    .array(z.object({ value: z.string(), label: z.string() }))
+    .transform((industry_ids) => industry_ids.map(({ value }) => value))
+    .default([]),
+  sector_ids: z
+    .array(z.object({ value: z.string(), label: z.string() }))
+    .transform((sector_ids) => sector_ids.map(({ value }) => value))
+    .default([]),
+  state_ids: z
+    .array(z.object({ value: z.string(), label: z.string() }))
+    .transform((state_ids) => state_ids.map(({ value }) => value))
+    .default([]),
+});

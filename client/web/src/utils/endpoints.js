@@ -1,4 +1,5 @@
 export const endpoints = {
+  profile: "/users/me",
   auth: {
     login: "/auth/login",
     signup: "/auth/signup",
@@ -21,9 +22,11 @@ export const endpoints = {
   userKeyContacts: { getAll: "/user-key-contacts" },
   viewTenders: { getAll: "/view-tenders" },
   applications: { getAll: "/applications" },
+  preferences: { getAll: "/preferences" },
   plans: { getAll: "/plans" },
   subscriptions: { getAll: "/subscriptions" },
-  profile: "/users/me",
+  categories: { getAll: "/categories" },
+  subcategories: { getAll: "/sub-categories" },
   files: {
     getFiles: "/upload",
     deleteKey: "/upload/s3",

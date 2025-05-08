@@ -2,10 +2,13 @@
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { allRoutes } from "@/data/routes";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/providers/auth-provider";
 import { BookHeart, Eye, FileUser, Menu, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useMemo } from "react";
 
 export default function DashboardLayout({ children }) {
   return (
@@ -37,38 +40,26 @@ export default function DashboardLayout({ children }) {
 
 function NavigationList() {
   const pathname = usePathname();
-  const tabs = [
-    {
-      label: "Profile",
-      href: "/dashboard",
-      icon: User,
-    },
-    {
-      label: "Favourite tenders",
-      href: "/dashboard/favourite-tenders",
-      icon: BookHeart,
-    },
-    {
-      label: "Viewed tenders",
-      href: "/dashboard/viewed-tenders",
-      icon: Eye,
-    },
-    {
-      label: "Applied tenders",
-      href: "/dashboard/applied-tenders",
-      icon: FileUser,
-    },
-  ];
+  const { user } = useAuth();
+  const tabs = useMemo(
+    () =>
+      allRoutes.filter(
+        (route) =>
+          route.roles.includes(user?.role) &&
+          route.tier.includes(user?.plan_tier),
+      ),
+    [user],
+  );
 
   return (
     <nav className="grid gap-2 p-4 text-sm">
       {tabs.map((tab, key) => (
         <Link
           key={key}
-          href={tab.href}
+          href={tab.link}
           className={cn(
             "flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-accent",
-            pathname === tab.href
+            pathname === tab.link
               ? "bg-accent text-accent-foreground"
               : "text-muted-foreground",
           )}
