@@ -13,34 +13,56 @@ import { Label } from "../ui/label";
 import MySelect from "../my-select";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import preference from "@/services/preference";
+import { Button } from "../ui/button";
+import { toast } from "@/hooks/use-toast";
+import Spinner from "../spinner";
+import ErrorMessage from "../ui/error";
+import useGetCategories from "@/hooks/use-get-categories";
 
 export default function PreferencesForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
     control,
     watch,
     setValue,
   } = useForm({ resolver: zodResolver(preferenceSchema) });
-
+  console.log({ isDirty });
   const { data, isError, error, isLoading } = useQuery({
     queryKey: ["preferences"],
     queryFn: preference.get,
   });
 
   const createMutation = useMutation({
-    mutationFn: () => {},
-    onSuccess: () => {},
-    onError: (error) => {},
+    mutationFn: preference.create,
+    onSuccess: () => {
+      toast({
+        title: "Success",
+        description: "Preferences added.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description:
+          error?.response?.data?.message ??
+          error?.message ??
+          "Something went wrong.",
+      });
+    },
   });
 
-  const { data: { subcategories } = {} } = useGetSubcategories();
+  const { data: categories } = useGetCategories();
+  const { data: subcategories } = useGetSubcategories();
   const { data: authorities } = useGetAuthorities();
   const { data: cities } = useGetCities();
   const { data: industries } = useGetIndustries();
   const { data: sectors } = useGetSectors();
   const { data: states } = useGetStates();
+
+  const formattedCategories = useFormattedOptions(categories);
   const formattedSubcategories = useFormattedOptions(subcategories);
   const formattedAuthorities = useFormattedOptions(authorities);
   const formattedCities = useFormattedOptions(cities);
@@ -48,11 +70,18 @@ export default function PreferencesForm() {
   const formattedSectors = useFormattedOptions(sectors);
   const formattedStates = useFormattedOptions(states);
 
-  const onSubmit = (data) => {};
+  const onSubmit = (data) => {
+    createMutation.mutate(data);
+  };
 
   useEffect(() => {
     if (data) {
-      console.log({ data });
+      setValue(
+        "category_ids",
+        formattedCategories.filter((au) =>
+          data.category_ids?.includes(au.value),
+        ),
+      );
       setValue(
         "subcategory_ids",
         formattedSubcategories.filter((au) =>
@@ -87,6 +116,7 @@ export default function PreferencesForm() {
   }, [
     data,
     setValue,
+    formattedCategories,
     formattedSubcategories,
     formattedAuthorities,
     formattedCities,
@@ -95,9 +125,31 @@ export default function PreferencesForm() {
     formattedStates,
   ]);
 
+  if (isLoading) return <Spinner />;
+  if (isError) return <ErrorMessage error={error} />;
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        {/* categories */}
+        <div>
+          <Label>Categories</Label>
+          <Controller
+            control={control}
+            name="category_ids"
+            render={({ field: { onChange, value } }) => {
+              return (
+                <MySelect
+                  options={formattedCategories}
+                  value={value}
+                  isMulti
+                  onChange={onChange}
+                />
+              );
+            }}
+          />
+        </div>
+
         {/* sub categories */}
         <div>
           <Label>Sub categories</Label>
@@ -211,6 +263,12 @@ export default function PreferencesForm() {
             }}
           />
         </div>
+      </div>
+
+      <div className="mt-4 text-end">
+        <Button disabled={!isDirty || createMutation.isPending}>
+          {createMutation.isPending ? "Submitting..." : "Submit"}
+        </Button>
       </div>
     </form>
   );

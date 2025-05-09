@@ -3,7 +3,7 @@ const { default: http } = require("@/utils/http");
 
 const get = async () => {
   const { data } = await http().get(`${endpoints.subcategories.getAll}`);
-  return data;
+  return data?.subcategories ?? [];
 };
 
 const subcategory = {

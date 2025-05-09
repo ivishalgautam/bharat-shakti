@@ -1,6 +1,10 @@
 import { z } from "zod";
 
 export const preferenceSchema = z.object({
+  category_ids: z
+    .array(z.object({ value: z.string(), label: z.string() }))
+    .transform((category_ids) => category_ids.map(({ value }) => value))
+    .default([]),
   subcategory_ids: z
     .array(z.object({ value: z.string(), label: z.string() }))
     .transform((subcategory_ids) => subcategory_ids.map(({ value }) => value))
