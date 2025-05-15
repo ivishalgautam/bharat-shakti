@@ -29,7 +29,7 @@ export function AppSidebar({ ...props }) {
   }, [user]);
 
   return (
-    <Sidebar variant="inset" {...props}>
+    <Sidebar variant="sidebar" {...props}>
       <SidebarContent>
         <NavMain items={filteredRoutes} />
       </SidebarContent>

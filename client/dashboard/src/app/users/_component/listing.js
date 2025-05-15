@@ -46,8 +46,7 @@ export default function UserListing() {
     }
   }, [searchParamsStr, router]);
 
-  if (isLoading || isFetching)
-    return <DataTableSkeleton columnCount={6} rowCount={10} />;
+  if (isLoading) return <DataTableSkeleton columnCount={6} rowCount={10} />;
 
   if (isError) return error?.message ?? "error";
 

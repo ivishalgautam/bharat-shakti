@@ -9,8 +9,8 @@ export default function TableActions() {
     resetFilters,
     searchQuery,
     setPage,
-    roleFilter,
-    setRoleFilter,
+    statusFilter,
+    setStatusFilter,
     setSearchQuery,
     isAnyFilterActive,
   } = useTableFilters();
@@ -23,16 +23,18 @@ export default function TableActions() {
         setSearchQuery={setSearchQuery}
         setPage={setPage}
       />
-      {/* <DataTableFilterBox
-        filterKey="role"
-        title="Role"
+      <DataTableFilterBox
+        filterKey="status"
+        title="Status"
         options={[
-          { label: "Patient", value: "patient" },
-          { label: "Doctor", value: "doctor" },
+          { value: "Pending", label: "Pending" },
+          { value: "Initiated", label: "Initiated" },
+          { value: "Order Received", label: "Order Received" },
+          { value: "Completed", label: "Completed" },
         ]}
-        setFilterValue={setRoleFilter}
-        filterValue={roleFilter}
-      /> */}
+        setFilterValue={setStatusFilter}
+        filterValue={statusFilter}
+      />
       <DataTableResetFilter
         isFilterActive={isAnyFilterActive}
         onReset={resetFilters}

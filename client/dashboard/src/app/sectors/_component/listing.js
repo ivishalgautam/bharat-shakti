@@ -18,12 +18,10 @@ export default function Listing() {
   const searchParams = useSearchParams();
   const searchParamsStr = searchParams.toString();
   const router = useRouter();
-  const { data, isLoading, isFetching, isError, error } =
-    useGetSectors(searchParamsStr);
+  const { data, isLoading, isError, error } = useGetSectors(searchParamsStr);
   const deleteMutation = useDeleteSector(() => {
     setIsModal(false);
   });
-  console.log({ data });
 
   const updateMutation = useUpdateSector(id);
 
@@ -38,10 +36,8 @@ export default function Listing() {
       router.replace(`?${params.toString()}`);
     }
   }, [searchParamsStr, router]);
-  console.log({ isModal });
-  if (isLoading || isFetching)
-    return <DataTableSkeleton columnCount={4} rowCount={10} />;
 
+  if (isLoading) return <DataTableSkeleton columnCount={4} rowCount={10} />;
   if (isError) return error?.message ?? "error";
 
   return (

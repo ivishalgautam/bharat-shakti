@@ -56,7 +56,7 @@ export function DataTableSkeleton({
                 <TableRow key={i} className="hover:bg-transparent">
                   {Array.from({ length: columnCount }).map((_, i) => (
                     <TableCell key={i}>
-                      <Skeleton className="h-8 w-full" />
+                      <Skeleton className="h-8 w-full bg-gray-200" />
                     </TableCell>
                   ))}
                 </TableRow>

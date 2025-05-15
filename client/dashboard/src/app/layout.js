@@ -1,5 +1,7 @@
 import "./globals.css";
 import Layout from "@/components/layout";
+import ThemeProvider from "@/providers/theme-provider";
+import { ThemeSwitcher } from "@/providers/theme-switcher";
 import { Instrument_Sans } from "next/font/google";
 
 const InstrumentSans = Instrument_Sans({
@@ -20,7 +22,14 @@ export default function RootLayout({ children }) {
         className={`${InstrumentSans.className} antialiased`}
         suppressHydrationWarning={true}
       >
-        <Layout>{children}</Layout>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Layout>{children}</Layout>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -36,8 +36,7 @@ export default function Listing() {
       router.replace(`?${params.toString()}`);
     }
   }, [searchParamsStr, router]);
-  if (isLoading || isFetching)
-    return <DataTableSkeleton columnCount={4} rowCount={10} />;
+  if (isLoading) return <DataTableSkeleton columnCount={4} rowCount={10} />;
   if (isError) return error?.message ?? "error";
 
   return (

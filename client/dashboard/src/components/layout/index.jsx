@@ -23,9 +23,9 @@ export default function Layout({ children }) {
         <RoleContext>
           <SidebarProvider>
             <AppSidebar />
-            <main className="w-full bg-gray-100">
+            <main className="bg-gray-100 w-full">
               <SidebarTrigger />
-              <div className="min-h-[calc(100vh-135px)] px-4">
+              <div className="min-h-[calc(100vh-135px)] px-4 py-1">
                 <Button
                   type="button"
                   variant="outline"

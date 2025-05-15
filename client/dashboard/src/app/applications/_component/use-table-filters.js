@@ -14,29 +14,29 @@ export function useTableFilters() {
     "page",
     searchParams.page.withDefault(1)
   );
-  const [roleFilter, setRoleFilter] = useQueryState(
-    "role",
+  const [statusFilter, setStatusFilter] = useQueryState(
+    "status",
     searchParams.role.withDefault("")
   );
 
   const resetFilters = useCallback(() => {
     setSearchQuery(null);
-    setRoleFilter(null);
+    setStatusFilter(null);
 
     setPage(1);
-  }, [setSearchQuery, setRoleFilter, setPage]);
+  }, [setSearchQuery, setStatusFilter, setPage]);
 
   const isAnyFilterActive = useMemo(() => {
-    return !!searchQuery || !!roleFilter;
-  }, [searchQuery, roleFilter]);
+    return !!searchQuery || !!statusFilter;
+  }, [searchQuery, statusFilter]);
 
   return {
     searchQuery,
     setSearchQuery,
     page,
     setPage,
-    roleFilter,
-    setRoleFilter,
+    statusFilter,
+    setStatusFilter,
     resetFilters,
     isAnyFilterActive,
   };

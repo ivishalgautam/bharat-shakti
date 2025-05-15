@@ -35,7 +35,7 @@ export function NavMain({ items }) {
         <SidebarMenu>
           {isUserLoading
             ? Array.from({ length: sidebarData.length + 1 }).map((_, ind) => (
-                <Skeleton className={"h-8 bg-white/5"} key={ind} />
+                <Skeleton className={"h-8 bg-gray-300"} key={ind} />
               ))
             : items.map((item) => (
                 <Collapsible
@@ -50,15 +50,15 @@ export function NavMain({ items }) {
                       asChild
                       tooltip={item.title}
                       className={cn({
-                        "text-white":
+                        "bg-primary text-white":
                           pathname.includes(item.url) ||
                           item.items?.some((item) => item.url === pathname),
                       })}
                     >
                       <CollapsibleTrigger
                         asChild
-                        className={cn("text-white hover:bg-white/10", {
-                          "bg-white/10": pathname.includes(item.url),
+                        className={cn("", {
+                          "": pathname.includes(item.url),
                         })}
                       >
                         <Link href={item.url}>
@@ -71,12 +71,9 @@ export function NavMain({ items }) {
                       <>
                         <CollapsibleTrigger
                           asChild
-                          className={cn(
-                            "text-white hover:bg-white hover:text-black",
-                            {
-                              "bg-primary": pathname.includes(item.url),
-                            }
-                          )}
+                          className={cn("", {
+                            "bg-primary": pathname.includes(item.url),
+                          })}
                         >
                           <SidebarMenuAction className="data-[state=open]:rotate-90">
                             <ChevronRight />
@@ -88,12 +85,10 @@ export function NavMain({ items }) {
                             {item.items?.map((subItem) => (
                               <SidebarMenuSubItem key={subItem.title}>
                                 <SidebarMenuSubButton
-                                  className={cn(
-                                    "text-white hover:bg-white/10",
-                                    {
-                                      "bg-white/10": pathname === subItem.url,
-                                    }
-                                  )}
+                                  className={cn("", {
+                                    "bg-primary text-white":
+                                      pathname === subItem.url,
+                                  })}
                                   asChild
                                 >
                                   <Link href={subItem.url}>

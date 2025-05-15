@@ -2,8 +2,11 @@ import {
   BadgeIndianRupee,
   Landmark,
   LayoutDashboard,
+  LayoutPanelTop,
+  LayoutTemplate,
   LetterText,
   MapPin,
+  MessageCircleQuestion,
   MessageSquareText,
   ScrollText,
   Settings,
@@ -75,6 +78,48 @@ export const sidebarData = [
       {
         title: "Edit",
         url: "/tenders/:id/edit",
+        roles: [ROLES.ADMIN],
+        isVisible: false,
+      },
+    ],
+  },
+  {
+    title: "Categories",
+    url: "/categories",
+    icon: LayoutPanelTop,
+    roles: [ROLES.ADMIN],
+    isVisible: true,
+    items: [
+      {
+        title: "Create",
+        url: "/categories/create",
+        roles: [ROLES.ADMIN],
+        isVisible: true,
+      },
+      {
+        title: "Edit",
+        url: "/categories/:id/edit",
+        roles: [ROLES.ADMIN],
+        isVisible: false,
+      },
+    ],
+  },
+  {
+    title: "Sub Categories",
+    url: "/subcategories",
+    icon: LayoutTemplate,
+    roles: [ROLES.ADMIN],
+    isVisible: true,
+    items: [
+      {
+        title: "Create",
+        url: "/subcategories/create",
+        roles: [ROLES.ADMIN],
+        isVisible: true,
+      },
+      {
+        title: "Edit",
+        url: "/subcategories/:id/edit",
         roles: [ROLES.ADMIN],
         isVisible: false,
       },
@@ -201,6 +246,27 @@ export const sidebarData = [
       {
         title: "Edit",
         url: "/plans/:id/edit",
+        roles: [ROLES.ADMIN],
+        isVisible: false,
+      },
+    ],
+  },
+  {
+    title: "FAQs",
+    url: "/faqs",
+    icon: MessageCircleQuestion,
+    roles: [ROLES.ADMIN],
+    isVisible: true,
+    items: [
+      {
+        title: "Create",
+        url: "/faqs/create",
+        roles: [ROLES.ADMIN],
+        isVisible: true,
+      },
+      {
+        title: "Edit",
+        url: "/faqs/:id/edit",
         roles: [ROLES.ADMIN],
         isVisible: false,
       },

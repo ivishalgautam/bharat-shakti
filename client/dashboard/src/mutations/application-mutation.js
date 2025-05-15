@@ -18,7 +18,7 @@ export const useGetApplication = (id) => {
   });
 };
 
-export const useUpdateApplication = (id) => {
+export const useUpdateApplication = (id, searchParams) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -29,7 +29,7 @@ export const useUpdateApplication = (id) => {
         description: "Application updated successfully.",
       });
 
-      queryClient.invalidateQueries(["applications"]);
+      queryClient.invalidateQueries(["applications", searchParams]);
     },
     onError: (error) => {
       console.error("Mutation Error:", error);

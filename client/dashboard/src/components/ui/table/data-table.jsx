@@ -95,7 +95,7 @@ export function DataTable({
 
   return (
     <div className="flex flex-1 flex-col space-y-4">
-      <ScrollArea className="h-[calc(55vh)] rounded-xl border whitespace-nowrap overflow-x-auto w-full">
+      <ScrollArea className="h-[calc(60vh)] rounded-xl border">
         <Table>
           <TableHeader className="bg-stone-100 sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (

@@ -24,6 +24,7 @@ import {
 export default function UserListing() {
   const [isModal, setIsModal] = useState(false);
   const [userId, setUserId] = useState("");
+  const [applicationId, setApplicationId] = useState("");
   const searchParams = useSearchParams();
   const searchParamsStr = searchParams.toString();
   const router = useRouter();
@@ -34,7 +35,7 @@ export default function UserListing() {
   const { data, isLoading, isFetching, isError, error } =
     useGetApplications(searchParamsStr);
   const deleteMutation = useDeleteApplication(userId, closeModal);
-  const updateMutation = useUpdateApplication(userId);
+  const updateMutation = useUpdateApplication(applicationId, searchParamsStr);
 
   useEffect(() => {
     if (!searchParamsStr) {
@@ -45,15 +46,19 @@ export default function UserListing() {
     }
   }, [searchParamsStr, router]);
 
-  if (isLoading || isFetching)
-    return <DataTableSkeleton columnCount={6} rowCount={10} />;
+  if (isLoading) return <DataTableSkeleton columnCount={6} rowCount={10} />;
 
   if (isError) return error?.message ?? "error";
 
   return (
     <div className="w-full rounded-lg border-input">
       <DataTable
-        columns={columns(updateMutation, setUserId, openModal)}
+        columns={columns(
+          updateMutation,
+          setUserId,
+          openModal,
+          setApplicationId
+        )}
         data={data?.data ?? []}
         totalItems={data?.total}
       />

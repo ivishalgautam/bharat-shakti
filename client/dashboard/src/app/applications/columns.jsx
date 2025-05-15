@@ -16,8 +16,25 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { ArrowUpDown } from "lucide-react";
 
-export const columns = (updateMutation, setUserId, openModal) => [
+export const columns = (
+  updateMutation,
+  setUserId,
+  openModal,
+  setApplicationId
+) => [
+  {
+    accessorKey: "application_id",
+    header: "Application ID",
+  },
   {
     accessorKey: "fullname",
     header: "FULLNAME",
@@ -51,6 +68,32 @@ export const columns = (updateMutation, setUserId, openModal) => [
   {
     accessorKey: "email",
     header: "EMAIL",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const id = row.original.id;
+      return (
+        <Select
+          defaultValue={row.getValue("status")}
+          onValueChange={(value) => {
+            setApplicationId(id);
+            updateMutation.mutate({ status: value });
+          }}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Pending">Pending</SelectItem>
+            <SelectItem value="Initiated">Initiated</SelectItem>
+            <SelectItem value="Order Received">Order Received</SelectItem>
+            <SelectItem value="Completed">Completed</SelectItem>
+          </SelectContent>
+        </Select>
+      );
+    },
   },
   {
     accessorKey: "created_at",

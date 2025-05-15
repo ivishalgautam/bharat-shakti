@@ -37,7 +37,6 @@ export default function PlanForm({ id, type = "create" }) {
     resolver: zodResolver(planSchema),
   });
   const tier = watch("plan_tier");
-  console.log({ tier });
   const { fields, append, remove } = useFieldArray({
     control,
     name: "features", // expecting an array of { key, value }
