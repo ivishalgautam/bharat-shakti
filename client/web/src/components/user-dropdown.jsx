@@ -12,13 +12,15 @@ import {
 import config from "@/config";
 import { handleLogout, useAuth } from "@/providers/auth-provider";
 
-import { LayoutDashboard, LogOutIcon } from "lucide-react";
+import { FileSliders, LayoutDashboard, LogOutIcon } from "lucide-react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export default function UserDropdown() {
-  const { user } = useAuth();
+export default function UserDropdown({ user }) {
+  // const { user } = useAuth();
   const router = useRouter();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -27,7 +29,7 @@ export default function UserDropdown() {
           className="h-auto rounded-full p-0 hover:bg-transparent"
         >
           <Avatar>
-            <AvatarImage src={`${config.file_base}${user.image_url}`} />
+            {/* <AvatarImage src={`${config.file_base}${user.image_url}`} /> */}
             <AvatarFallback className="border border-primary bg-primary/20 uppercase">
               {user.first_name.charAt(0) + user.last_name.charAt(0)}
             </AvatarFallback>
@@ -53,8 +55,15 @@ export default function UserDropdown() {
             />
             <span>Dashboard</span>
           </DropdownMenuItem>
+          <DropdownMenuSeparator className="" />
+          <DropdownMenuItem
+            onClick={() => router.push("/tenders-by-preferences")}
+          >
+            <FileSliders size={16} className="opacity-60" aria-hidden="true" />
+            <span>Tenders by Preferences</span>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator className="dark:bg-white/8" />
+        <DropdownMenuSeparator className="" />
         <DropdownMenuItem onClick={handleLogout}>
           <LogOutIcon size={16} className="opacity-60" aria-hidden="true" />
           <span>Sign out</span>

@@ -7,6 +7,7 @@ import {
   Building2,
   MapPin,
   IndianRupee,
+  Eye,
 } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -33,8 +34,8 @@ export default function TenderCardPremium({
   });
 
   return (
-    <div className="overflow-hidden rounded-xl border bg-card text-card-foreground">
-      <div className="bg-muted/50 p-6">
+    <div className="overflow-hidden rounded-lg border bg-card text-card-foreground">
+      <div className="bg-primary/10 p-6">
         <div className="flex items-start justify-between">
           <div>
             <div className="mb-1 flex items-center">
@@ -52,14 +53,22 @@ export default function TenderCardPremium({
               {tender?.name || tender?.tender_name}
             </h3>
           </div>
-          <Badge
-            className="ml-2 text-xs"
-            variant={isUrgent ? "destructive" : "outline"}
-          >
-            {isClosed
-              ? "Closed"
-              : `${getRemainingDays(tender.bid_end_date_time)} days left`}
-          </Badge>
+          <div className="flex">
+            {user?.plan_tier === "premium" && (
+              <Badge variant="" className={""}>
+                <Eye size={15} className="mr-1" /> {tender.view_count}
+              </Badge>
+            )}
+
+            <Badge
+              className="ml-2 text-xs"
+              variant={isUrgent ? "destructive" : "outline"}
+            >
+              {isClosed
+                ? "Closed"
+                : `${getRemainingDays(tender.bid_end_date_time)} days left`}
+            </Badge>
+          </div>
         </div>
       </div>
 
@@ -144,9 +153,7 @@ export default function TenderCardPremium({
             href={`/tenders/${tender.slug}`}
             className={cn(buttonVariants(), "w-full sm:w-auto")}
             onClick={() =>
-              user &&
-              ["premium", "elite"].includes(user.plan_tier) &&
-              viewMutation.mutate({ tender_id: tender.id })
+              user && viewMutation.mutate({ tender_id: tender.id })
             }
           >
             View Details

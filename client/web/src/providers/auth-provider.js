@@ -2,8 +2,6 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import axios from "axios";
-import { endpoints } from "@/utils/endpoints";
-import http from "@/utils/http";
 
 export const AuthContext = createContext(null);
 
@@ -38,6 +36,7 @@ export default function AuthProvider({ children }) {
         setUser(data.user);
         localStorage.setItem("user", JSON.stringify(data.user));
       } catch (error) {
+        localStorage.clear();
         setUser(null);
         console.log(error);
       } finally {

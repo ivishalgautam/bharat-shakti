@@ -10,6 +10,7 @@ export async function GET(request) {
   const cookieStore = await cookies();
   let token = cookieStore.get("token")?.value;
   const refresh_token = cookieStore.get("refresh_token")?.value;
+
   if (!token) {
     if (!refresh_token) {
       return NextResponse.json(
@@ -18,23 +19,28 @@ export async function GET(request) {
       );
     }
 
-    // const newTokenData = await axios.post("/api/refresh-token");
-    const newTokenData = await http().post(endpoints.auth.refresh, {
-      refresh_token,
-    });
-    if (!newTokenData) {
-      cookieStore.delete("token");
+    try {
+      // const newTokenData = await axios.post("/api/refresh-token");
+      const newTokenData = await http().post(endpoints.auth.refresh, {
+        refresh_token,
+      });
+
+      if (!newTokenData) {
+        cookieStore.delete("token");
+        cookieStore.delete("refresh_token");
+        return NextResponse.redirect(new URL("/login", request.url));
+      }
+      token = newTokenData.token;
+      cookieStore.set("token", token, {
+        path: "/",
+        expires: new Date(newTokenData.expires),
+        httpOnly: true,
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      });
+    } catch (error) {
       cookieStore.delete("refresh_token");
-      return NextResponse.redirect(new URL("/login", request.url));
     }
-    token = newTokenData.token;
-    cookieStore.set("token", token, {
-      path: "/",
-      expires: new Date(newTokenData.expires),
-      httpOnly: true,
-      sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
-    });
   }
 
   try {

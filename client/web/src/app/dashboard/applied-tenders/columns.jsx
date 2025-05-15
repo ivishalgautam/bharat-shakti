@@ -5,10 +5,18 @@ import { Badge } from "@/components/ui/badge";
 
 export const columns = (setUserId, openModal) => [
   {
+    accessorKey: "application_id",
+    header: "Application ID",
+  },
+  {
     accessorKey: "tender_name",
     header: ({ column }) => {
       return <Button variant="ghost">TENDER</Button>;
     },
+  },
+  {
+    accessorKey: "status",
+    header: "STATUS",
   },
   {
     accessorKey: "created_at",

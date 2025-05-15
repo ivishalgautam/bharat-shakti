@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 const FilterBoxSkeleton = () => {
   return (
     <div className="space-y-2">
-      <Skeleton className="h-5 w-24" />
       <Skeleton className="h-10 w-full" />
     </div>
   );

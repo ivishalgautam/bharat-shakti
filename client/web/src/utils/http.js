@@ -1,3 +1,4 @@
+import config from "@/config";
 import axios from "axios";
 const API_ROOT = process.env.NEXT_PUBLIC_BHARAT_SHAKTI_API_URL;
 
@@ -22,7 +23,10 @@ const http = (headerType = "json", baseURL = API_ROOT) => {
     if (error.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const response = await axios.post("/api/auth/refresh-token");
+        const response = await axios.post(
+          `${config.next_public_url}/api/auth/refresh-token`,
+        );
+
         if (response.statusText === "OK") {
           const token = response.data.token;
           client.defaults.headers["Authorization"] = `Bearer ${token}`;
@@ -35,6 +39,7 @@ const http = (headerType = "json", baseURL = API_ROOT) => {
         }
       } catch (refreshError) {
         console.error("Error refreshing token:", refreshError);
+        await axios.post(`${config.next_public_url}/api/auth/logout`);
         localStorage.clear();
         window.location.href = "/login";
         return Promise.reject(error);

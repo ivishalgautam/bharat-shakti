@@ -14,6 +14,11 @@ const get = async (searchParams = "page=1") => {
   return data;
 };
 
+const count = async () => {
+  const { count } = await http().get(`${endpoints.viewTenders.getAll}/count`);
+  return count;
+};
+
 const deleteById = async (id) => {
   return await http().delete(`${endpoints.viewTenders.getAll}/${id}`);
 };
@@ -22,6 +27,7 @@ const viewTenders = {
   create: create,
   get: get,
   deleteById: deleteById,
+  count: count,
 };
 
 export default viewTenders;

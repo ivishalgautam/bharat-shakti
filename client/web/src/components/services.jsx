@@ -1,15 +1,14 @@
 import Section from "./layout/section";
+import SectionHeading from "./layout/section-heading";
 
 export default function Services() {
   return (
     <Section>
       <div className="container px-4 md:px-6">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight">Our Services</h2>
-          <p className="mt-2 text-muted-foreground">
-            Comprehensive tender solutions to help you win more bids
-          </p>
-        </div>
+        <SectionHeading
+          heading="Our Services"
+          subheading="Comprehensive tender solutions to help you win more bids"
+        />
         <div className="mt-10 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {[
             {

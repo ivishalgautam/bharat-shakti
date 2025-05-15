@@ -8,6 +8,7 @@ const API_URL = process.env.NEXT_PUBLIC_BHARAT_SHAKTI_API_URL;
 export async function POST(Request) {
   const cookieStore = await cookies();
   const refresh_token = cookieStore.get("refresh_token")?.value;
+  console.log({ refresh_token });
   if (!refresh_token) {
     return NextResponse.json(
       { error: "Refresh token missing" },

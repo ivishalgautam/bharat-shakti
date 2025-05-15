@@ -1,6 +1,9 @@
 import { z } from "zod";
 
 export const preferenceSchema = z.object({
+  name: z
+    .string({ required_error: "Preference name is required." })
+    .min(1, "Preference name is required."),
   category_ids: z
     .array(z.object({ value: z.string(), label: z.string() }))
     .transform((category_ids) => category_ids.map(({ value }) => value))

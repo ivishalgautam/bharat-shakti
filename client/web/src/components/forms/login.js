@@ -19,7 +19,7 @@ import {
 import { signIn } from "next-auth/react";
 import { Separator } from "../ui/separator";
 
-export default function LoginForm() {
+export default function LoginForm({ redirectLink = "" }) {
   const {
     handleSubmit,
     formState: { errors },
@@ -28,8 +28,10 @@ export default function LoginForm() {
   const router = useRouter();
   const loginMutation = useMutation({
     mutationFn: auth.login,
-    onSuccess: () => {
-      router.replace("/");
+    onSuccess: ({ data }) => {
+      delete data.user_data.password;
+      localStorage.setItem("user", JSON.stringify(data.user_data));
+      redirectLink ? router.replace(redirectLink) : router.replace("/");
     },
     onError: (error) => {
       console.log(error);

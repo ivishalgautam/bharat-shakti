@@ -6,16 +6,24 @@ const getById = async (id) => {
   return data;
 };
 
+const getBySimilarTenders = async (searchParams) => {
+  const { data } = await http().get(
+    `${endpoints.tenders.getAll}/get-similar-tenders?${searchParams}`,
+  );
+  return data;
+};
+
 const getBySlug = async (slug) => {
   const { data } = await http().get(`${endpoints.tenders.getBySlug}/${slug}`);
   return data;
 };
 
 const get = async (searchParams = "", user) => {
-  console.log({ user });
-  const { data } = await http().get(
-    `${endpoints.tenders.getAll}?${searchParams}`,
-  );
+  const url = user
+    ? `${endpoints.tenders.getAll}/all-tenders?${searchParams}`
+    : `${endpoints.tenders.getAll}?${searchParams}`;
+
+  const { data } = await http().get(url);
   return data;
 };
 
@@ -31,6 +39,7 @@ const tender = {
   get: get,
   favourite: favourite,
   getBySlug: getBySlug,
+  getBySimilarTenders: getBySimilarTenders,
 };
 
 export default tender;

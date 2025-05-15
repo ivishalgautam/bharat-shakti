@@ -44,10 +44,10 @@ export const allRoutes = [
     icon: FileUser,
   },
   {
-    label: "Preferences",
-    link: "/dashboard/preferences",
+    label: "Tenders by preferences",
+    link: "/tenders-by-preferences",
     roles: [ROLES.USER],
-    tier: [TIER.FREE, TIER.STANDARD, TIER.PREMIUM],
+    tier: [TIER.STANDARD, TIER.PREMIUM],
     icon: Settings,
   },
 ];

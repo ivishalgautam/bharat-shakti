@@ -16,6 +16,9 @@ import {
   Clock3,
   IndianRupee,
   Heart,
+  Lock,
+  LogIn,
+  ArrowUpRight,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -38,16 +41,36 @@ import { toast } from "@/hooks/use-toast";
 import http from "@/utils/http";
 import { endpoints } from "@/utils/endpoints";
 import { Skeleton } from "./ui/skeleton";
-import { AuthContext } from "@/providers/auth-provider";
+import { AuthContext, useAuth } from "@/providers/auth-provider";
 import application from "@/services/application";
+import { fakeTenderData } from "@/data/constants";
+import Spinner from "./spinner";
+import Link from "next/link";
+import { Small } from "./ui/typography";
+import viewTenders from "@/services/view-tender";
 
 export default function TenderDetails({ data }) {
   const [activeTab, setActiveTab] = useState("overview");
   const queryClient = useQueryClient();
-  const tenderData = data;
-  const { user } = useContext(AuthContext);
-  // const isFollowed = true;
-  // const isLoading = false;
+  const { user, isUserLoading } = useContext(AuthContext);
+  const tenderData = user ? data : { ...data, ...fakeTenderData };
+
+  const {
+    data: viewedTenders = { data: [], total: 0 },
+    isLoading: isViewedTendersLoading,
+    isError: isViewedTendersError,
+    error: viewedTendersError,
+  } = useQuery({
+    queryFn: viewTenders.get,
+    queryKey: ["viewed-tenders"],
+    enabled: !!user,
+  });
+
+  const hasStandardAccess =
+    user && ["standard", "premium"].includes(user.plan_tier);
+  const hasFreeAccess = user?.plan_tier === "free" && viewedTenders.total < 5;
+  const hasViewedTender = viewedTenders.data?.some((t) => t.id === data.id);
+
   const { data: isFollowed, isLoading } = useQuery({
     queryFn: async () => {
       return http().get(
@@ -144,6 +167,8 @@ export default function TenderDetails({ data }) {
     keywords: "bg-amber-100 text-amber-800 hover:bg-amber-200",
   };
 
+  if (isUserLoading) return <Spinner />;
+
   return (
     <div className="from-primary-200 min-h-screen bg-gradient-to-b to-white">
       <div className="container mx-auto px-4 py-8">
@@ -161,38 +186,48 @@ export default function TenderDetails({ data }) {
                   <span>{tenderData.organisation}</span>
                 </div>
               </div>
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <Button
-                  onClick={() =>
-                    applyMutation.mutate({ tender_id: tenderData.id })
-                  }
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700"
-                >
-                  Apply Now
-                </Button>
-                {isLoading ? (
-                  <Skeleton className={"h-10 w-28 bg-gray-200"} />
-                ) : (
-                  <Button
-                    variant="outline"
-                    className="border-indigo-300 text-indigo-700 hover:bg-indigo-50"
-                    onClick={() =>
-                      isFollowed
-                        ? unfollowMutation.mutate({ id: tenderData.id })
-                        : followMutation.mutate({ tender_id: tenderData.id })
-                    }
-                  >
-                    <Heart
-                      className="mr-2 h-4 w-4"
-                      fill={isFollowed ? "red" : "none"}
-                    />
-                    {isFollowed ? "Followed" : "Follow"}
-                  </Button>
+              <div className="space-y-2 text-end">
+                {user?.plan_tier === "premium" && tenderData.wishlist_count && (
+                  <Badge variant="outline" className={"bg-white"}>
+                    {tenderData.wishlist_count ?? 0} others are tracking this
+                    tender.
+                  </Badge>
                 )}
+
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <Button
+                    onClick={() =>
+                      applyMutation.mutate({ tender_id: tenderData.id })
+                    }
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700"
+                  >
+                    Apply Now
+                  </Button>
+                  {isLoading ? (
+                    <Skeleton className={"h-10 w-28 bg-gray-200"} />
+                  ) : (
+                    <Button
+                      variant="outline"
+                      className="border-indigo-300 text-indigo-700 hover:bg-indigo-50"
+                      onClick={() =>
+                        isFollowed
+                          ? unfollowMutation.mutate({ id: tenderData.id })
+                          : followMutation.mutate({ tender_id: tenderData.id })
+                      }
+                    >
+                      <Heart
+                        className="mr-2 h-4 w-4"
+                        fill={isFollowed ? "red" : "none"}
+                      />
+                      {isFollowed ? "Followed" : "Follow"}
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+            <div className="relative mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+              {/* <LoginButton {...{ user,hasStandardAccess, hasFreeAccess, hasViewedTender }} /> */}
               <Card className="border-l-4 border-l-rose-500 shadow-md transition-shadow hover:shadow-lg">
                 <CardContent className="flex items-center gap-3 p-4">
                   <div className="rounded-full bg-rose-100 p-2">
@@ -202,7 +237,7 @@ export default function TenderDetails({ data }) {
                     <p className="text-sm font-medium text-rose-600">
                       Tender Value
                     </p>
-                    <p className="text-xl font-semibold">
+                    <p className={cn("text-xl font-semibold")}>
                       {rupee.format(tenderData.tender_value)}
                     </p>
                   </div>
@@ -217,7 +252,7 @@ export default function TenderDetails({ data }) {
                     <p className="text-sm font-medium text-amber-600">
                       EMD Amount
                     </p>
-                    <p className="text-xl font-semibold">
+                    <p className={cn("text-xl font-semibold")}>
                       {rupee.format(tenderData.emd_amount)}
                     </p>
                   </div>
@@ -232,7 +267,7 @@ export default function TenderDetails({ data }) {
                     <p className="text-sm font-medium text-emerald-600">
                       Bid End Date
                     </p>
-                    <p className="text-xl font-semibold">
+                    <p className={cn("text-xl font-semibold")}>
                       {formatDate(tenderData.bid_end_date_time)}
                     </p>
                   </div>
@@ -247,7 +282,7 @@ export default function TenderDetails({ data }) {
                     <p className="text-sm font-medium text-blue-600">
                       Delivery Days
                     </p>
-                    <p className="text-xl font-semibold">
+                    <p className={cn("text-xl font-semibold")}>
                       {tenderData.delivery_days} days
                     </p>
                   </div>
@@ -290,7 +325,7 @@ export default function TenderDetails({ data }) {
             </TabsList>
 
             {/* Overview Tab */}
-            <TabsContent value="overview" className="mt-6">
+            <TabsContent value="overview" className={cn("mt-6")}>
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                 <div className="lg:col-span-2">
                   <Card className="overflow-hidden border-0 shadow-lg">
@@ -300,19 +335,35 @@ export default function TenderDetails({ data }) {
                         Key information about this tender
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="grid gap-6 p-6">
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        <div className="flex flex-col gap-1 rounded-lg bg-blue-50 p-3">
+                    <CardContent className="relative grid gap-6 p-6">
+                      <LoginButton
+                        {...{
+                          user,
+                          hasStandardAccess,
+                          hasFreeAccess,
+                          hasViewedTender,
+                        }}
+                      />
+                      <div
+                        className={cn("grid grid-cols-1 gap-4 md:grid-cols-2")}
+                      >
+                        <div
+                          className={cn(
+                            "flex flex-col gap-1 rounded-lg bg-blue-50 p-3",
+                          )}
+                        >
                           <p className="text-sm font-medium text-blue-600">
                             Department
                           </p>
-                          <p className="font-medium">{tenderData.department}</p>
+                          <p className={cn("font-medium")}>
+                            {tenderData.department}
+                          </p>
                         </div>
                         <div className="flex flex-col gap-1 rounded-lg bg-purple-50 p-3">
                           <p className="text-sm font-medium text-purple-600">
                             Organisation
                           </p>
-                          <p className="font-medium">
+                          <p className={cn("font-medium")}>
                             {tenderData.organisation}
                           </p>
                         </div>
@@ -320,25 +371,31 @@ export default function TenderDetails({ data }) {
                           <p className="text-sm font-medium text-emerald-600">
                             Office
                           </p>
-                          <p className="font-medium">{tenderData.office}</p>
+                          <p className={cn("font-medium")}>
+                            {tenderData.office}
+                          </p>
                         </div>
                         <div className="flex flex-col gap-1 rounded-lg bg-amber-50 p-3">
                           <p className="text-sm font-medium text-amber-600">
                             Consignee
                           </p>
-                          <p className="font-medium">{tenderData.consignee}</p>
+                          <p className={cn("font-medium")}>
+                            {tenderData.consignee}
+                          </p>
                         </div>
                         <div className="flex flex-col gap-1 rounded-lg bg-rose-50 p-3">
                           <p className="text-sm font-medium text-rose-600">
                             Dated
                           </p>
-                          <p className="font-medium">{tenderData.dated}</p>
+                          <p className={cn("font-medium")}>
+                            {tenderData.dated}
+                          </p>
                         </div>
                         <div className="flex flex-col gap-1 rounded-lg bg-cyan-50 p-3">
                           <p className="text-sm font-medium text-cyan-600">
                             Bid End Date & Time
                           </p>
-                          <p className="font-medium">
+                          <p className={cn("font-medium")}>
                             {formatDate(tenderData.bid_end_date_time)} at{" "}
                             {formatTime(tenderData.bid_end_date_time)}
                           </p>
@@ -351,6 +408,7 @@ export default function TenderDetails({ data }) {
                         <h3 className="mb-3 text-lg font-semibold text-indigo-700">
                           Qualification Requirements
                         </h3>
+
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                           <div className="flex items-center gap-3 rounded-lg bg-gradient-to-r from-indigo-50 to-blue-50 p-3">
                             <div className="rounded-full bg-indigo-100 p-2">
@@ -360,7 +418,7 @@ export default function TenderDetails({ data }) {
                               <p className="text-sm font-medium text-indigo-600">
                                 Min. Average Annual Turnover
                               </p>
-                              <p className="font-medium">
+                              <p className={cn("font-medium")}>
                                 {tenderData.minimum_average_annual_turnover}
                               </p>
                             </div>
@@ -373,7 +431,7 @@ export default function TenderDetails({ data }) {
                               <p className="text-sm font-medium text-purple-600">
                                 Years of Past Experience
                               </p>
-                              <p className="font-medium">
+                              <p className={cn("font-medium")}>
                                 {tenderData.years_of_past_experience}
                               </p>
                             </div>
@@ -386,7 +444,7 @@ export default function TenderDetails({ data }) {
                               <p className="text-sm font-medium text-emerald-600">
                                 Evaluation Method
                               </p>
-                              <p className="font-medium">
+                              <p className={cn("font-medium")}>
                                 {tenderData.evaluation_method}
                               </p>
                             </div>
@@ -399,7 +457,7 @@ export default function TenderDetails({ data }) {
                               <p className="text-sm font-medium text-amber-600">
                                 EPBG Percentage
                               </p>
-                              <p className="font-medium">
+                              <p className={cn("font-medium")}>
                                 {tenderData.epbg_percentage}%
                               </p>
                             </div>
@@ -413,7 +471,11 @@ export default function TenderDetails({ data }) {
                         <h3 className="mb-3 text-lg font-semibold text-indigo-700">
                           Pre-qualification Criteria
                         </h3>
-                        <div className="rounded-lg bg-gradient-to-r from-indigo-50 to-purple-50 p-4">
+                        <div
+                          className={cn(
+                            "rounded-lg bg-gradient-to-r from-indigo-50 to-purple-50 p-4",
+                          )}
+                        >
                           <p>{tenderData.pre_qualification_criteria}</p>
                         </div>
                       </div>
@@ -426,12 +488,20 @@ export default function TenderDetails({ data }) {
                     <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
                       <CardTitle>Location & Categories</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid gap-6 p-6">
+                    <CardContent className="relative grid gap-6 p-6">
+                      <LoginButton
+                        {...{
+                          user,
+                          hasStandardAccess,
+                          hasFreeAccess,
+                          hasViewedTender,
+                        }}
+                      />
                       <div className="flex flex-col gap-2">
                         <h3 className="flex items-center gap-2 text-sm font-medium text-purple-700">
                           <MapPin className="h-4 w-4" /> States
                         </h3>
-                        <div className="flex flex-wrap gap-2">
+                        <div className={cn("flex flex-wrap gap-2")}>
                           {tenderData.states?.map((state) => (
                             <Badge
                               key={state.id}
@@ -447,7 +517,7 @@ export default function TenderDetails({ data }) {
                         <h3 className="flex items-center gap-2 text-sm font-medium text-blue-700">
                           <MapPin className="h-4 w-4" /> Cities
                         </h3>
-                        <div className="flex flex-wrap gap-2">
+                        <div className={cn("flex flex-wrap gap-2")}>
                           {tenderData.cities?.map((city) => (
                             <Badge
                               key={city.id}
@@ -463,7 +533,7 @@ export default function TenderDetails({ data }) {
                         <h3 className="flex items-center gap-2 text-sm font-medium text-emerald-700">
                           <Briefcase className="h-4 w-4" /> Sectors
                         </h3>
-                        <div className="flex flex-wrap gap-2">
+                        <div className={cn("flex flex-wrap gap-2", {})}>
                           {tenderData.sectors?.map((sector) => (
                             <Badge
                               key={sector.id}
@@ -479,7 +549,7 @@ export default function TenderDetails({ data }) {
                         <h3 className="flex items-center gap-2 text-sm font-medium text-amber-700">
                           <FileText className="h-4 w-4" /> Keywords
                         </h3>
-                        <div className="flex flex-wrap gap-2">
+                        <div className={cn("flex flex-wrap gap-2", {})}>
                           {tenderData.keywords?.map((keyword) => (
                             <Badge
                               key={keyword.id}
@@ -497,7 +567,15 @@ export default function TenderDetails({ data }) {
                     <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white">
                       <CardTitle>Important Dates</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid gap-4 bg-gradient-to-b from-emerald-50 to-white p-6">
+                    <CardContent className="relative grid gap-4 bg-gradient-to-b from-emerald-50 to-white p-6">
+                      <LoginButton
+                        {...{
+                          user,
+                          hasStandardAccess,
+                          hasFreeAccess,
+                          hasViewedTender,
+                        }}
+                      />
                       <div className="flex items-start gap-3">
                         <div className="rounded-full bg-emerald-100 p-2">
                           <Calendar className="h-5 w-5 text-emerald-600" />
@@ -506,7 +584,7 @@ export default function TenderDetails({ data }) {
                           <p className="font-medium text-emerald-700">
                             Tender Date
                           </p>
-                          <p className="text-sm text-emerald-600">
+                          <p className={cn("text-sm text-emerald-600", {})}>
                             {tenderData.dated}
                           </p>
                         </div>
@@ -519,7 +597,7 @@ export default function TenderDetails({ data }) {
                           <p className="font-medium text-teal-700">
                             Bid End Date & Time
                           </p>
-                          <p className="text-sm text-teal-600">
+                          <p className={cn("text-sm text-teal-600", {})}>
                             {formatDate(tenderData.bid_end_date_time)} at{" "}
                             {formatTime(tenderData.bid_end_date_time)}
                           </p>
@@ -532,7 +610,7 @@ export default function TenderDetails({ data }) {
             </TabsContent>
 
             {/* Specifications Tab */}
-            <TabsContent value="specifications" className="mt-6">
+            <TabsContent value="specifications" className={cn("mt-6")}>
               <Card className="overflow-hidden border-0 shadow-lg">
                 <CardHeader className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
                   <CardTitle>Tender Specifications</CardTitle>
@@ -540,7 +618,15 @@ export default function TenderDetails({ data }) {
                     Detailed specifications for this tender
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="grid gap-6 p-6">
+                <CardContent className="relative grid gap-6 p-6">
+                  <LoginButton
+                    {...{
+                      user,
+                      hasStandardAccess,
+                      hasFreeAccess,
+                      hasViewedTender,
+                    }}
+                  />
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div className="flex items-center gap-3 rounded-lg bg-blue-50 p-3">
                       <div className="rounded-full bg-blue-100 p-2">
@@ -550,7 +636,9 @@ export default function TenderDetails({ data }) {
                         <p className="text-sm font-medium text-blue-600">
                           Quantity
                         </p>
-                        <p className="font-medium">{tenderData.quantity}</p>
+                        <p className={cn("font-medium", {})}>
+                          {tenderData.quantity}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 rounded-lg bg-cyan-50 p-3">
@@ -561,7 +649,9 @@ export default function TenderDetails({ data }) {
                         <p className="text-sm font-medium text-cyan-600">
                           Unit of Measurement
                         </p>
-                        <p className="font-medium">{tenderData.uom}</p>
+                        <p className={cn("font-medium", {})}>
+                          {tenderData.uom}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 rounded-lg bg-indigo-50 p-3">
@@ -572,7 +662,9 @@ export default function TenderDetails({ data }) {
                         <p className="text-sm font-medium text-indigo-600">
                           Number of Items
                         </p>
-                        <p className="font-medium">{tenderData.no_of_items}</p>
+                        <p className={cn("font-medium", {})}>
+                          {tenderData.no_of_items}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 rounded-lg bg-purple-50 p-3">
@@ -583,7 +675,9 @@ export default function TenderDetails({ data }) {
                         <p className="text-sm font-medium text-purple-600">
                           Distribution
                         </p>
-                        <p className="font-medium">{tenderData.distribution}</p>
+                        <p className={cn("font-medium", {})}>
+                          {tenderData.distribution}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -597,7 +691,12 @@ export default function TenderDetails({ data }) {
                     <div className="grid grid-cols-1 gap-4">
                       <div className="flex items-center gap-3 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 p-3">
                         <div
-                          className={`flex h-6 w-6 items-center justify-center rounded-full ${tenderData.splitting_applied ? "bg-green-500" : "bg-red-500"}`}
+                          className={cn(
+                            `flex h-6 w-6 items-center justify-center rounded-full bg-red-500`,
+                            {
+                              "bg-green-500": tenderData.splitting_applied,
+                            },
+                          )}
                         >
                           {tenderData.splitting_applied ? (
                             <svg
@@ -630,11 +729,13 @@ export default function TenderDetails({ data }) {
                         <p className="font-medium">
                           Splitting Applied:{" "}
                           <span
-                            className={
-                              tenderData.splitting_applied
-                                ? "text-green-600"
-                                : "text-red-600"
-                            }
+                            className={cn(
+                              `${
+                                tenderData.splitting_applied
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }`,
+                            )}
                           >
                             {tenderData.splitting_applied ? "Yes" : "No"}
                           </span>
@@ -642,7 +743,9 @@ export default function TenderDetails({ data }) {
                       </div>
                       <div className="flex items-center gap-3 rounded-lg bg-gradient-to-r from-indigo-50 to-purple-50 p-3">
                         <div
-                          className={`flex h-6 w-6 items-center justify-center rounded-full ${tenderData.mse_exemption_for_turnover ? "bg-green-500" : "bg-red-500"}`}
+                          className={cn(
+                            `flex h-6 w-6 items-center justify-center rounded-full ${tenderData.mse_exemption_for_turnover ? "bg-green-500" : "bg-red-500"}`,
+                          )}
                         >
                           {tenderData.mse_exemption_for_turnover ? (
                             <svg
@@ -675,11 +778,13 @@ export default function TenderDetails({ data }) {
                         <p className="font-medium">
                           MSE Exemption for Turnover:{" "}
                           <span
-                            className={
-                              tenderData.mse_exemption_for_turnover
-                                ? "text-green-600"
-                                : "text-red-600"
-                            }
+                            className={cn(
+                              `${
+                                tenderData.mse_exemption_for_turnover
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }`,
+                            )}
                           >
                             {tenderData.mse_exemption_for_turnover
                               ? "Yes"
@@ -689,7 +794,9 @@ export default function TenderDetails({ data }) {
                       </div>
                       <div className="flex items-center gap-3 rounded-lg bg-gradient-to-r from-purple-50 to-pink-50 p-3">
                         <div
-                          className={`flex h-6 w-6 items-center justify-center rounded-full ${tenderData.startup_exemption_for_turnover ? "bg-green-500" : "bg-red-500"}`}
+                          className={cn(
+                            `flex h-6 w-6 items-center justify-center rounded-full ${tenderData.startup_exemption_for_turnover ? "bg-green-500" : "bg-red-500"}`,
+                          )}
                         >
                           {tenderData.startup_exemption_for_turnover ? (
                             <svg
@@ -722,11 +829,13 @@ export default function TenderDetails({ data }) {
                         <p className="font-medium">
                           Startup Exemption for Turnover:{" "}
                           <span
-                            className={
-                              tenderData.startup_exemption_for_turnover
-                                ? "text-green-600"
-                                : "text-red-600"
-                            }
+                            className={cn(
+                              `${
+                                tenderData.startup_exemption_for_turnover
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }`,
+                            )}
                           >
                             {tenderData.startup_exemption_for_turnover
                               ? "Yes"
@@ -736,7 +845,9 @@ export default function TenderDetails({ data }) {
                       </div>
                       <div className="flex items-center gap-3 rounded-lg bg-gradient-to-r from-pink-50 to-rose-50 p-3">
                         <div
-                          className={`flex h-6 w-6 items-center justify-center rounded-full ${tenderData.bid_to_ra_enabled ? "bg-green-500" : "bg-red-500"}`}
+                          className={cn(
+                            `flex h-6 w-6 items-center justify-center rounded-full ${tenderData.bid_to_ra_enabled ? "bg-green-500" : "bg-red-500"}`,
+                          )}
                         >
                           {tenderData.bid_to_ra_enabled ? (
                             <svg
@@ -769,11 +880,13 @@ export default function TenderDetails({ data }) {
                         <p className="font-medium">
                           Bid to RA Enabled:{" "}
                           <span
-                            className={
-                              tenderData.bid_to_ra_enabled
-                                ? "text-green-600"
-                                : "text-red-600"
-                            }
+                            className={cn(
+                              `${
+                                tenderData.bid_to_ra_enabled
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }`,
+                            )}
                           >
                             {tenderData.bid_to_ra_enabled ? "Yes" : "No"}
                           </span>
@@ -786,7 +899,7 @@ export default function TenderDetails({ data }) {
             </TabsContent>
 
             {/* Documents Tab */}
-            <TabsContent value="documents" className="mt-6">
+            <TabsContent value="documents" className={cn("mt-6")}>
               <Card className="overflow-hidden border-0 shadow-lg">
                 <CardHeader className="bg-gradient-to-r from-amber-500 to-orange-500 text-white">
                   <CardTitle>Tender Documents</CardTitle>
@@ -794,7 +907,16 @@ export default function TenderDetails({ data }) {
                     Download specification documents and drawings
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="grid gap-6 p-6">
+                <CardContent className="relative grid gap-6 p-6">
+                  <LoginButton
+                    {...{
+                      user,
+                      hasStandardAccess,
+                      hasFreeAccess,
+                      hasViewedTender,
+                      tab: "document",
+                    }}
+                  />
                   <div>
                     <h3 className="mb-3 text-lg font-semibold text-amber-700">
                       Buyer Specification Documents
@@ -813,22 +935,29 @@ export default function TenderDetails({ data }) {
                               <p className="font-medium text-amber-700">
                                 Document {index + 1}
                               </p>
-                              <p className="max-w-[250px] truncate text-sm text-amber-600">
+                              <p
+                                className={cn(
+                                  "max-w-[250px] truncate text-sm text-amber-600",
+                                  { "blur-sm": !user },
+                                )}
+                              >
                                 {doc.split("\\").pop()}
                               </p>
                             </div>
-                            <a
-                              target="_blank"
-                              download
-                              href={`${config.file_base}${doc}`}
-                              className={cn(
-                                buttonVariants({ size: "sm" }),
-                                "bg-amber-500 text-white hover:bg-amber-600",
-                              )}
-                            >
-                              <Download className="mr-2 h-4 w-4" />
-                              Download
-                            </a>
+                            {user && (hasFreeAccess || hasViewedTender) && (
+                              <a
+                                target="_blank"
+                                download
+                                href={`${config.file_base}${doc}`}
+                                className={cn(
+                                  buttonVariants({ size: "sm" }),
+                                  "bg-amber-500 text-white hover:bg-amber-600",
+                                )}
+                              >
+                                <Download className="mr-2 h-4 w-4" />
+                                Download
+                              </a>
+                            )}
                           </Card>
                         ),
                       )}
@@ -854,22 +983,29 @@ export default function TenderDetails({ data }) {
                             <p className="font-medium text-orange-700">
                               Drawing {index + 1}
                             </p>
-                            <p className="max-w-[250px] truncate text-sm text-orange-600">
+                            <p
+                              className={cn(
+                                "max-w-[250px] truncate text-sm text-orange-600",
+                                { "blur-sm": !user },
+                              )}
+                            >
                               {doc.split("\\").pop()}
                             </p>
                           </div>
-                          <a
-                            target="_blank"
-                            download
-                            href={`${config.file_base}${doc}`}
-                            className={cn(
-                              buttonVariants({ size: "sm" }),
-                              "bg-orange-500 text-white hover:bg-orange-600",
-                            )}
-                          >
-                            <Download className="mr-2 h-4 w-4" />
-                            Download
-                          </a>
+                          {user && hasStandardAccess && (
+                            <a
+                              target="_blank"
+                              download
+                              href={`${config.file_base}${doc}`}
+                              className={cn(
+                                buttonVariants({ size: "sm" }),
+                                "bg-orange-500 text-white hover:bg-orange-600",
+                              )}
+                            >
+                              <Download className="mr-2 h-4 w-4" />
+                              Download
+                            </a>
+                          )}
                         </Card>
                       ))}
                     </div>
@@ -879,7 +1015,7 @@ export default function TenderDetails({ data }) {
             </TabsContent>
 
             {/* Related Tab */}
-            <TabsContent value="related" className="mt-6">
+            <TabsContent value="related" className={cn("mt-6")}>
               <Card className="overflow-hidden border-0 shadow-lg">
                 <CardHeader className="bg-gradient-to-r from-emerald-500 to-green-500 text-white">
                   <CardTitle>Related Entities</CardTitle>
@@ -887,7 +1023,15 @@ export default function TenderDetails({ data }) {
                     Organizations and authorities related to this tender
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="grid gap-6 p-6">
+                <CardContent className="relative grid gap-6 p-6">
+                  <LoginButton
+                    {...{
+                      user,
+                      hasStandardAccess,
+                      hasFreeAccess,
+                      hasViewedTender,
+                    }}
+                  />
                   <div>
                     <h3 className="mb-3 text-lg font-semibold text-emerald-700">
                       Authorities
@@ -904,10 +1048,20 @@ export default function TenderDetails({ data }) {
                             </div>
                           </div>
                           <CardContent className="bg-gradient-to-b from-emerald-50 to-white p-4">
-                            <h4 className="font-semibold text-emerald-700">
+                            <h4
+                              className={cn(
+                                "font-semibold text-emerald-700",
+                                {},
+                              )}
+                            >
                               {authority.name}
                             </h4>
-                            <p className="mt-1 text-sm text-emerald-600">
+                            <p
+                              className={cn(
+                                "mt-1 text-sm text-emerald-600",
+                                {},
+                              )}
+                            >
                               {authority.is_featured
                                 ? "Featured Authority"
                                 : "Authority"}
@@ -936,10 +1090,14 @@ export default function TenderDetails({ data }) {
                             </div>
                           </div>
                           <CardContent className="bg-gradient-to-b from-green-50 to-white p-4">
-                            <h4 className="font-semibold text-green-700">
+                            <h4
+                              className={cn("font-semibold text-green-700", {})}
+                            >
                               {sector.name}
                             </h4>
-                            <p className="mt-1 text-sm text-green-600">
+                            <p
+                              className={cn("mt-1 text-sm text-green-600", {})}
+                            >
                               {sector.is_featured
                                 ? "Featured Sector"
                                 : "Sector"}
@@ -954,6 +1112,51 @@ export default function TenderDetails({ data }) {
             </TabsContent>
           </Tabs>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function LoginButton({
+  user,
+  hasStandardAccess,
+  hasFreeAccess,
+  hasViewedTender,
+  tab = "",
+}) {
+  // Calculate access logic
+  const shouldHideButton =
+    user &&
+    (hasStandardAccess ||
+      (tab !== "document" && (hasFreeAccess || hasViewedTender)));
+
+  if (shouldHideButton) {
+    return null;
+  }
+
+  // Determine if the CTA is login or subscribe
+  const isFreeUser = user?.plan_tier === "free";
+  const isGuest = !user;
+
+  return (
+    <div className="absolute inset-0 z-10 flex items-center justify-center gap-2 rounded-lg backdrop-blur-sm">
+      <div className="flex items-center justify-center gap-4 rounded-lg border bg-white p-4 shadow-sm">
+        <div className="grow-0 rounded-full bg-red-500/30 p-2">
+          <Lock className="text-red-500" size={15} />
+        </div>
+        <Small className="w-full">Access full tender details at no cost</Small>
+        {isGuest && (
+          <Link className={cn("grow-0", buttonVariants())} href={"/login"}>
+            Login
+            <LogIn />
+          </Link>
+        )}
+        {isFreeUser && (
+          <Link className={cn("grow-0", buttonVariants())} href={"/pricing"}>
+            Subscribe
+            <ArrowUpRight />
+          </Link>
+        )}
       </div>
     </div>
   );

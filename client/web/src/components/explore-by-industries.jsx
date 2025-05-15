@@ -8,6 +8,7 @@ import { Skeleton } from "./ui/skeleton";
 import Section from "./layout/section";
 import industries from "@/services/industry";
 import IndustryCard from "./cards/keyword";
+import SectionHeading from "./layout/section-heading";
 
 export default function ExploreByIndustries() {
   const { data, isLoading, isError, error } = useQuery({
@@ -21,12 +22,7 @@ export default function ExploreByIndustries() {
     <Section>
       <div className="container">
         <div className="flex flex-col items-center gap-4">
-          <div className="flex items-center">
-            <Tag className="mr-2 h-5 w-5" />
-            <h2 className="text-2xl font-bold tracking-tight">
-              Explore by Industries
-            </h2>
-          </div>
+          <SectionHeading heading="Explore by Industries" />
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
             {isLoading
               ? Array.from({ length: 12 }).map((_, i) => (

@@ -1,20 +1,15 @@
-import { Building2, LogIn, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import Link from "next/link";
-import React, { useContext } from "react";
 import { Button, buttonVariants } from "./ui/button";
 import Logo from "./logo";
-import { useAuth } from "@/providers/auth-provider";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import config from "@/config";
-import AvatarDropdown from "./ui/avatar-dropdown";
-import { Skeleton } from "./ui/skeleton";
 import UserDropdown from "./user-dropdown";
+import { useLocalStorage } from "@uidotdev/usehooks";
 
 export default function Header() {
-  const { user, isUserLoading } = useAuth();
+  const [user] = useLocalStorage("user", null);
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
-      <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+      <div className="container flex h-20 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-2">
           <Logo />
         </div>
@@ -39,8 +34,8 @@ export default function Header() {
           </Link>
         </nav>
         <div className="flex items-center gap-2">
-          {isUserLoading ? null : user ? (
-            <UserDropdown />
+          {user ? (
+            <UserDropdown user={user} />
           ) : (
             <>
               <Link

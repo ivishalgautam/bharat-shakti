@@ -8,6 +8,7 @@ import states from "@/services/state";
 import { Skeleton } from "./ui/skeleton";
 import Section from "./layout/section";
 import StateCard from "./cards/state-card";
+import SectionHeading from "./layout/section-heading";
 
 export default function ExploreByStates() {
   const { data, isLoading, isError, error } = useQuery({
@@ -24,10 +25,9 @@ export default function ExploreByStates() {
         <div className="flex flex-col items-center gap-4">
           <div className="flex items-center">
             {/* <MapPin className="mr-2 h-5 w-5" /> */}
-            <h2 className="text-2xl font-bold tracking-tight text-white">
-              Explore by States
-            </h2>
+            <h2 className="text-2xl font-bold tracking-tight text-white"></h2>
           </div>
+          <SectionHeading heading="Explore by States" />
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
             {isLoading
               ? Array.from({ length: 12 }).map((_, i) => (

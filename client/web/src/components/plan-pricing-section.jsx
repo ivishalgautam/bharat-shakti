@@ -91,7 +91,7 @@ function Step({ index, currentStep, label, isLastStep }) {
   );
 }
 
-export default function PricingSection1() {
+export default function PricingSection() {
   const [duration, setDuration] = useState("1");
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -425,8 +425,10 @@ export default function PricingSection1() {
                     </div>
                   )}
                   <CardHeader>
-                    <CardTitle className="text-xl">{plan.name}</CardTitle>
-                    <CardDescription>
+                    <CardTitle className="text-start text-xl">
+                      {plan.name}
+                    </CardTitle>
+                    <CardDescription className="text-start">
                       {plan.plan_tier === "standard"
                         ? "For individuals and small teams"
                         : "For businesses with advanced needs"}
@@ -449,11 +451,13 @@ export default function PricingSection1() {
                         </span>
                       )}
                     </div>
-                    {Number.parseFloat(plan.discount_percentage) > 0 && (
-                      <span className="mt-1 inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                        Save {plan.discount_percentage}%
-                      </span>
-                    )}
+                    <div className="mt-1 text-start">
+                      {Number.parseFloat(plan.discount_percentage) > 0 && (
+                        <span className="inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                          Save {plan.discount_percentage}%
+                        </span>
+                      )}
+                    </div>
                     <ul className="mt-6 space-y-2">
                       {plan.features.map((feature, index) => (
                         <li key={index} className="flex items-center gap-2">

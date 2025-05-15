@@ -1,4 +1,5 @@
 import { endpoints } from "@/utils/endpoints";
+import { signOut } from "next-auth/react";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
@@ -11,7 +12,10 @@ export async function POST(request) {
     cookieStore.delete("token");
     cookieStore.delete("refresh_token");
     cookieStore.delete("role");
-
+    cookieStore.delete("next-auth.session-token");
+    cookieStore.delete("next-auth.csrf-token");
+    cookieStore.delete("next-auth.callback-url");
+    signOut();
     return NextResponse.json({ message: "Logged out." }, { status: 200 });
   } catch (err) {
     console.log("Error logging out in:", err);
