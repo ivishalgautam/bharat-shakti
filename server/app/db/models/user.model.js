@@ -91,7 +91,7 @@ const create = async (req) => {
   const hash_password = req.body.password
     ? hash.encrypt(req.body.password)
     : "";
-  return await UserModel.create({
+  const data = await UserModel.create({
     username: req.body.username,
     password: hash_password,
     first_name: req.body?.first_name,
@@ -103,6 +103,8 @@ const create = async (req) => {
     provider: req?.body?.provider,
     provider_account_id: req?.body?.provider_account_id,
   });
+
+  return data.dataValues;
 };
 
 const get = async (req) => {
@@ -292,6 +294,7 @@ const getByEmailId = async (req) => {
     where: {
       email: req.body.email,
     },
+    raw: true,
   });
 };
 

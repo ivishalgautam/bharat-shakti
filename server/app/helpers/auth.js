@@ -27,7 +27,7 @@ function generateRefreshToken(userData) {
 const verifyToken = async (req, res) => {
   const authHeader = req.headers["authorization"] ?? req.cookies.token;
   if (!authHeader) {
-    res.code(401).send({ message: "unauthorized!" });
+    return res.code(401).send({ message: "unauthorized!" });
   }
 
   const token = authHeader.startsWith("Bearer")
@@ -38,9 +38,16 @@ const verifyToken = async (req, res) => {
       .code(401)
       .send({ message: "A token is required for authentication" });
   }
+
   try {
     const decoded = jwt.verify(token, config.jwt_secret);
     const userData = await table.UserModel.getByUsername(req, decoded);
+
+    const sessions = await table.SessionModel.getByUserId(decoded.user.id);
+    const sessionExist = sessions.some((s) => s.id === decoded.user.session_id);
+    console.log({ access: decoded });
+    if (!sessionExist) res.code(401).send({ message: "unauthorized!" });
+
     req.user_data = userData;
     req.decoded = decoded;
   } catch (error) {
@@ -53,6 +60,12 @@ const verifyRefreshToken = async (req, res) => {
   const refreshToken = req.body.refresh_token;
   try {
     const decoded = jwt.verify(refreshToken, config.jwt_refresh_secret);
+    console.log({ refresh: decoded });
+    const sessions = await table.SessionModel.getByUserId(decoded.user.id);
+    const sessionExist = sessions.some((s) => s.id === decoded.user.session_id);
+
+    if (!sessionExist) res.code(401).send({ message: "unauthorized!" });
+
     const [jwtToken, time] = generateAccessToken(decoded.user);
     return res.send({ token: jwtToken, expire_time: Date.now() + time });
   } catch (error) {

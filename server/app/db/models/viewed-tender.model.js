@@ -192,6 +192,23 @@ const getByUserAndTenderId = async (req) => {
   });
 };
 
+const getTenderByUser = async (req) => {
+  return await ViewedTenderModel.findOne({
+    where: {
+      user_id: req.user_data.id,
+    },
+    raw: true,
+  });
+};
+
+const countByUser = async (req) => {
+  return await ViewedTenderModel.count({
+    where: {
+      user_id: req.user_data.id,
+    },
+  });
+};
+
 const deleteByTenderId = async (req, id, { transaction }) => {
   return await ViewedTenderModel.destroy({
     where: { tender_id: req.params.id || id },
@@ -205,4 +222,6 @@ export default {
   get: get,
   getByUserAndTenderId: getByUserAndTenderId,
   deleteByTenderId: deleteByTenderId,
+  countByUser: countByUser,
+  getTenderByUser: getTenderByUser,
 };

@@ -1,6 +1,7 @@
 "use strict";
 import constants from "../../lib/constants/index.js";
 import sequelizeFwk, { Deferrable, Op, QueryTypes } from "sequelize";
+import { randomBytesGenerator } from "../../lib/encryption/index.js";
 const { DataTypes } = sequelizeFwk;
 
 let ApplicationModel = null;
@@ -15,6 +16,10 @@ const init = async (sequelize) => {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         unique: true,
+      },
+      application_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       user_id: {
         type: DataTypes.UUID,
@@ -36,6 +41,18 @@ const init = async (sequelize) => {
           deferrable: Deferrable.INITIALLY_IMMEDIATE,
         },
       },
+      status: {
+        type: DataTypes.ENUM(
+          "Pending",
+          "Initiated",
+          "Order Received",
+          "Completed"
+        ),
+        defaultValue: "Pending",
+        validate: {
+          isIn: [["Pending", "Initiated", "Order Received", "Completed"]],
+        },
+      },
     },
     {
       createdAt: "created_at",
@@ -51,6 +68,7 @@ const create = async (req, { transaction }) => {
     {
       user_id: req.user_data.id,
       tender_id: req.body.tender_id,
+      application_id: randomBytesGenerator(8),
     },
     { transaction }
   );
@@ -69,9 +87,15 @@ const get = async (req) => {
   let q = req.query.q;
   if (q) {
     whereConditions.push(
-      `(usr.first_name ILIKE :query OR usr.last_name ILIKE :query OR usr.email ILIKE :query OR tdr.name ILIKE :query OR tdr.bid_number ILIKE :query)`
+      `(usr.first_name ILIKE :query OR usr.last_name ILIKE :query OR usr.email ILIKE :query OR tdr.name ILIKE :query OR tdr.bid_number ILIKE :query OR apl.application_id ILIKE :query)`
     );
     queryParams.query = `%${q}%`;
+  }
+
+  const status = req.query.status ? req.query.status.split(".") : null;
+  if (status?.length) {
+    whereConditions.push(`apl.status = any(:status)`);
+    queryParams.status = `{${status.join(",")}}`;
   }
 
   const page = req.query.page ? Number(req.query.page) : 1;
@@ -95,7 +119,7 @@ const get = async (req) => {
 
   let query = `
   SELECT
-      apl.id, usr.id as user_id, CONCAT(usr.first_name, ' ', usr.last_name) as fullname, usr.username, 
+      apl.id, apl.application_id, apl.status, usr.id as user_id, CONCAT(usr.first_name, ' ', usr.last_name) as fullname, usr.username, 
       usr.mobile_number, usr.email, usr.role, usr.is_active, apl.created_at,
       tdr.id AS tender_id, tdr.name AS tender_name, tdr.bid_end_date_time, tdr.tender_value
     FROM ${constants.models.APPLICATION_TABLE} apl
@@ -143,6 +167,16 @@ const getById = async (req, id) => {
   });
 };
 
+const update = async (req, id, { transaction }) => {
+  return await ApplicationModel.update(
+    { status: req.body.status },
+    {
+      where: { id: req.params.id || id },
+      transaction,
+    }
+  );
+};
+
 export default {
   init: init,
   create: create,
@@ -150,4 +184,5 @@ export default {
   getByUserAndTenderId: getByUserAndTenderId,
   deleteById: deleteById,
   getById: getById,
+  update: update,
 };

@@ -8,7 +8,8 @@ const { message, status } = constants.http;
 const create = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
-    if (!["premium", "elite"].includes(req.user_data.plan_tier))
+    const viewedTendersCount = await table.ViewedTenderModel.countByUser(req);
+    if (req.user_data.plan_tier === "free" && viewedTendersCount === 5)
       return res.code(status.CREATED);
 
     const record = await table.ViewedTenderModel.getByUserAndTenderId(req);
@@ -51,8 +52,21 @@ const deleteById = async (req, res) => {
   }
 };
 
+const count = async (req, res) => {
+  const transaction = await sequelize.transaction();
+  try {
+    const record = await table.ViewedTenderModel.countByUser(req);
+
+    res.code(status.CREATED).send({ count: record });
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
+};
+
 export default {
   create: create,
   get: get,
   deleteById: deleteById,
+  count: count,
 };

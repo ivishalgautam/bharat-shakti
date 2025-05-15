@@ -27,6 +27,11 @@ const init = async (sequelize) => {
         },
         onDelete: "CASCADE",
       },
+      name: { type: DataTypes.STRING, allowNull: false },
+      category_ids: {
+        type: DataTypes.ARRAY(DataTypes.UUID),
+        defaultValue: [],
+      },
       subcategory_ids: {
         type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
@@ -67,7 +72,9 @@ const init = async (sequelize) => {
 const create = async (req, { transaction }) => {
   return await PreferenceModel.create(
     {
-      user_id: req.body.user_id,
+      user_id: req.user_data.id,
+      name: req.body.name,
+      category_ids: req.body.category_ids,
       subcategory_ids: req.body.subcategory_ids,
       authority_ids: req.body.authority_ids,
       city_ids: req.body.city_ids,
@@ -82,6 +89,8 @@ const create = async (req, { transaction }) => {
 const update = async (req, id, { transaction }) => {
   const [rowCount, rows] = await PreferenceModel.update(
     {
+      name: req.body.name,
+      category_ids: req.body.category_ids,
       subcategory_ids: req.body.subcategory_ids,
       authority_ids: req.body.authority_ids,
       city_ids: req.body.city_ids,
@@ -102,23 +111,29 @@ const update = async (req, id, { transaction }) => {
 };
 
 const get = async (req) => {
-  const data = await PreferenceModel.sequelize.query(query, {
-    replacements: { ...queryParams, limit, offset },
-    type: QueryTypes.SELECT,
-    raw: true,
+  const preferences = await PreferenceModel.findAll({
+    where: { user_id: req?.user_data?.id || userId },
+    order: [["created_at", "DESC"]],
   });
 
-  const count = await PreferenceModel.sequelize.query(countQuery, {
-    replacements: { ...queryParams },
-    type: QueryTypes.SELECT,
+  return { preferences };
+};
+
+const getById = async (req, id) => {
+  return await PreferenceModel.findOne({
+    where: { id: req?.params?.id || id },
     raw: true,
   });
-
-  return { tenders: data, total: count?.[0]?.total ?? 0 };
 };
 
 const getByUser = async (req, userId) => {
-  return await PreferenceModel.findOne({
+  return await PreferenceModel.findAll({
+    where: { user_id: req?.user_data?.id || userId },
+  });
+};
+
+const countByUser = async (req, userId) => {
+  return await PreferenceModel.count({
     where: { user_id: req?.user_data?.id || userId },
   });
 };
@@ -128,5 +143,7 @@ export default {
   create: create,
   update: update,
   get: get,
+  getById: getById,
   getByUser: getByUser,
+  countByUser: countByUser,
 };

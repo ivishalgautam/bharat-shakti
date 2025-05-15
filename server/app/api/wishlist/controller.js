@@ -8,6 +8,12 @@ const { message, status } = constants.http;
 const create = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
+    const tenderRecord = await table.TenderModel.getById(0, req.body.tender_id);
+    if (!tenderRecord)
+      return res
+        .code(status.NOT_FOUND)
+        .send({ status: false, message: "Tender not found!" });
+
     const record = await table.WishlistModel.getByUserAndTenderId(req);
     if (record)
       return res
@@ -15,8 +21,17 @@ const create = async (req, res) => {
         .send({ status: false, message: "Already followed." });
 
     await table.WishlistModel.create(req, { transaction });
-    await transaction.commit();
 
+    const wishlist_count = Number(tenderRecord.wishlist_count) + 1;
+    await table.TenderModel.update(
+      { body: { wishlist_count } },
+      req.body.tender_id,
+      {
+        transaction,
+      }
+    );
+
+    await transaction.commit();
     res
       .code(status.CREATED)
       .send({ status: true, message: "Followed successfully" });

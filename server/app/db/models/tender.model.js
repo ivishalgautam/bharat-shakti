@@ -2,6 +2,7 @@
 import moment from "moment";
 import constants from "../../lib/constants/index.js";
 import sequelizeFwk, { Op, QueryTypes } from "sequelize";
+import { toPgArray } from "../../helpers/to-pg-array.js";
 const { DataTypes } = sequelizeFwk;
 
 let TenderModel = null;
@@ -113,6 +114,19 @@ const init = async (sequelize) => {
       },
       keywords: {
         type: DataTypes.ARRAY(DataTypes.STRING),
+      },
+
+      view_count: {
+        type: DataTypes.BIGINT,
+        defaultValue: 0,
+      },
+      wishlist_count: {
+        type: DataTypes.BIGINT,
+        defaultValue: 0,
+      },
+      applied_count: {
+        type: DataTypes.BIGINT,
+        defaultValue: 0,
       },
       meta_title: { type: DataTypes.TEXT, defaultValue: "" },
       meta_description: { type: DataTypes.TEXT, defaultValue: "" },
@@ -233,6 +247,10 @@ const update = async (req, id, { transaction }) => {
       state_ids: req.body.state_ids,
       keywords: req.body.keywords,
 
+      view_count: req.body.view_count,
+      wishlist_count: req.body.wishlist_count,
+      applied_count: req.body.applied_count,
+
       meta_title: req.body.meta_title,
       meta_description: req.body.meta_description,
       meta_keywords: req.body.meta_keywords,
@@ -261,6 +279,29 @@ const get = async (req) => {
         OR tdr.bid_number ILIKE :query OR array_to_string(tdr.keywords, '') ILIKE :ilikeQuery`
     );
     queryParams.ilikeQuery = `%${q}%`;
+  }
+
+  const categories = req.query.categories
+    ? String(req.query.categories).split(".")
+    : null;
+  if (categories) {
+    whereConditions.push(`
+      EXISTS (
+        SELECT 1
+        FROM ${constants.models.SUB_CATEGORY_TABLE} sub
+        WHERE sub.id = ANY(tdr.subcategory_ids)
+        AND sub.category_id = ANY(:categoryIds)
+      )
+    `);
+    queryParams.categoryIds = `{${categories.join(",")}}`;
+  }
+
+  const subcategories = req.query.subcategories
+    ? String(req.query.subcategories).split(".")
+    : null;
+  if (subcategories) {
+    whereConditions.push(`tdr.subcategory_ids && :subcategoryIds`);
+    queryParams.subcategoryIds = `{${subcategories.join(",")}}`;
   }
 
   const authorities = req.query.authorities
@@ -400,9 +441,29 @@ const getWithPlan = async (req) => {
         OR EXISTS (SELECT 1 FROM ${constants.models.STATE_TABLE} st WHERE st.id = ANY(tdr.state_ids) AND st.name ILIKE :ilikeQuery))`
     );
     queryParams.ilikeQuery = `%${q}%`;
+  }
 
-    // whereConditions.push(`(to_tsvector('english', unaccent(coalesce(tdr.name, ''))) @@ plainto_tsquery('english', unaccent(:query)))`);
-    // queryParams.query = q;
+  const categories = req.query.categories
+    ? String(req.query.categories).split(".")
+    : null;
+  if (categories) {
+    whereConditions.push(`
+      EXISTS (
+        SELECT 1
+        FROM ${constants.models.SUB_CATEGORY_TABLE} sub
+        WHERE sub.id = ANY(tdr.subcategory_ids)
+        AND sub.category_id = ANY(:categoryIds)
+      )
+    `);
+    queryParams.categoryIds = `{${categories.join(",")}}`;
+  }
+
+  const subcategories = req.query.subcategories
+    ? String(req.query.subcategories).split(".")
+    : null;
+  if (subcategories) {
+    whereConditions.push(`tdr.subcategory_ids && :subcategoryIds`);
+    queryParams.subcategoryIds = `{${subcategories.join(",")}}`;
   }
 
   const authorities = req.query.authorities
@@ -530,6 +591,225 @@ const getWithPlan = async (req) => {
   return { tenders: data, total: count?.[0]?.total ?? 0 };
 };
 
+const getSimilarTenders = async (req, tenderId, tender) => {
+  const query = `
+  SELECT 
+      tdr.*, 
+      CASE 
+        WHEN ws.tender_id IS NOT NULL THEN true 
+        ELSE false 
+      END AS is_followed
+  FROM 
+    ${constants.models.TENDER_TABLE} tdr
+  LEFT JOIN 
+    ${constants.models.WISHLIST_TABLE} ws 
+    ON ws.user_id = :userId AND ws.tender_id = tdr.id
+  WHERE 
+    tdr.id != :tenderId
+    AND (
+      tdr.keywords && :keywords
+      OR tdr.subcategory_ids && :subcategory_ids
+      OR tdr.authority_ids && :authority_ids
+      OR tdr.city_ids && :city_ids
+      OR tdr.industry_ids && :industry_ids
+      OR tdr.sector_ids && :sector_ids
+      OR tdr.state_ids && :state_ids
+    )
+  ORDER BY tdr.created_at DESC
+  LIMIT 3;
+`;
+
+  return await TenderModel.sequelize.query(query, {
+    replacements: {
+      userId: req.user_data.id,
+      tenderId: tenderId,
+      keywords: toPgArray(tender.keywords),
+      subcategory_ids: toPgArray(tender.subcategory_ids),
+      authority_ids: toPgArray(tender.authority_ids),
+      city_ids: toPgArray(tender.city_ids),
+      industry_ids: toPgArray(tender.industry_ids),
+      sector_ids: toPgArray(tender.sector_ids),
+      state_ids: toPgArray(tender.state_ids),
+    },
+    type: QueryTypes.SELECT,
+  });
+};
+
+async function getTendersByUserPreferences(req, preference) {
+  let whereConditions = [
+    "(tdr.keywords && :keywords OR tdr.subcategory_ids && :subcategory_ids OR tdr.authority_ids && :authority_ids OR tdr.city_ids && :city_ids OR tdr.industry_ids && :industry_ids OR tdr.sector_ids && :sector_ids OR tdr.state_ids && :state_ids )",
+  ];
+  const queryParams = {
+    userId: req.user_data.id,
+    keywords: toPgArray(preference.keywords),
+    subcategory_ids: toPgArray(preference.subcategory_ids),
+    authority_ids: toPgArray(preference.authority_ids),
+    city_ids: toPgArray(preference.city_ids),
+    industry_ids: toPgArray(preference.industry_ids),
+    sector_ids: toPgArray(preference.sector_ids),
+    state_ids: toPgArray(preference.state_ids),
+  };
+
+  let q = req.query.q;
+  if (q) {
+    whereConditions.push(
+      `(tdr.name ILIKE :query
+        OR tdr.bid_number ILIKE :query OR array_to_string(tdr.keywords, '') ILIKE :query
+        OR EXISTS (SELECT 1 FROM ${constants.models.INDUSTRY_TABLE} ind WHERE ind.id = ANY(tdr.industry_ids) AND ind.name ILIKE :query)
+        OR EXISTS (SELECT 1 FROM ${constants.models.AUTHORITY_TABLE} atr WHERE atr.id = ANY(tdr.authority_ids) AND atr.name ILIKE :query)
+        OR EXISTS (SELECT 1 FROM ${constants.models.CITY_TABLE} ct WHERE ct.id = ANY(tdr.city_ids) AND ct.name ILIKE :query)
+        OR EXISTS (SELECT 1 FROM ${constants.models.SECTOR_TABLE} sct WHERE sct.id = ANY(tdr.sector_ids) AND sct.name ILIKE :query)
+        OR EXISTS (SELECT 1 FROM ${constants.models.STATE_TABLE} st WHERE st.id = ANY(tdr.state_ids) AND st.name ILIKE :query))`
+    );
+    queryParams.query = `%${q}%`;
+  }
+
+  const categories = req.query.categories
+    ? String(req.query.categories).split(".")
+    : null;
+  if (categories) {
+    whereConditions.push(`
+      EXISTS (
+        SELECT 1
+        FROM ${constants.models.SUB_CATEGORY_TABLE} sub
+        WHERE sub.id = ANY(tdr.subcategory_ids)
+        AND sub.category_id = ANY(:categoryIds)
+      )
+    `);
+    queryParams.categoryIds = `{${categories.join(",")}}`;
+  }
+
+  const subcategories = req.query.subcategories
+    ? String(req.query.subcategories).split(".")
+    : null;
+  if (subcategories) {
+    whereConditions.push(`tdr.subcategory_ids && :subcategoryIds`);
+    queryParams.subcategoryIds = `{${subcategories.join(",")}}`;
+  }
+
+  const authorities = req.query.authorities
+    ? String(req.query.authorities).split(".")
+    : null;
+  if (authorities) {
+    whereConditions.push(`tdr.authority_ids && :authorityIds`);
+    queryParams.authorityIds = `{${authorities.join(",")}}`;
+  }
+
+  const industries = req.query.industries
+    ? String(req.query.industries).split(".")
+    : null;
+  if (industries) {
+    whereConditions.push(`tdr.industry_ids && :industryIds`);
+    queryParams.industryIds = `{${industries.join(",")}}`;
+  }
+
+  const states = req.query.states ? String(req.query.states).split(".") : null;
+  if (states) {
+    whereConditions.push(`tdr.state_ids && :stateIds`);
+    queryParams.stateIds = `{${states.join(",")}}`;
+  }
+
+  const cities = req.query.cities ? String(req.query.cities).split(".") : null;
+  if (cities) {
+    whereConditions.push(`tdr.city_ids && :cityIds`);
+    queryParams.cityIds = `{${cities.join(",")}}`;
+  }
+
+  const sectors = req.query.sectors
+    ? String(req.query.sectors).split(".")
+    : null;
+  if (sectors) {
+    whereConditions.push(`tdr.sector_ids && :sectorIds`);
+    queryParams.sectorIds = `{${sectors.join(",")}}`;
+  }
+
+  const startDate = req.query.start_date || null;
+  const endDate = req.query.end_date || null;
+  if (startDate && endDate) {
+    whereConditions.push(
+      `tdr.bid_end_date_time BETWEEN :startDate AND :endDate`
+    );
+    queryParams.startDate = startDate;
+    queryParams.endDate = endDate;
+  } else if (startDate) {
+    whereConditions.push(`tdr.bid_end_date_time >= :startDate`);
+    queryParams.startDate = startDate;
+  } else if (endDate) {
+    whereConditions.push(`tdr.bid_end_date_time <= :endDate`);
+    queryParams.endDate = endDate;
+  }
+
+  const amountMin = Number(req.query.amount_min) || null;
+  const amountMax = Number(req.query.amount_max) || null;
+  if (amountMin && amountMax) {
+    whereConditions.push(
+      `(tdr.tender_amount::integer BETWEEN :amountMin AND :amountMax)`
+    );
+    queryParams.amountMin = amountMin;
+    queryParams.amountMax = amountMax;
+  } else if (amountMin) {
+    whereConditions.push(`(tdr.tender_amount::integer >= :amountMin)`);
+    queryParams.amountMin = amountMin;
+  } else if (amountMax) {
+    whereConditions.push(`(tdr.tender_amount::integer <= :amountMax)`);
+    queryParams.amountMax = amountMax;
+  }
+
+  const featured = req.query.featured;
+  if (featured) {
+    whereConditions.push(`tdr.is_featured = true`);
+  }
+
+  const page = req.query.page ? Number(req.query.page) : 1;
+  const limit = req.query.limit ? Number(req.query.limit) : 10;
+  const offset = (page - 1) * limit;
+
+  let whereClause = "";
+  if (whereConditions.length > 0) {
+    whereClause = "WHERE " + whereConditions.join(" AND ");
+  }
+
+  const query = `
+    SELECT 
+      tdr.*,
+      CASE 
+          WHEN ws.tender_id IS NOT NULL THEN true 
+          ELSE false 
+      END AS is_followed
+    FROM 
+      ${constants.models.TENDER_TABLE} tdr
+    LEFT JOIN 
+      ${constants.models.WISHLIST_TABLE} ws 
+      ON ws.user_id = :userId AND ws.tender_id = tdr.id
+      ${whereClause}
+    ORDER BY 
+      tdr.created_at DESC
+    LIMIT :limit OFFSET :offset;
+  `;
+
+  let countQuery = `
+  SELECT
+      COUNT(tdr.id) OVER()::integer as total
+    FROM ${constants.models.TENDER_TABLE} tdr
+    ${whereClause}
+    GROUP BY tdr.id
+    ORDER BY tdr.created_at DESC
+  `;
+
+  const tenders = await TenderModel.sequelize.query(query, {
+    replacements: { ...queryParams, limit, offset },
+    type: QueryTypes.SELECT,
+  });
+  const count = await TenderModel.sequelize.query(countQuery, {
+    replacements: { ...queryParams },
+    type: QueryTypes.SELECT,
+    raw: true,
+    plain: true,
+  });
+
+  return { tenders, total: count?.total ?? 0 };
+}
+
 const updateVector = async (id, { transaction }) => {
   let query = `
     UPDATE "${constants.models.TENDER_TABLE}"
@@ -548,7 +828,7 @@ const updateVector = async (id, { transaction }) => {
 const getById = async (req, id) => {
   return await TenderModel.findOne({
     where: {
-      id: req.params.id || id,
+      id: req.params?.id || id,
     },
     raw: true,
   });
@@ -636,4 +916,6 @@ export default {
   getBySlug: getBySlug,
   deleteById: deleteById,
   count: count,
+  getSimilarTenders: getSimilarTenders,
+  getTendersByUserPreferences: getTendersByUserPreferences,
 };

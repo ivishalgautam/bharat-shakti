@@ -16,6 +16,8 @@ import subscriptionModel from "./models/subscription.model.js";
 import categoryModel from "./models/category.model.js";
 import subCategoryModel from "./models/sub-category.model.js";
 import preferenceModel from "./models/preference.model.js";
+import sessionsModel from "./models/session.model.js";
+import faqModel from "./models/faq.model.js";
 
 export default {
   UserModel: userModel,
@@ -36,4 +38,6 @@ export default {
   CategoryModel: categoryModel,
   SubCategoryModel: subCategoryModel,
   PreferenceModel: preferenceModel,
+  SessionModel: sessionsModel,
+  FAQModel: faqModel,
 };

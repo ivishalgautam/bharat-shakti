@@ -7,6 +7,7 @@ import { statePublicRoutes } from "../../api/state/routes.js";
 import { planPublicRoutes } from "../../api/plan/routes.js";
 import { categoryPublicRoutes } from "../../api/category/routes.js";
 import { subCategoryPublicRoutes } from "../../api/sub-category/routes.js";
+import { faqPublicRoutes } from "../../api/faq/routes.js";
 
 export default async function routes(fastify, options) {
   fastify.register(tenderPublicRoutes, { prefix: "tenders" });
@@ -18,4 +19,5 @@ export default async function routes(fastify, options) {
   fastify.register(planPublicRoutes, { prefix: "plans" });
   fastify.register(categoryPublicRoutes, { prefix: "categories" });
   fastify.register(subCategoryPublicRoutes, { prefix: "sub-categories" });
+  fastify.register(faqPublicRoutes, { prefix: "faqs" });
 }

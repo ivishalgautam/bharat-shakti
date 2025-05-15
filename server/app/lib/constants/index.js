@@ -60,6 +60,8 @@ const constants = {
     CATEGORY_TABLE: "categories",
     SUB_CATEGORY_TABLE: "sub_categories",
     PREFERENCE_TABLE: "preferences",
+    USER_SESSION_TABLE: "user_sessions",
+    FAQ_TABLE: "faqs",
   },
   bcrypt: {
     SALT_ROUNDS: 10,
@@ -67,6 +69,11 @@ const constants = {
   time: {
     TOKEN_EXPIRES_IN: 1000 * 60 * 15, // 15 * 1 minute = 15 minutes
     REFRESH_TOKEN_EXPIRES_IN: 1000 * 60 * 60 * 24 * 1, // 1 day
+  },
+  plan_limits: {
+    free: 1,
+    standard: 1,
+    premium: 3,
   },
 };
 

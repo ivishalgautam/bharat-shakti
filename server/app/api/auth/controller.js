@@ -5,11 +5,15 @@ import hash from "../../lib/encryption/index.js";
 import table from "../../db/models.js";
 import authToken from "../../helpers/auth.js";
 import { userSchema } from "../../utils/schema/user.schema.js";
+import { sequelize } from "../../db/postgres.js";
+import constants from "../../lib/constants/index.js";
 
 const verifyUserCredentials = async (req, res) => {
   const { username, password, provider, provider_account_id, email } = req.body;
 
   let userData = null;
+
+  const transaction = await sequelize.transaction();
 
   try {
     if (username && password) {
@@ -37,7 +41,6 @@ const verifyUserCredentials = async (req, res) => {
       }
     } else if (provider && provider_account_id && email) {
       userData = await table.UserModel.getByEmailId(req);
-
       if (!userData) {
         userData = await table.UserModel.create(req);
       } else {
@@ -49,10 +52,32 @@ const verifyUserCredentials = async (req, res) => {
       return res.code(400).send({ message: "Invalid login request." });
     }
 
-    const [jwtToken, expiresIn] = authToken.generateAccessToken(userData);
-    const [refreshToken, refreshExpireTime] =
-      authToken.generateRefreshToken(userData);
+    const planTier = await table.SubscriptionModel.getLastActivePlanByUserId(
+      userData.id
+    );
+    const allowedSessions =
+      constants.plan_limits[planTier?.plan_tier ?? "free"];
+    const sessions = await table.SessionModel.getByUserId(userData.id);
+    if (sessions.length >= allowedSessions) {
+      const toRemove = sessions[0].id;
+      await table.SessionModel.deleteById(toRemove, { transaction });
+    }
 
+    const session = await table.SessionModel.create(userData.id, {
+      transaction,
+    });
+    console.log({ allowedSessions, sessions, session });
+
+    const userPayload = {
+      ...userData,
+      session_id: session.id,
+    };
+    console.log({ userPayload });
+    const [jwtToken, expiresIn] = authToken.generateAccessToken(userPayload);
+    const [refreshToken, refreshExpireTime] =
+      authToken.generateRefreshToken(userPayload);
+
+    await transaction.commit();
     return res.send({
       token: jwtToken,
       expire_time: Date.now() + expiresIn,
@@ -61,6 +86,7 @@ const verifyUserCredentials = async (req, res) => {
       user_data: userData,
     });
   } catch (error) {
+    await transaction.rollback();
     console.log(error);
     return res.code(500).send({ message: "Internal Server Error", error });
   }

@@ -38,7 +38,8 @@ export default async function routes(fastify, opts) {
   );
   fastify.get("/:id", {}, controller.getById);
   fastify.delete("/:id", {}, controller.deleteById);
-  fastify.get("/all-tenders", {}, controller.get);
+  fastify.get("/all-tenders", {}, controller.getWithPlan);
+  fastify.get("/get-similar-tenders", {}, controller.getSimilarTenders);
 }
 
 export async function tenderPublicRoutes(fastify, opts) {
