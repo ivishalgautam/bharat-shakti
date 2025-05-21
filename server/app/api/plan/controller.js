@@ -8,7 +8,10 @@ const message = constants.http.message;
 
 const create = async (req, res) => {
   const transaction = await sequelize.transaction();
+
   try {
+    const validateData = planSchema.parse(req.body);
+
     await table.PlanModel.create({ body: validateData }, { transaction });
     await transaction.commit();
     res.code(status.CREATED).send({ message: message.HTTP_STATUS_CODE_201 });
