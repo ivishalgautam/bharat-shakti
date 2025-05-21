@@ -20,4 +20,5 @@ export default async function routes(fastify, options) {
   fastify.register(categoryPublicRoutes, { prefix: "categories" });
   fastify.register(subCategoryPublicRoutes, { prefix: "sub-categories" });
   fastify.register(faqPublicRoutes, { prefix: "faqs" });
+  //
 }
