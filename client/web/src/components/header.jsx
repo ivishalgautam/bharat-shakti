@@ -1,12 +1,14 @@
+"use client";
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import { Button, buttonVariants } from "./ui/button";
 import Logo from "./logo";
 import UserDropdown from "./user-dropdown";
-import { useLocalStorage } from "@uidotdev/usehooks";
+import useLocalStorage from "@/hooks/use-local-storage";
 
 export default function Header() {
   const [user] = useLocalStorage("user", null);
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="container flex h-20 items-center justify-between px-4 md:px-6">

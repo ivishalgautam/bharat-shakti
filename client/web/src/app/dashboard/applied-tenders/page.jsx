@@ -10,7 +10,7 @@ export const metadata = {
   title: "Users",
 };
 
-export default async function ApplicationsPage({ searchParams }) {
+export default async function AppliedTendersPage({ searchParams }) {
   searchParamsCache.parse(searchParams);
   const key = serialize({ ...searchParams });
 

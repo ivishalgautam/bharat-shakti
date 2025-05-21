@@ -9,7 +9,7 @@ export default function TendersFiltersLayout({ children }) {
 
   return (
     <div className="space-y-6 p-4">
-      <Suspense fallback={<FilterTendersLoadingSkeleton />}>
+      <Suspense fallback={<FilterTendersLoadingSkeleton />} key={key}>
         <TendersFilters />
       </Suspense>
       {children}
