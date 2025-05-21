@@ -26,14 +26,6 @@ const init = async (sequelize) => {
         type: DataTypes.STRING,
         defaultValue: 0,
       },
-      // bid_start_date: {
-      //   type: DataTypes.DATE,
-      //   allowNull: false,
-      // },
-      // bid_end_date: {
-      //   type: DataTypes.DATE,
-      //   allowNull: false,
-      // },
       slug: {
         type: DataTypes.STRING,
         allowNull: false,
