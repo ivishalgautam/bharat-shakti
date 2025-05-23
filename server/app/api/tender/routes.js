@@ -45,4 +45,5 @@ export default async function routes(fastify, opts) {
 export async function tenderPublicRoutes(fastify, opts) {
   fastify.get("/", {}, controller.get);
   fastify.get("/get-by-slug/:slug", {}, controller.getBySlug);
+  fastify.post("/import", {}, controller.importTenders);
 }

@@ -6,6 +6,16 @@ import constants from "../../lib/constants/index.js";
 import { getItemsToDelete } from "../../helpers/filter.js";
 import { tenderSchema } from "../../utils/schema/tender.schema.js";
 
+import path from "path";
+import fs from "fs";
+import util from "util";
+import xlsx from "xlsx";
+import { pipeline } from "stream";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const pump = util.promisify(pipeline);
+
 const status = constants.http.status;
 const message = constants.http.message;
 
@@ -221,6 +231,58 @@ const getBySlug = async (req, res) => {
   }
 };
 
+function removeDuplicates(data, key) {
+  return Array.from(new Set(data.map((item) => item[key]).filter(Boolean)));
+}
+
+const importTenders = async (req, res) => {
+  const parts = req.parts();
+
+  for await (const part of parts) {
+    if (part.file) {
+      const tempPath = path.join(
+        __dirname,
+        "../../../",
+        "uploads",
+        part.filename
+      );
+      await pump(part.file, fs.createWriteStream(tempPath));
+
+      const workbook = xlsx.readFile(tempPath);
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const data = xlsx.utils.sheet_to_json(sheet);
+      // Clean up temp file
+      fs.unlinkSync(tempPath);
+      // name slug category_id
+
+      const transaction = await sequelize.transaction();
+      try {
+        // Iterate over the grouped data
+        const cities = removeDuplicates(data, "city");
+        const states = removeDuplicates(data, "state");
+        const categories = removeDuplicates(data, "category");
+        const subcategories = removeDuplicates(data, "subcategory");
+        const subcategories_1 = removeDuplicates(data, "subcategory_1");
+
+        res.send({
+          cities,
+          states,
+          categories,
+          subcategories,
+          subcategories_1,
+        });
+        // await transaction.commit();
+      } catch (error) {
+        await transaction.rollback();
+        throw error;
+      }
+    }
+  }
+
+  return reply.code(400).send({ error: "No file uploaded" });
+};
+
 export default {
   create: create,
   update: update,
@@ -230,4 +292,5 @@ export default {
   getById: getById,
   getBySlug: getBySlug,
   getSimilarTenders: getSimilarTenders,
+  importTenders: importTenders,
 };
