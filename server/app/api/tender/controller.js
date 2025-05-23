@@ -266,7 +266,7 @@ const importTenders = async (req, res) => {
       // return data;
       try {
         const promises = data.map(async (item, index) => {
-          const slug = slugify(`Tender ${index + 1}`, {
+          const slug = slugify(`Tender ${index + 46}`, {
             lower: true,
           });
           // console.log({ time: item.bid_end_date_time });
@@ -276,7 +276,7 @@ const importTenders = async (req, res) => {
               {
                 body: {
                   slug: slug,
-                  name: `Tender ${index + 1}`,
+                  name: `Tender ${index + 46}`,
                   processing_date: item.processing_date,
                   bid_number: item.bid_number,
                   dated: item.dated,
