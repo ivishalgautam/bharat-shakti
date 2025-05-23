@@ -105,9 +105,16 @@ export default function TenderCardPremium({
             <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
             <div>
               <p className="text-xs font-medium">Bid End Date</p>
-              <p className="text-xs text-muted-foreground">
-                {format(new Date(tender.bid_end_date_time), "PPP p")}
-              </p>
+              {/* <p className="text-xs text-muted-foreground">
+                {format(
+                  new Date(
+                    tender.bid_end_date_time.includes("T")
+                      ? tender.bid_end_date_time
+                      : tender.bid_end_date_time.split(" ").join("T"),
+                  ),
+                  "PPP p",
+                )}
+              </p> */}
             </div>
           </div>
         </div>
