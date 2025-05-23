@@ -232,12 +232,18 @@ const getBySlug = async (req, res) => {
 };
 
 function removeDuplicates(data, key) {
-  return Array.from(new Set(data.map((item) => item[key]).filter(Boolean)));
+  return Array.from(
+    new Set(
+      data
+        .map((item) => item[key])
+        .map((item) => String(item).toLowerCase())
+        .filter(Boolean)
+    )
+  );
 }
 
 const importTenders = async (req, res) => {
   const parts = req.parts();
-
   for await (const part of parts) {
     if (part.file) {
       const tempPath = path.join(
@@ -257,22 +263,51 @@ const importTenders = async (req, res) => {
       // name slug category_id
 
       const transaction = await sequelize.transaction();
+      // return data;
       try {
-        // Iterate over the grouped data
-        const cities = removeDuplicates(data, "city");
-        const states = removeDuplicates(data, "state");
-        const categories = removeDuplicates(data, "category");
-        const subcategories = removeDuplicates(data, "subcategory");
-        const subcategories_1 = removeDuplicates(data, "subcategory_1");
-
-        res.send({
-          cities,
-          states,
-          categories,
-          subcategories,
-          subcategories_1,
+        const promises = data.map(async (item, index) => {
+          const slug = slugify(`Tender ${index + 46}`, {
+            lower: true,
+          });
+          // console.log({ time: item.bid_end_date_time });
+          const record = await table.TenderModel.getBySlug(0, slug);
+          if (!record) {
+            await table.TenderModel.create(
+              {
+                body: {
+                  slug: slug,
+                  name: `Tender ${index + 46}`,
+                  processing_date: item.processing_date,
+                  bid_number: item.bid_number,
+                  dated: item.dated,
+                  bid_start_date_time: item.bid_start_date_time,
+                  bid_end_date_time: item.bid_end_date_time,
+                  department: item.department,
+                  organisation: item.organisation,
+                  office: item.office,
+                  item_gem_parts: item.item_gem_parts,
+                  quantity: item.quantity,
+                  uom: item.uom,
+                  no_of_items: item.no_of_items,
+                  mse_exemption_for_turnover: item.mse_exemption_for_turnover,
+                  startup_exemption_for_turnover:
+                    item.startup_exemption_for_turnover,
+                  bid_to_ra_enabled: item.bid_to_ra_enabled,
+                  evaluation_method: item.evaluation_method,
+                  emd_amount: item.emd_amount,
+                  ote_lte: item.ote_lte,
+                  epbg_percentage: item.epbg_percentage,
+                },
+              },
+              { transaction }
+            );
+          }
         });
-        // await transaction.commit();
+
+        await Promise.all(promises);
+        await transaction.commit();
+        res.send("created");
+        await transaction.commit();
       } catch (error) {
         await transaction.rollback();
         throw error;

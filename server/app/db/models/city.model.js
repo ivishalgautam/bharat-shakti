@@ -157,7 +157,7 @@ const getByPk = async (req, id) => {
 const getBySlug = async (req, slug) => {
   return await CityModel.findOne({
     where: {
-      slug: req.params?.slug || slug,
+      slug: req?.params?.slug || slug,
     },
     raw: true,
   });

@@ -35,12 +35,17 @@ const init = async (sequelize) => {
       },
       bid_number: { type: DataTypes.STRING, defaultValue: "" },
       dated: { type: DataTypes.STRING, defaultValue: "" },
+      processing_date: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      bid_start_date_time: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       bid_end_date_time: {
-        type: DataTypes.DATE,
+        type: DataTypes.STRING,
         allowNull: false,
-        validate: {
-          isDate: { args: true, message: "Bid end date time is required" },
-        },
       },
       department: { type: DataTypes.STRING, defaultValue: "" },
       organisation: { type: DataTypes.STRING, defaultValue: "" },
@@ -152,6 +157,8 @@ const create = async (req, { transaction }) => {
       unique: req.body.unique,
       bid_number: req.body.bid_number,
       dated: req.body.dated,
+      processing_date: req.body.processing_date,
+      bid_start_date_time: req.body.bid_start_date_time,
       bid_end_date_time: req.body.bid_end_date_time,
       department: req.body.department,
       organisation: req.body.organisation,
@@ -172,6 +179,7 @@ const create = async (req, { transaction }) => {
       consignee: req.body.consignee,
       delivery_days: req.body.delivery_days,
       distribution: req.body.distribution,
+
       pre_qualification_criteria: req.body.pre_qualification_criteria,
       mse_exemption_for_turnover: req.body.mse_exemption_for_turnover,
       startup_exemption_for_turnover: req.body.startup_exemption_for_turnover,
@@ -195,6 +203,10 @@ const create = async (req, { transaction }) => {
   );
 };
 
+const bulkCreate = async (data) => {
+  return await TenderModel.bulkCreate(data);
+};
+
 const update = async (req, id, { transaction }) => {
   const [rowCount, rows] = await TenderModel.update(
     {
@@ -205,7 +217,7 @@ const update = async (req, id, { transaction }) => {
       bid_number: req.body.bid_number,
       dated: req.body.dated,
       bid_end_date_time: req.body.bid_end_date_time,
-      department: req.body.department,
+      department: req.body.department, //--
       organisation: req.body.organisation,
       office: req.body.office,
       item_gem_parts: req.body.item_gem_parts,
@@ -216,14 +228,15 @@ const update = async (req, id, { transaction }) => {
       years_of_past_experience: req.body.years_of_past_experience,
       evaluation_method: req.body.evaluation_method,
       emd_amount: req.body.emd_amount,
-      tender_value: req.body.tender_value,
+      tender_value: req.body.tender_value, //--
       ote_lte: req.body.ote_lte,
       epbg_percentage: req.body.epbg_percentage,
       buyer_specification_document: req.body.buyer_specification_document,
       drawing: req.body.drawing,
-      consignee: req.body.consignee,
+      consignee: req.body.consignee, //--
       delivery_days: req.body.delivery_days,
       distribution: req.body.distribution,
+
       pre_qualification_criteria: req.body.pre_qualification_criteria,
       mse_exemption_for_turnover: req.body.mse_exemption_for_turnover,
       startup_exemption_for_turnover: req.body.startup_exemption_for_turnover,
@@ -899,6 +912,7 @@ const count = async (last_30_days = false) => {
 export default {
   init: init,
   create: create,
+  bulkCreate: bulkCreate,
   get: get,
   getWithPlan: getWithPlan,
   update: update,
