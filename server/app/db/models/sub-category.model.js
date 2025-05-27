@@ -127,7 +127,7 @@ const get = async (req) => {
   SELECT
       COUNT(sbcat.id) OVER()::integer as total
     FROM ${constants.models.SUB_CATEGORY_TABLE} sbcat
-    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON sbcat.id = ANY(tdr.sector_ids)
+    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON sbcat.id = ANY(tdr.subcategory_ids)
     LEFT JOIN ${constants.models.CATEGORY_TABLE} cat ON cat.id = sbcat.category_id
     ${whereClause}
     GROUP BY sbcat.id, cat.name
@@ -140,7 +140,7 @@ const get = async (req) => {
       COUNT(tdr.id)::integer as tenders_count,
       cat.name as category_name
     FROM ${constants.models.SUB_CATEGORY_TABLE} sbcat
-    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON sbcat.id = ANY(tdr.sector_ids)
+    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON sbcat.id = ANY(tdr.subcategory_ids)
     LEFT JOIN ${constants.models.CATEGORY_TABLE} cat ON cat.id = sbcat.category_id
     ${whereClause}
     GROUP BY sbcat.id, cat.name

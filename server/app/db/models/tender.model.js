@@ -35,10 +35,6 @@ const init = async (sequelize) => {
       },
       bid_number: { type: DataTypes.STRING, defaultValue: "" },
       dated: { type: DataTypes.STRING, defaultValue: "" },
-      processing_date_time: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
       bid_start_date_time: {
         type: DataTypes.STRING,
         allowNull: true,
@@ -217,7 +213,6 @@ const update = async (req, id, { transaction }) => {
       bid_number: req.body.bid_number,
       dated: req.body.dated,
 
-      processing_date_time: req.body.processing_date_time,
       bid_start_date_time: req.body.bid_start_date_time,
       bid_end_date_time: req.body.bid_end_date_time,
 
