@@ -372,7 +372,7 @@ export default function TenderForm({ type, updateMutation, id }) {
               </div>
 
               {/* name */}
-              <div className="space-y-1">
+              {/* <div className="space-y-1">
                 <Label htmlFor="name" className="block text-sm font-medium">
                   Tender name
                 </Label>
@@ -385,7 +385,7 @@ export default function TenderForm({ type, updateMutation, id }) {
                 {errors.name && (
                   <p className="text-red-500 text-sm">{errors.name.message}</p>
                 )}
-              </div>
+              </div> */}
 
               {/* tender amount */}
               <div className="space-y-1">

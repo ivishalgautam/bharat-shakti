@@ -1,9 +1,9 @@
 import { z } from "zod";
 
 export const TenderSchema = z.object({
-  name: z
-    .string({ required_error: "Tender name is required!" })
-    .min(1, { message: "tender name is required!" }),
+  // name: z
+  //   .string({ required_error: "Tender name is required!" })
+  //   .min(1, { message: "tender name is required!" }),
   tender_amount: z.number().int().default(0),
   // bid_start_date: z.string(),
   // bid_end_date: z.string(),
