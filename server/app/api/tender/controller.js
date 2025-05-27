@@ -278,7 +278,7 @@ const importTenders = async (req, res) => {
                 body: {
                   slug: slug,
                   name: `Tender ${index + 46}`,
-                  processing_date: item.processing_date,
+                  processing_date_time: item.processing_date_time,
                   bid_number: item.bid_number,
                   dated: item.dated,
                   bid_start_date_time: item.bid_start_date_time,
@@ -286,7 +286,7 @@ const importTenders = async (req, res) => {
                   department: item.department,
                   organisation: item.organisation,
                   office: item.office,
-                  item_gem_parts: item.item_gem_parts,
+                  item_gem_arpts: item.item_gem_arpts,
                   quantity: item.quantity,
                   uom: item.uom,
                   no_of_items: item.no_of_items,

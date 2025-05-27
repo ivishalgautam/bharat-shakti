@@ -11,7 +11,7 @@ export const tenderSchema = z.object({
   department: z.string().default(""),
   organisation: z.string().default(""),
   office: z.string().default(""),
-  item_gem_parts: z.string().default(""),
+  item_gem_arpts: z.string().default(""),
   quantity: z.string().default(""),
   uom: z.string().default(""),
   no_of_items: z.string().default(""),
