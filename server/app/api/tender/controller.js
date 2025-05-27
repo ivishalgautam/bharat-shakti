@@ -65,7 +65,7 @@ const update = async (req, res) => {
       );
     }
 
-    req.body.slug = slugify(bid_number, { lower: true });
+    req.body.slug = slugify(req.body.bid_number, { lower: true });
     await table.TenderModel.update(req, 0, { transaction });
     // await table.TenderModel.updateVector(record.id, { transaction });
     if (documentsToDelete.length) {
