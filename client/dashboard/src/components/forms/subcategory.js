@@ -47,7 +47,7 @@ export default function SubcategoryForm({ id, type = "create" }) {
   const router = useRouter();
   const handleSuccess = () => {
     reset();
-    router.replace("/categories?limit=10");
+    router.replace("/subcategories?limit=10");
   };
 
   const createMutation = useCreateSubcategory(handleSuccess);

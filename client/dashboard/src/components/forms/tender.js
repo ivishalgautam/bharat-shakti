@@ -34,19 +34,21 @@ import { TagInput } from "emblor";
 import { useGetIndustries } from "@/mutations/industry-mutation";
 import { useGetSubCategories } from "@/mutations/subcategory-mutation";
 import moment from "moment";
+import { useRouter } from "next/navigation";
 
 const defaultValues = {
-  name: "",
-  tender_amount: "",
+  // name: "",
+  tender_amount: 0,
   bid_start_date: "",
   bid_end_date: "",
   bid_number: "",
   dated: "",
+  bid_start_date_time: "",
   bid_end_date_time: "",
   department: "",
   organisation: "",
   office: "",
-  item_gem_parts: "",
+  item_gem_arpts: "",
   quantity: "",
   uom: "",
   no_of_items: "",
@@ -100,10 +102,13 @@ export default function TenderForm({ type, updateMutation, id }) {
     watch,
     setValue,
   } = useForm({ resolver: zodResolver(TenderSchema), defaultValues });
+  const router = useRouter();
   const keywordsArray = watch("keywords");
   const [exampleTags, setExampleTags] = useState(keywordsArray ?? []);
   const [activeTagIndex, setActiveTagIndex] = useState(null);
-  const createMutation = useCreateTender();
+  const createMutation = useCreateTender(function () {
+    router.push("/tenders?page=1&limit=10");
+  });
   const { data } = useGetTender(id);
 
   const { data: { subcategories } = {} } = useGetSubCategories();
@@ -141,8 +146,13 @@ export default function TenderForm({ type, updateMutation, id }) {
   };
   useEffect(() => {
     if (data) {
-      setValue("name", data.name);
+      console.log({ data });
+      // setValue("name", data.name);
       setValue("tender_amount", data.tender_amount);
+      setValue(
+        "bid_start_date_time",
+        moment(data.bid_start_date_time).format("YYYY-MM-DDTHH:mm")
+      );
       setValue(
         "bid_end_date_time",
         moment(data.bid_end_date_time).format("YYYY-MM-DDTHH:mm")
@@ -152,7 +162,7 @@ export default function TenderForm({ type, updateMutation, id }) {
       setValue("department", data.department);
       setValue("organisation", data.organisation);
       setValue("office", data.office);
-      setValue("item_gem_parts", data.item_gem_parts);
+      setValue("item_gem_arpts", data.item_gem_arpts);
       setValue("quantity", data.quantity);
       setValue("uom", data.uom);
       setValue("no_of_items", data.no_of_items);
@@ -178,7 +188,7 @@ export default function TenderForm({ type, updateMutation, id }) {
         data.startup_exemption_for_turnover
       );
       setValue("bid_to_ra_enabled", data.bid_to_ra_enabled);
-      setValue("keywords", data.keywords);
+      setValue("keywords", data.keywords ?? []);
 
       setValue("meta_title", data.meta_title);
       setValue("meta_description", data.meta_description);
@@ -399,7 +409,7 @@ export default function TenderForm({ type, updateMutation, id }) {
                   type="number"
                   id="tender_amount"
                   {...register("tender_amount", { valueAsNumber: true })}
-                  placeholder="Enter tender mount name"
+                  placeholder="Enter tender amount"
                 />
               </div>
 
@@ -436,6 +446,27 @@ export default function TenderForm({ type, updateMutation, id }) {
                   {...register("dated")}
                   placeholder="Select date"
                 />
+              </div>
+
+              {/* bid start date time */}
+              <div className="space-y-1">
+                <Label
+                  htmlFor="bid_start_date_time"
+                  className="block text-sm font-medium"
+                >
+                  Bid Start Date/Time
+                </Label>
+                <Input
+                  id="bid_start_date_time"
+                  type="datetime-local"
+                  {...register("bid_start_date_time")}
+                  placeholder="Select start date and time"
+                />
+                {errors.bid_start_date_time && (
+                  <p className="text-red-500 text-sm">
+                    {errors.bid_start_date_time.message}
+                  </p>
+                )}
               </div>
 
               {/* bid end date time */}

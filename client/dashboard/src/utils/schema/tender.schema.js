@@ -4,16 +4,17 @@ export const TenderSchema = z.object({
   // name: z
   //   .string({ required_error: "Tender name is required!" })
   //   .min(1, { message: "tender name is required!" }),
-  tender_amount: z.number().int().default(0),
+  tender_amount: z.number().int().optional().default(0),
   // bid_start_date: z.string(),
   // bid_end_date: z.string(),
   bid_number: z.string().default(""),
   dated: z.string().default(""),
+  bid_start_date_time: z.coerce.date(),
   bid_end_date_time: z.coerce.date(),
   department: z.string().default(""),
   organisation: z.string().default(""),
   office: z.string().default(""),
-  item_gem_parts: z.string().default(""),
+  item_gem_arpts: z.string().default(""),
   quantity: z.string().default(""),
   uom: z.string().default(""),
   no_of_items: z.string().default(""),
@@ -59,7 +60,7 @@ export const TenderSchema = z.object({
     .array(z.object({ value: z.string(), label: z.string() }))
     .transform((state_ids) => state_ids.map(({ value }) => value))
     .default([]),
-  keywords: z.array(z.string()),
+  keywords: z.array(z.string()).optional(),
   meta_title: z.string().default(""),
   meta_description: z.string().default(""),
   meta_keywords: z.string().default(""),
