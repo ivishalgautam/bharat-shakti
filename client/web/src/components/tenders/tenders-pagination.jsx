@@ -19,7 +19,7 @@ export default function TendersPagination({ totalItems }) {
   const pageCount = Math.ceil(totalItems / pageSize);
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-col items-center gap-2 md:flex-row md:items-center md:justify-between md:gap-0">
       <p className="text-sm text-muted-foreground">
         Showing {Math.min(totalItems, (currentPage - 1) * pageSize + 1)} to{" "}
         {Math.min(currentPage * pageSize, totalItems)} of {totalItems} tenders
@@ -33,7 +33,7 @@ export default function TendersPagination({ totalItems }) {
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <div className="flex items-center">
+        <div className="flex items-center gap-1">
           {Array.from({ length: Math.min(pageCount, 5) }, (_, i) => {
             // Show pages around current page
             let pageNum = i + 1;

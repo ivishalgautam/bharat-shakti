@@ -8,6 +8,7 @@ import {
   MapPin,
   IndianRupee,
   Eye,
+  ListCollapse,
 } from "lucide-react";
 import { format } from "date-fns";
 import Link from "next/link";
@@ -16,6 +17,12 @@ import { rupee } from "@/lib/Intl";
 import { getRemainingDays } from "@/lib/get-remaining-days";
 import { useMutation } from "@tanstack/react-query";
 import viewTenders from "@/services/view-tender";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 
 export default function TenderCardPremium({
   tender,
@@ -34,7 +41,7 @@ export default function TenderCardPremium({
   });
 
   return (
-    <div className="overflow-hidden rounded-lg border bg-card text-card-foreground">
+    <div className="overflow-hidden rounded-lg border border-primary/30 bg-card text-card-foreground">
       <div className="bg-primary/10 p-6">
         <div className="flex items-start justify-between">
           <div>
@@ -43,15 +50,12 @@ export default function TenderCardPremium({
                 variant="secondary"
                 className="mr-2 border-primary/20 bg-primary/10 text-primary"
               >
-                Tender
+                BID NO #{tender.bid_number}
               </Badge>
-              <p className="text-xs text-muted-foreground">
-                Bid #{tender.bid_number}
-              </p>
             </div>
-            <h3 className="line-clamp-2 text-lg font-bold text-primary">
+            {/* <h3 className="line-clamp-2 text-lg font-bold text-primary">
               {tender?.name || tender?.tender_name}
-            </h3>
+            </h3> */}
           </div>
           <div className="flex">
             {user?.plan_tier === "premium" && (
@@ -75,6 +79,26 @@ export default function TenderCardPremium({
       <div className="p-6">
         <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="flex items-start">
+            <ListCollapse className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
+            <div>
+              <p className="text-xs font-medium">Items</p>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger className="truncate text-ellipsis text-xs">
+                    {tender.item_gem_arpts && tender.item_gem_arpts.length > 30
+                      ? String(tender.item_gem_arpts).substring(0, 30) + "..."
+                      : "N/A"}
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-lg">{tender.item_gem_arpts || "N/A"}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <p className="text-xs text-muted-foreground"></p>
+            </div>
+          </div>
+
+          <div className="flex items-start">
             <Briefcase className="mr-2 h-4 w-4 text-muted-foreground" />
             <div>
               <p className="text-xs font-medium">Department</p>
@@ -83,21 +107,13 @@ export default function TenderCardPremium({
               </p>
             </div>
           </div>
+
           <div className="flex items-start">
-            <Building2 className="mr-2 h-4 w-4 text-muted-foreground" />
+            <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
             <div>
-              <p className="text-xs font-medium">Organisation</p>
+              <p className="text-xs font-medium">Bid Start Date</p>
               <p className="text-xs text-muted-foreground">
-                {tender.organisation || "N/A"}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-start">
-            <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
-            <div>
-              <p className="text-xs font-medium">Office</p>
-              <p className="text-xs text-muted-foreground">
-                {tender.office || "N/A"}
+                {format(new Date(tender.bid_start_date_time), "PPP p")}
               </p>
             </div>
           </div>
@@ -105,7 +121,7 @@ export default function TenderCardPremium({
             <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
             <div>
               <p className="text-xs font-medium">Bid End Date</p>
-              {/* <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 {format(
                   new Date(
                     tender.bid_end_date_time.includes("T")
@@ -114,7 +130,7 @@ export default function TenderCardPremium({
                   ),
                   "PPP p",
                 )}
-              </p> */}
+              </p>
             </div>
           </div>
         </div>
@@ -124,7 +140,7 @@ export default function TenderCardPremium({
             <IndianRupee className="mr-1 h-4 w-4 text-muted-foreground" />
             <span className="mr-1 text-xs font-medium">Tender Value:</span>
             <span className="text-sm font-bold">
-              {rupee.format(tender.tender_value)}
+              {rupee.format(tender.tender_amount)}
             </span>
           </div>
           <div className="flex items-center">
