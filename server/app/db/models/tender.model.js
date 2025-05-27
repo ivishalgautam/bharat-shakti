@@ -216,7 +216,11 @@ const update = async (req, id, { transaction }) => {
       unique: req.body.unique,
       bid_number: req.body.bid_number,
       dated: req.body.dated,
+
+      processing_date: req.body.processing_date,
+      bid_start_date_time: req.body.bid_start_date_time,
       bid_end_date_time: req.body.bid_end_date_time,
+
       department: req.body.department, //--
       organisation: req.body.organisation,
       office: req.body.office,

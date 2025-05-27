@@ -23,7 +23,7 @@ const create = async (req, res) => {
   const transaction = await sequelize.transaction();
   try {
     const validateData = tenderSchema.parse(req.body);
-    req.body.slug = slugify(validateData.name, { lower: true });
+    req.body.slug = slugify(validateData.bid_number, { lower: true });
 
     await table.TenderModel.create(req, { transaction });
     await transaction.commit();
@@ -65,6 +65,7 @@ const update = async (req, res) => {
       );
     }
 
+    req.body.slug = slugify(bid_number, { lower: true });
     await table.TenderModel.update(req, 0, { transaction });
     // await table.TenderModel.updateVector(record.id, { transaction });
     if (documentsToDelete.length) {
