@@ -18,10 +18,10 @@ const init = async (sequelize) => {
         defaultValue: DataTypes.UUIDV4,
         unique: true,
       },
-      name: {
-        type: DataTypes.STRING,
-        defaultValue: "",
-      },
+      // name: {
+      //   type: DataTypes.STRING,
+      //   defaultValue: "",
+      // },
       tender_amount: {
         type: DataTypes.STRING,
         defaultValue: 0,
@@ -151,7 +151,7 @@ const init = async (sequelize) => {
 const create = async (req, { transaction }) => {
   return await TenderModel.create(
     {
-      name: req.body.name,
+      // name: req.body.name,
       tender_amount: req.body.tender_amount,
       slug: req.body.slug,
       unique: req.body.unique,
@@ -210,7 +210,7 @@ const bulkCreate = async (data) => {
 const update = async (req, id, { transaction }) => {
   const [rowCount, rows] = await TenderModel.update(
     {
-      name: req.body.name,
+      // name: req.body.name,
       tender_amount: req.body.tender_amount,
       slug: req.body.slug,
       unique: req.body.unique,
