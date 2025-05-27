@@ -284,8 +284,7 @@ const get = async (req) => {
   let q = req.query.q;
   if (q) {
     whereConditions.push(
-      `(tdr.name ILIKE :ilikeQuery
-        OR tdr.bid_number ILIKE :ilikeQuery OR array_to_string(tdr.keywords, '') ILIKE :ilikeQuery)`
+      `(tdr.bid_number ILIKE :ilikeQuery OR array_to_string(tdr.keywords, '') ILIKE :ilikeQuery)`
     );
     queryParams.ilikeQuery = `%${q}%`;
   }
