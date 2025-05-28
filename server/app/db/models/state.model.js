@@ -44,7 +44,7 @@ const init = async (sequelize) => {
 };
 
 const create = async (req, { transaction }) => {
-  return await StateModel.create(
+  const data = await StateModel.create(
     {
       name: req.body.name,
       slug: req.body.slug,
@@ -56,6 +56,8 @@ const create = async (req, { transaction }) => {
     },
     { transaction }
   );
+
+  return data.dataValues;
 };
 
 const get = async (req) => {

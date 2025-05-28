@@ -210,7 +210,6 @@ const importSubcategories = async (req, res) => {
               subCatSlug
             );
 
-            console.log({ isSubCatExist });
             if (!isSubCatExist) {
               await table.SubCategoryModel.create(
                 {

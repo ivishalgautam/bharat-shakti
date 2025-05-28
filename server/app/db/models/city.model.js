@@ -1,7 +1,7 @@
 "use strict";
 import moment from "moment";
 import constants from "../../lib/constants/index.js";
-import sequelizeFwk, { Op, QueryTypes } from "sequelize";
+import sequelizeFwk, { Deferrable, Op, QueryTypes } from "sequelize";
 const { DataTypes } = sequelizeFwk;
 
 let CityModel = null;
@@ -28,6 +28,16 @@ const init = async (sequelize) => {
           msg: "City exist with this name!",
         },
       },
+      state_id: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        onDelete: "CASCADE",
+        references: {
+          model: constants.models.STATE_TABLE,
+          key: "id",
+          deferrable: Deferrable.INITIALLY_IMMEDIATE,
+        },
+      },
       is_featured: { type: DataTypes.BOOLEAN, defaultValue: false },
       image: { type: DataTypes.ARRAY(DataTypes.TEXT), defaultValue: [] },
       meta_title: { type: DataTypes.TEXT, defaultValue: "" },
@@ -48,6 +58,7 @@ const create = async (req, { transaction }) => {
     {
       name: req.body.name,
       slug: req.body.slug,
+      state_id: req.body.state_id,
       is_featured: req.body.is_featured,
       image: req.body.image,
       meta_title: req.body.meta_title,
@@ -123,6 +134,7 @@ const update = async (req, id) => {
     {
       name: req.body.name,
       slug: req.body.slug,
+      state_id: req.body.state_id,
       is_featured: req.body.is_featured,
       image: req.body.image,
       meta_title: req.body.meta_title,
@@ -131,7 +143,7 @@ const update = async (req, id) => {
     },
     {
       where: {
-        id: req.params.id || id,
+        id: req?.params?.id || id,
       },
       returning: true,
       raw: true,

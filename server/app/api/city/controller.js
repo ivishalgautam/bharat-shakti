@@ -6,6 +6,16 @@ import constants from "../../lib/constants/index.js";
 import { citySchema } from "../../utils/schema/city.schema.js";
 import { getItemsToDelete } from "../../helpers/filter.js";
 
+import path from "path";
+import fs from "fs";
+import util from "util";
+import xlsx from "xlsx";
+import { pipeline } from "stream";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const pump = util.promisify(pipeline);
+
 const status = constants.http.status;
 const message = constants.http.message;
 
@@ -102,10 +112,119 @@ const getById = async (req, res) => {
   }
 };
 
+const importCities = async (req, res) => {
+  const parts = req.parts();
+  for await (const part of parts) {
+    if (part.file) {
+      const tempPath = path.join(
+        __dirname,
+        "../../../",
+        "uploads",
+        part.filename
+      );
+      await pump(part.file, fs.createWriteStream(tempPath));
+
+      const workbook = xlsx.readFile(tempPath);
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const data = xlsx.utils.sheet_to_json(sheet);
+      // Clean up temp file
+      fs.unlinkSync(tempPath);
+      // name slug category_id
+
+      const transaction = await sequelize.transaction();
+
+      const stateCityData = data.map(({ state, city }) => ({
+        state,
+        city,
+      }));
+      const obj = {};
+      stateCityData.forEach(({ state, city }) => {
+        let stateLower = String(state).trim().toLowerCase();
+        let cityLower = String(city).trim().toLowerCase();
+
+        if (!obj[stateLower]) {
+          obj[stateLower] = [];
+        }
+
+        if (cityLower && !obj[stateLower].includes(cityLower)) {
+          obj[stateLower].push(cityLower);
+        }
+      });
+
+      try {
+        const promises = Object.keys(obj).map(async (state) => {
+          const stateSlug = slugify(state);
+
+          let stateRecord = null;
+          const isStateExist = await table.StateModel.getBySlug(0, stateSlug);
+
+          if (isStateExist) {
+            stateRecord = isStateExist;
+          } else {
+            stateRecord = await table.StateModel.create(
+              {
+                body: {
+                  slug: stateSlug,
+                  name: state,
+                  type: state,
+                },
+              },
+              { transaction }
+            );
+          }
+
+          console.log({ stateRecord });
+          // const cityPromises = obj[state].map(async (city) => {
+          //   const citySlug = slugify(city);
+          //   const isCityExist = await table.CityModel.getBySlug(0, citySlug);
+          //   if (isCityExist) {
+          //     await table.CityModel.update(
+          //       {
+          //         params: { id: isCityExist.id },
+          //         body: {
+          //           name: city,
+          //           slug: citySlug,
+          //           state_id: stateRecord.id,
+          //         },
+          //       },
+          //       { transaction }
+          //     );
+          //   } else {
+          //     await table.CityModel.create(
+          //       {
+          //         body: {
+          //           name: city,
+          //           slug: citySlug,
+          //           state_id: stateRecord.id,
+          //         },
+          //       },
+          //       { transaction }
+          //     );
+          //   }
+          // });
+
+          // await Promise.all(cityPromises);
+        });
+
+        await Promise.all(promises);
+        await transaction.commit();
+        return res.send("created");
+      } catch (error) {
+        await transaction.rollback();
+        throw error;
+      }
+    }
+  }
+
+  return res.code(400).send({ error: "No file uploaded" });
+};
+
 export default {
   create: create,
   update: update,
   deleteById: deleteById,
   get: get,
   getById: getById,
+  importCities: importCities,
 };
