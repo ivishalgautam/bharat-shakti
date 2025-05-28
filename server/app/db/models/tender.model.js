@@ -415,8 +415,6 @@ const get = async (req) => {
     raw: true,
   });
 
-  console.log({ data, count });
-
   return { tenders: data, total: count?.[0]?.total ?? 0 };
 };
 
