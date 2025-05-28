@@ -190,7 +190,8 @@ const getById = async (req, user_id) => {
 const getByUsername = async (req, record = undefined) => {
   let query = `
   SELECT
-      usr.id, usr.username, usr.email, usr.first_name, usr.last_name, usr.password, usr.blocked, usr.role, usr.mobile_number, usr.is_verified, usr.image_url,
+      usr.id, usr.username, usr.email, usr.first_name, usr.last_name, usr.password, 
+      usr.blocked, usr.role, usr.mobile_number, usr.is_verified, usr.image_url, usr.provider,
       COALESCE(sbs.plan_tier, 'free') as plan_tier
     FROM ${constants.models.USER_TABLE} usr
     LEFT JOIN ${constants.models.SUBSCRIPTION_TABLE} sbs ON sbs.user_id = usr.id AND sbs.status = 'active'

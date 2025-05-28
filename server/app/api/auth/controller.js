@@ -18,7 +18,7 @@ const verifyUserCredentials = async (req, res) => {
   try {
     if (username && password) {
       userData = await table.UserModel.getByUsername(req);
-
+      console.log({ userData });
       if (!userData) {
         return res
           .code(404)
@@ -36,7 +36,7 @@ const verifyUserCredentials = async (req, res) => {
 
       if (!passwordIsValid) {
         return res.code(401).send({
-          message: "Incorrect password. Please enter a valid password",
+          message: "Invalid Credentials.",
         });
       }
     } else if (provider && provider_account_id && email) {

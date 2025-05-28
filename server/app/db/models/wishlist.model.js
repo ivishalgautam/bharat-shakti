@@ -61,9 +61,7 @@ const get = async (req) => {
   const queryParams = { userId: req.user_data.id };
   let q = req.query.q;
   if (q) {
-    whereConditions.push(
-      `(tdr.name ILIKE :query OR tdr.bid_number ILIKE :query)`
-    );
+    whereConditions.push(`(tdr.bid_number ILIKE :query)`);
     queryParams.query = `%${q}%`;
   }
 

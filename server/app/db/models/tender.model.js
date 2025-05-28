@@ -18,10 +18,6 @@ const init = async (sequelize) => {
         defaultValue: DataTypes.UUIDV4,
         unique: true,
       },
-      // name: {
-      //   type: DataTypes.STRING,
-      //   defaultValue: "",
-      // },
       tender_amount: {
         type: DataTypes.STRING,
         defaultValue: 0,
@@ -34,14 +30,14 @@ const init = async (sequelize) => {
         },
       },
       bid_number: { type: DataTypes.STRING, defaultValue: "" },
-      dated: { type: DataTypes.STRING, defaultValue: "" },
+      dated: { type: DataTypes.DATE, allowNull: true },
       bid_start_date_time: {
-        type: DataTypes.STRING,
+        type: DataTypes.DATE,
         allowNull: true,
       },
       bid_end_date_time: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: DataTypes.DATE,
+        allowNull: true,
       },
       department: { type: DataTypes.STRING, defaultValue: "" },
       organisation: { type: DataTypes.STRING, defaultValue: "" },
@@ -124,10 +120,6 @@ const init = async (sequelize) => {
       meta_title: { type: DataTypes.TEXT, defaultValue: "" },
       meta_description: { type: DataTypes.TEXT, defaultValue: "" },
       meta_keywords: { type: DataTypes.TEXT, defaultValue: "" },
-      // search_vector: {
-      //   type: DataTypes.TSVECTOR,
-      //   allowNull: true,
-      // },
     },
     {
       createdAt: "created_at",
@@ -136,18 +128,11 @@ const init = async (sequelize) => {
   );
 
   await TenderModel.sync({ alter: true });
-  // await sequelize.query(`
-  //     UPDATE "${constants.models.TENDER_TABLE}"
-  //     SET search_vector =
-  //       setweight(to_tsvector('english', coalesce(name, '')), 'A') ||
-  //       setweight(to_tsvector('english', coalesce(array_to_string(keywords, ''), '')), 'B') ||
-  //       setweight(to_tsvector('english', coalesce(bid_number, '')), 'C')`);
 };
 
 const create = async (req, { transaction }) => {
   return await TenderModel.create(
     {
-      // name: req.body.name,
       tender_amount: req.body.tender_amount,
       slug: req.body.slug,
       unique: req.body.unique,
@@ -206,7 +191,6 @@ const bulkCreate = async (data) => {
 const update = async (req, id, { transaction }) => {
   const [rowCount, rows] = await TenderModel.update(
     {
-      // name: req.body.name,
       tender_amount: req.body.tender_amount,
       slug: req.body.slug,
       unique: req.body.unique,
@@ -279,9 +263,9 @@ const get = async (req) => {
   let q = req.query.q;
   if (q) {
     whereConditions.push(
-      `(tdr.bid_number ILIKE :ilikeQuery OR array_to_string(tdr.keywords, '') ILIKE :ilikeQuery)`
+      `(tdr.bid_number ILIKE :query OR array_to_string(tdr.keywords, '') ILIKE :query)`
     );
-    queryParams.ilikeQuery = `%${q}%`;
+    queryParams.query = `%${q}%`;
   }
 
   const categories = req.query.categories
@@ -393,6 +377,11 @@ const get = async (req) => {
   SELECT
       COUNT(tdr.id) OVER()::integer as total
     FROM ${constants.models.TENDER_TABLE} tdr
+    LEFT JOIN ${constants.models.AUTHORITY_TABLE} atr ON atr.id = ANY(tdr.authority_ids)
+    LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = ANY(tdr.city_ids)
+    LEFT JOIN ${constants.models.INDUSTRY_TABLE} ind ON ind.id = ANY(tdr.industry_ids)
+    LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = ANY(tdr.sector_ids)
+    LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = ANY(tdr.state_ids)
     ${whereClause}
     GROUP BY tdr.id
     ORDER BY tdr.created_at DESC
@@ -426,6 +415,8 @@ const get = async (req) => {
     raw: true,
   });
 
+  console.log({ data, count });
+
   return { tenders: data, total: count?.[0]?.total ?? 0 };
 };
 
@@ -435,15 +426,14 @@ const getWithPlan = async (req) => {
   let q = req.query.q;
   if (q) {
     whereConditions.push(
-      `(tdr.name ILIKE :query
-        OR tdr.bid_number ILIKE :query OR array_to_string(tdr.keywords, '') ILIKE :ilikeQuery
-        OR EXISTS (SELECT 1 FROM ${constants.models.INDUSTRY_TABLE} ind WHERE ind.id = ANY(tdr.industry_ids) AND ind.name ILIKE :ilikeQuery)
-        OR EXISTS (SELECT 1 FROM ${constants.models.AUTHORITY_TABLE} atr WHERE atr.id = ANY(tdr.authority_ids) AND atr.name ILIKE :ilikeQuery)
-        OR EXISTS (SELECT 1 FROM ${constants.models.CITY_TABLE} ct WHERE ct.id = ANY(tdr.city_ids) AND ct.name ILIKE :ilikeQuery)
-        OR EXISTS (SELECT 1 FROM ${constants.models.SECTOR_TABLE} sct WHERE sct.id = ANY(tdr.sector_ids) AND sct.name ILIKE :ilikeQuery)
-        OR EXISTS (SELECT 1 FROM ${constants.models.STATE_TABLE} st WHERE st.id = ANY(tdr.state_ids) AND st.name ILIKE :ilikeQuery))`
+      `(tdr.bid_number ILIKE :query OR array_to_string(tdr.keywords, '') ILIKE :query
+        OR EXISTS (SELECT 1 FROM ${constants.models.INDUSTRY_TABLE} ind WHERE ind.id = ANY(tdr.industry_ids) AND ind.name ILIKE :query)
+        OR EXISTS (SELECT 1 FROM ${constants.models.AUTHORITY_TABLE} atr WHERE atr.id = ANY(tdr.authority_ids) AND atr.name ILIKE :query)
+        OR EXISTS (SELECT 1 FROM ${constants.models.CITY_TABLE} ct WHERE ct.id = ANY(tdr.city_ids) AND ct.name ILIKE :query)
+        OR EXISTS (SELECT 1 FROM ${constants.models.SECTOR_TABLE} sct WHERE sct.id = ANY(tdr.sector_ids) AND sct.name ILIKE :query)
+        OR EXISTS (SELECT 1 FROM ${constants.models.STATE_TABLE} st WHERE st.id = ANY(tdr.state_ids) AND st.name ILIKE :query))`
     );
-    queryParams.ilikeQuery = `%${q}%`;
+    queryParams.query = `%${q}%`;
   }
 
   const categories = req.query.categories
@@ -555,6 +545,12 @@ const getWithPlan = async (req) => {
   SELECT
       COUNT(tdr.id) OVER()::integer as total
     FROM ${constants.models.TENDER_TABLE} tdr
+    LEFT JOIN ${constants.models.AUTHORITY_TABLE} atr ON atr.id = ANY(tdr.authority_ids)
+    LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = ANY(tdr.city_ids)
+    LEFT JOIN ${constants.models.INDUSTRY_TABLE} ind ON ind.id = ANY(tdr.industry_ids)
+    LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = ANY(tdr.sector_ids)
+    LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = ANY(tdr.state_ids)
+    LEFT JOIN ${constants.models.WISHLIST_TABLE} ws ON ws.user_id = :userId AND ws.tender_id = tdr.id
     ${whereClause}
     GROUP BY tdr.id
     ORDER BY tdr.created_at DESC
@@ -656,8 +652,7 @@ async function getTendersByUserPreferences(req, preference) {
   let q = req.query.q;
   if (q) {
     whereConditions.push(
-      `(tdr.name ILIKE :query
-        OR tdr.bid_number ILIKE :query OR array_to_string(tdr.keywords, '') ILIKE :query
+      `(tdr.bid_number ILIKE :query OR array_to_string(tdr.keywords, '') ILIKE :query
         OR EXISTS (SELECT 1 FROM ${constants.models.INDUSTRY_TABLE} ind WHERE ind.id = ANY(tdr.industry_ids) AND ind.name ILIKE :query)
         OR EXISTS (SELECT 1 FROM ${constants.models.AUTHORITY_TABLE} atr WHERE atr.id = ANY(tdr.authority_ids) AND atr.name ILIKE :query)
         OR EXISTS (SELECT 1 FROM ${constants.models.CITY_TABLE} ct WHERE ct.id = ANY(tdr.city_ids) AND ct.name ILIKE :query)
@@ -882,6 +877,17 @@ const getBySlug = async (req, slug) => {
   });
 };
 
+const isSlugExist = async (slug) => {
+  let query = `SELECT 1 FROM ${constants.models.TENDER_TABLE} tdr WHERE tdr.slug = :slug`;
+
+  return await TenderModel.sequelize.query(query, {
+    replacements: { slug: slug },
+    type: QueryTypes.SELECT,
+    plain: true,
+    raw: true,
+  });
+};
+
 const deleteById = async (req, id, { transaction }) => {
   return await TenderModel.destroy({
     where: { id: req.params.id || id },
@@ -918,6 +924,7 @@ export default {
   getById: getById,
   getByPk: getByPk,
   getBySlug: getBySlug,
+  isSlugExist: isSlugExist,
   deleteById: deleteById,
   count: count,
   getSimilarTenders: getSimilarTenders,

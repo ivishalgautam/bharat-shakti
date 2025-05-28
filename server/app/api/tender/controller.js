@@ -12,6 +12,7 @@ import util from "util";
 import xlsx from "xlsx";
 import { pipeline } from "stream";
 import { fileURLToPath } from "url";
+import moment from "moment";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const pump = util.promisify(pipeline);
@@ -267,22 +268,24 @@ const importTenders = async (req, res) => {
       // return data;
       try {
         const promises = data.map(async (item, index) => {
-          const slug = slugify(`Tender ${index + 46}`, {
-            lower: true,
-          });
-          // console.log({ time: item.bid_end_date_time });
-          const record = await table.TenderModel.getBySlug(0, slug);
+          const slug = slugify(item.bid_number, { lower: true });
+          const record = await table.TenderModel.isSlugExist(slug);
+          console.log({ record });
           if (!record) {
             await table.TenderModel.create(
               {
                 body: {
                   slug: slug,
-                  name: `Tender ${index + 46}`,
-                  processing_date_time: item.processing_date_time,
                   bid_number: item.bid_number,
-                  dated: item.dated,
-                  bid_start_date_time: item.bid_start_date_time,
-                  bid_end_date_time: item.bid_end_date_time,
+                  dated: moment(item.dated, "DD-MM-YYYY").toISOString(),
+                  bid_start_date_time: moment(
+                    item.bid_start_date_time,
+                    "DD-MM-YYYY HH:mm:ss"
+                  ).toISOString(),
+                  bid_end_date_time: moment(
+                    item.bid_end_date_time,
+                    "DD-MM-YYYY HH:mm:ss"
+                  ).toISOString(),
                   department: item.department,
                   organisation: item.organisation,
                   office: item.office,
@@ -293,11 +296,14 @@ const importTenders = async (req, res) => {
                   mse_exemption_for_turnover: item.mse_exemption_for_turnover,
                   startup_exemption_for_turnover:
                     item.startup_exemption_for_turnover,
-                  bid_to_ra_enabled: item.bid_to_ra_enabled,
+                  bid_to_ra_enabled: Boolean(item.bid_to_ra_enabled),
                   evaluation_method: item.evaluation_method,
-                  emd_amount: item.emd_amount,
-                  ote_lte: item.ote_lte,
-                  epbg_percentage: item.epbg_percentage,
+                  emd_amount: parseFloat(item.emd_amount) || 0,
+                  tender_value: parseFloat(item.tender_value) || 0,
+                  tender_amount: parseFloat(item.tender_value) || 0,
+                  ote_lte: String(item.ote_lte).toLowerCase(),
+                  epbg_percentage: item.epbg_percentage ?? 0,
+                  delivery_days: item.delivery_days ?? 0,
                 },
               },
               { transaction }
@@ -308,7 +314,6 @@ const importTenders = async (req, res) => {
         await Promise.all(promises);
         await transaction.commit();
         res.send("created");
-        await transaction.commit();
       } catch (error) {
         await transaction.rollback();
         throw error;
