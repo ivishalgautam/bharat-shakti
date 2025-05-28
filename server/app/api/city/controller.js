@@ -175,36 +175,36 @@ const importCities = async (req, res) => {
           }
 
           console.log({ stateRecord });
-          // const cityPromises = obj[state].map(async (city) => {
-          //   const citySlug = slugify(city);
-          //   const isCityExist = await table.CityModel.getBySlug(0, citySlug);
-          //   if (isCityExist) {
-          //     await table.CityModel.update(
-          //       {
-          //         params: { id: isCityExist.id },
-          //         body: {
-          //           name: city,
-          //           slug: citySlug,
-          //           state_id: stateRecord.id,
-          //         },
-          //       },
-          //       { transaction }
-          //     );
-          //   } else {
-          //     await table.CityModel.create(
-          //       {
-          //         body: {
-          //           name: city,
-          //           slug: citySlug,
-          //           state_id: stateRecord.id,
-          //         },
-          //       },
-          //       { transaction }
-          //     );
-          //   }
-          // });
+          const cityPromises = obj[state].map(async (city) => {
+            const citySlug = slugify(city);
+            const isCityExist = await table.CityModel.getBySlug(0, citySlug);
+            if (isCityExist) {
+              await table.CityModel.update(
+                {
+                  params: { id: isCityExist.id },
+                  body: {
+                    name: city,
+                    slug: citySlug,
+                    state_id: stateRecord.id,
+                  },
+                },
+                { transaction }
+              );
+            } else {
+              await table.CityModel.create(
+                {
+                  body: {
+                    name: city,
+                    slug: citySlug,
+                    state_id: stateRecord.id,
+                  },
+                },
+                { transaction }
+              );
+            }
+          });
 
-          // await Promise.all(cityPromises);
+          await Promise.all(cityPromises);
         });
 
         await Promise.all(promises);
