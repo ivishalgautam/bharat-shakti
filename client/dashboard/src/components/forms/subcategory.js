@@ -178,7 +178,7 @@ export default function SubcategoryForm({ id, type = "create" }) {
         </div>
 
         <div>
-          <Label>Type</Label>
+          <Label>Category</Label>
           <Controller
             control={control}
             name="category_id"

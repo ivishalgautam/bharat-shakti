@@ -17,18 +17,6 @@ import { rupee } from "@/lib/Intl";
 
 export const columns = (openModal, setId) => [
   {
-    accessorKey: "name",
-    header: "NAME",
-    cell: ({ row }) => {
-      const name = row.getValue("name");
-      return (
-        <div className="flex items-center justify-start gap-2">
-          <Badge variant={"outline"}>{name}</Badge>
-        </div>
-      );
-    },
-  },
-  {
     accessorKey: "bid_number",
     header: "BID NO.",
   },

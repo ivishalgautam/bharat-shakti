@@ -35,6 +35,7 @@ import { useGetIndustries } from "@/mutations/industry-mutation";
 import { useGetSubCategories } from "@/mutations/subcategory-mutation";
 import moment from "moment";
 import { useRouter } from "next/navigation";
+import { useGetCategories } from "@/mutations/category-mutation";
 
 const defaultValues = {
   // name: "",
@@ -111,6 +112,7 @@ export default function TenderForm({ type, updateMutation, id }) {
   });
   const { data } = useGetTender(id);
 
+  const { data: { categories } = {} } = useGetCategories();
   const { data: { subcategories } = {} } = useGetSubCategories();
   const { data: { authorities } = {} } = useGetAuthorities();
   const { data: { cities } = {} } = useGetCities();
@@ -118,6 +120,7 @@ export default function TenderForm({ type, updateMutation, id }) {
   const { data: { sectors } = {} } = useGetSectors();
   const { data: { states } = {} } = useGetStates();
 
+  const formattedCategories = useFormattedOptions(categories);
   const formattedSubcategories = useFormattedOptions(subcategories);
   const formattedAuthorities = useFormattedOptions(authorities);
   const formattedCities = useFormattedOptions(cities);
@@ -267,9 +270,27 @@ export default function TenderForm({ type, updateMutation, id }) {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/*  categories */}
+              <div>
+                <Label>Category</Label>
+                <Controller
+                  control={control}
+                  name="category_id"
+                  render={({ field: { onChange, value } }) => {
+                    return (
+                      <MySelect
+                        options={formattedCategories}
+                        value={value}
+                        onChange={onChange}
+                      />
+                    );
+                  }}
+                />
+              </div>
+
               {/* sub categories */}
               <div>
-                <Label>Sub categories</Label>
+                <Label>Classifications</Label>
                 <Controller
                   control={control}
                   name="subcategory_ids"
