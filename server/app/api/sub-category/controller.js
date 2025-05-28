@@ -6,6 +6,16 @@ import constants from "../../lib/constants/index.js";
 import { getItemsToDelete } from "../../helpers/filter.js";
 import { subcategorySchema } from "../../utils/schema/sub-category.schema.js";
 
+import path from "path";
+import fs from "fs";
+import util from "util";
+import xlsx from "xlsx";
+import { pipeline } from "stream";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const pump = util.promisify(pipeline);
+
 const status = constants.http.status;
 const message = constants.http.message;
 
@@ -87,7 +97,6 @@ const deleteById = async (req, res) => {
 
 const get = async (req, res) => {
   try {
-    console.log("object");
     const data = await table.SubCategoryModel.get(req);
     res.code(status.OK).send({ status: true, data });
   } catch (error) {
@@ -123,6 +132,114 @@ const getBySlug = async (req, res) => {
   }
 };
 
+const importSubcategories = async (req, res) => {
+  const parts = req.parts();
+  for await (const part of parts) {
+    if (part.file) {
+      const tempPath = path.join(
+        __dirname,
+        "../../../",
+        "uploads",
+        part.filename
+      );
+      await pump(part.file, fs.createWriteStream(tempPath));
+
+      const workbook = xlsx.readFile(tempPath);
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const data = xlsx.utils.sheet_to_json(sheet);
+      // Clean up temp file
+      fs.unlinkSync(tempPath);
+      // name slug category_id
+
+      const transaction = await sequelize.transaction();
+
+      const categories = data.map(
+        ({ category, classification1, classification2 }) => ({
+          category,
+          classification1,
+          classification2,
+        })
+      );
+      const obj = {};
+      categories.forEach(({ category, classification1, classification2 }) => {
+        let cat = String(category).toLowerCase();
+        let class1 = String(classification1).toLowerCase();
+        let class2 = String(classification2).toLowerCase();
+
+        if (!obj[cat]) {
+          obj[cat] = [];
+        }
+
+        if (class1 && !obj[cat].includes(class1)) {
+          obj[cat].push(class1);
+        }
+
+        if (class2 && !obj[cat].includes(class2)) {
+          obj[cat].push(class2);
+        }
+      });
+      try {
+        const promises = Object.keys(obj).map(async (category) => {
+          const categorySlug = slugify(category);
+
+          let categoryRecord = null;
+          const isCategoryExist = await table.CategoryModel.getBySlug(
+            0,
+            categorySlug
+          );
+
+          if (isCategoryExist) {
+            categoryRecord = isCategoryExist;
+          } else {
+            categoryRecord = await table.CategoryModel.create(
+              {
+                body: {
+                  slug: categorySlug,
+                  name: category,
+                  type: category,
+                },
+              },
+              { transaction }
+            );
+          }
+          const subcatePromises = obj[category].map(async (subcat) => {
+            const subCatSlug = slugify(subcat);
+            const isSubCatExist = await table.SubCategoryModel.getBySlug(
+              0,
+              subCatSlug
+            );
+
+            console.log({ isSubCatExist });
+            if (!isSubCatExist) {
+              await table.SubCategoryModel.create(
+                {
+                  body: {
+                    name: subcat,
+                    slug: subCatSlug,
+                    category_id: categoryRecord.id,
+                  },
+                },
+                { transaction }
+              );
+            }
+          });
+
+          await Promise.all(subcatePromises);
+        });
+
+        await Promise.all(promises);
+        await transaction.commit();
+        return res.send("created");
+      } catch (error) {
+        await transaction.rollback();
+        throw error;
+      }
+    }
+  }
+
+  return res.code(400).send({ error: "No file uploaded" });
+};
 export default {
   create: create,
   update: update,
@@ -130,4 +247,5 @@ export default {
   get: get,
   getById: getById,
   getBySlug: getBySlug,
+  importSubcategories: importSubcategories,
 };

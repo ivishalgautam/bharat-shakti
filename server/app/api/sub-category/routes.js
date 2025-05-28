@@ -21,4 +21,5 @@ export default async function routes(fastify, opts) {
 export async function subCategoryPublicRoutes(fastify, opts) {
   fastify.get("/get-by-slug/:slug", {}, controller.getBySlug);
   fastify.get("/", {}, controller.get);
+  fastify.post("/import", {}, controller.importSubcategories);
 }

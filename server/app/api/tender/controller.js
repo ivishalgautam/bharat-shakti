@@ -6,13 +6,13 @@ import constants from "../../lib/constants/index.js";
 import { getItemsToDelete } from "../../helpers/filter.js";
 import { tenderSchema } from "../../utils/schema/tender.schema.js";
 
+import moment from "moment";
 import path from "path";
 import fs from "fs";
 import util from "util";
 import xlsx from "xlsx";
 import { pipeline } from "stream";
 import { fileURLToPath } from "url";
-import moment from "moment";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const pump = util.promisify(pipeline);
@@ -265,51 +265,56 @@ const importTenders = async (req, res) => {
       // name slug category_id
 
       const transaction = await sequelize.transaction();
-      // return data;
+
+      return data.map(({ place, state }) => ({
+        state,
+        place,
+      }));
+
       try {
-        const promises = data.map(async (item, index) => {
-          const slug = slugify(item.bid_number, { lower: true });
-          const record = await table.TenderModel.isSlugExist(slug);
-          console.log({ record });
-          if (!record) {
-            await table.TenderModel.create(
-              {
-                body: {
-                  slug: slug,
-                  bid_number: item.bid_number,
-                  dated: moment(item.dated, "DD-MM-YYYY").toISOString(),
-                  bid_start_date_time: moment(
-                    item.bid_start_date_time,
-                    "DD-MM-YYYY HH:mm:ss"
-                  ).toISOString(),
-                  bid_end_date_time: moment(
-                    item.bid_end_date_time,
-                    "DD-MM-YYYY HH:mm:ss"
-                  ).toISOString(),
-                  department: item.department,
-                  organisation: item.organisation,
-                  office: item.office,
-                  item_gem_arpts: item.item_gem_arpts,
-                  quantity: item.quantity,
-                  uom: item.uom,
-                  no_of_items: item.no_of_items,
-                  mse_exemption_for_turnover: item.mse_exemption_for_turnover,
-                  startup_exemption_for_turnover:
-                    item.startup_exemption_for_turnover,
-                  bid_to_ra_enabled: Boolean(item.bid_to_ra_enabled),
-                  evaluation_method: item.evaluation_method,
-                  emd_amount: parseFloat(item.emd_amount) || 0,
-                  tender_value: parseFloat(item.tender_value) || 0,
-                  tender_amount: parseFloat(item.tender_value) || 0,
-                  ote_lte: String(item.ote_lte).toLowerCase(),
-                  epbg_percentage: item.epbg_percentage ?? 0,
-                  delivery_days: item.delivery_days ?? 0,
-                },
-              },
-              { transaction }
-            );
-          }
-        });
+        // const promises = data.map(async (item, index) => {
+        //   const slug = slugify(item.bid_number, { lower: true });
+        //   const record = await table.TenderModel.isSlugExist(slug);
+        //   console.log({ record });
+        //   if (!record) {
+        //     await table.TenderModel.create(
+        //       {
+        //         body: {
+        //           slug: slug,
+        //           bid_number: item.bid_number,
+        //           dated: moment(item.dated, "DD-MM-YYYY").toISOString(),
+        //           bid_start_date_time: moment(
+        //             item.bid_start_date_time,
+        //             "DD-MM-YYYY HH:mm:ss"
+        //           ).toISOString(),
+        //           bid_end_date_time: moment(
+        //             item.bid_end_date_time,
+        //             "DD-MM-YYYY HH:mm:ss"
+        //           ).toISOString(),
+        //           department: item.department,
+        //           organisation: item.organisation,
+        //           office: item.office,
+        //           item_gem_arpts: item.item_gem_arpts,
+        //           quantity: item.quantity,
+        //           uom: item.uom,
+        //           no_of_items: item.no_of_items,
+        //           mse_exemption_for_turnover: item.mse_exemption_for_turnover,
+        //           startup_exemption_for_turnover:
+        //             item.startup_exemption_for_turnover,
+        //           bid_to_ra_enabled: Boolean(item.bid_to_ra_enabled),
+        //           evaluation_method: item.evaluation_method,
+        //           emd_amount: parseFloat(item.emd_amount) || 0,
+        //           tender_value: parseFloat(item.tender_value) || 0,
+        //           tender_amount: parseFloat(item.tender_value) || 0,
+        //           ote_lte: String(item.ote_lte).toLowerCase(),
+        //           epbg_percentage: item.epbg_percentage ?? 0,
+        //           delivery_days: item.delivery_days ?? 0,
+        //         },
+        //       },
+        //       { transaction }
+        //     );
+        //   }
+        // });
 
         await Promise.all(promises);
         await transaction.commit();
@@ -321,7 +326,7 @@ const importTenders = async (req, res) => {
     }
   }
 
-  return reply.code(400).send({ error: "No file uploaded" });
+  return res.code(400).send({ error: "No file uploaded" });
 };
 
 export default {

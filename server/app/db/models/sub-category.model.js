@@ -24,7 +24,7 @@ const init = async (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
         unique: {
-          msg: "Category exist with this name!",
+          msg: "Sub Category exist with this name!",
         },
       },
       category_id: {
@@ -107,6 +107,12 @@ const get = async (req) => {
   if (q) {
     whereConditions.push(`sbcat.name ILIKE :query`);
     queryParams.query = `%${q}%`;
+  }
+
+  let category = req.query.category;
+  if (category) {
+    whereConditions.push(`sbcat.category_id = :category`);
+    queryParams.category = category;
   }
 
   const featured = req.query.featured;
