@@ -550,7 +550,6 @@ const getWithPlan = async (req) => {
     LEFT JOIN ${constants.models.INDUSTRY_TABLE} ind ON ind.id = ANY(tdr.industry_ids)
     LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = ANY(tdr.sector_ids)
     LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = ANY(tdr.state_ids)
-    LEFT JOIN ${constants.models.WISHLIST_TABLE} ws ON ws.user_id = :userId AND ws.tender_id = tdr.id
     ${whereClause}
     GROUP BY tdr.id
     ORDER BY tdr.created_at DESC
