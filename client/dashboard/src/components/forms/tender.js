@@ -32,7 +32,10 @@ import config from "@/config";
 import { Link2, Trash, View } from "lucide-react";
 import { TagInput } from "emblor";
 import { useGetIndustries } from "@/mutations/industry-mutation";
-import { useGetSubCategories } from "@/mutations/subcategory-mutation";
+import {
+  useGetSubCategories,
+  useGetSubCategoriesByCategory,
+} from "@/mutations/subcategory-mutation";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import { useGetCategories } from "@/mutations/category-mutation";
@@ -73,9 +76,11 @@ const defaultValues = {
   startup_exemption_for_turnover: false,
   bid_to_ra_enabled: false,
 
-  authority_ids: [],
   state_id: "",
   city_id: "",
+  category_id: "",
+  subcategory_ids: [],
+  authority_ids: [],
   industry_ids: [],
   sector_ids: [],
 
@@ -107,6 +112,7 @@ export default function TenderForm({ type, updateMutation, id }) {
   const router = useRouter();
   const keywordsArray = watch("keywords");
   const state = watch("state_id");
+  const category = watch("category_id");
   const [exampleTags, setExampleTags] = useState(keywordsArray ?? []);
   const [activeTagIndex, setActiveTagIndex] = useState(null);
   const createMutation = useCreateTender(function () {
@@ -114,7 +120,9 @@ export default function TenderForm({ type, updateMutation, id }) {
   });
   const { data, isLoading, isError, error } = useGetTender(id);
   const { data: { categories } = {} } = useGetCategories();
-  const { data: { subcategories } = {} } = useGetSubCategories();
+  const { data: { subcategories } = {} } = useGetSubCategoriesByCategory(
+    category?.value
+  );
   const { data: { authorities } = {} } = useGetAuthorities();
   const { data: { states } = {} } = useGetStates();
   const { data: { cities } = {} } = useGetCitiesByState(state?.value);
@@ -199,20 +207,18 @@ export default function TenderForm({ type, updateMutation, id }) {
       setValue("meta_keywords", data.meta_keywords);
 
       setValue(
-        "subcategory_ids",
-        formattedSubcategories.filter((au) =>
-          data.subcategory_ids?.includes(au.value)
-        )
+        "state_id",
+        formattedStates.find((au) => data.state_id === au.value)
+      );
+      setValue(
+        "category_id",
+        formattedCategories.find((au) => data.category_id === au.value)
       );
       setValue(
         "authority_ids",
         formattedAuthorities.filter((au) =>
           data.authority_ids?.includes(au.value)
         )
-      );
-      setValue(
-        "state_id",
-        formattedStates.find((au) => data.state_id === au.value)
       );
       setValue(
         "industry_ids",
@@ -242,7 +248,7 @@ export default function TenderForm({ type, updateMutation, id }) {
   }, [
     data,
     setValue,
-    formattedSubcategories,
+    formattedCategories,
     formattedAuthorities,
     formattedIndustries,
     formattedSectors,
@@ -257,6 +263,17 @@ export default function TenderForm({ type, updateMutation, id }) {
       );
     }
   }, [setValue, data, formattedCities]);
+
+  useEffect(() => {
+    if (data) {
+      setValue(
+        "subcategory_ids",
+        formattedSubcategories.filter((au) =>
+          data.subcategory_ids?.includes(au.value)
+        )
+      );
+    }
+  }, [setValue, data, formattedSubcategories]);
 
   const handleDrop = (name, acceptedFiles) => {
     setFiles((prev) => ({ ...prev, [name]: acceptedFiles }));
@@ -289,7 +306,10 @@ export default function TenderForm({ type, updateMutation, id }) {
                       <MySelect
                         options={formattedCategories}
                         value={value}
-                        onChange={onChange}
+                        onChange={(value) => {
+                          onChange(value);
+                          setValue("subcategory_ids", []);
+                        }}
                       />
                     );
                   }}
@@ -297,23 +317,25 @@ export default function TenderForm({ type, updateMutation, id }) {
               </div>
 
               {/* sub categories */}
-              <div>
-                <Label>Classifications</Label>
-                <Controller
-                  control={control}
-                  name="subcategory_ids"
-                  render={({ field: { onChange, value } }) => {
-                    return (
-                      <MySelect
-                        options={formattedSubcategories}
-                        value={value}
-                        isMulti
-                        onChange={onChange}
-                      />
-                    );
-                  }}
-                />
-              </div>
+              {category && (
+                <div>
+                  <Label>Classifications</Label>
+                  <Controller
+                    control={control}
+                    name="subcategory_ids"
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <MySelect
+                          options={formattedSubcategories}
+                          value={value}
+                          isMulti
+                          onChange={onChange}
+                        />
+                      );
+                    }}
+                  />
+                </div>
+              )}
 
               {/* State */}
               <div>

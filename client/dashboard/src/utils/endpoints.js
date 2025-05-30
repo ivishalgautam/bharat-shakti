@@ -17,7 +17,10 @@ export const endpoints = {
   plans: { getAll: "/plans" },
   sectors: { getAll: "/sectors" },
   categories: { getAll: "/categories" },
-  subcategories: { getAll: "/sub-categories" },
+  subcategories: {
+    getAll: "/sub-categories",
+    getCategory: "/sub-categories/get-by-category",
+  },
   keywords: { getAll: "/keywords" },
   industries: { getAll: "/industries" },
   states: { getAll: "/states" },

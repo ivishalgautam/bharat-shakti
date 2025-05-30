@@ -29,12 +29,20 @@ const get = async (searchParams = "") => {
   return data;
 };
 
+const getByCategory = async (categoryIds) => {
+  const { data } = await http().get(
+    `${endpoints.subcategories.getCategory}?category_ids=${categoryIds}`
+  );
+  return data;
+};
+
 const subcategory = {
   create: create,
   update: update,
   deleteById: deleteById,
   getById: getById,
   get: get,
+  getByCategory: getByCategory,
 };
 
 export default subcategory;

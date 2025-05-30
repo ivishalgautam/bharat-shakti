@@ -36,14 +36,6 @@ export const TenderSchema = z.object({
   splitting_applied: z.boolean().default(false),
   startup_exemption_for_turnover: z.boolean().default(false),
 
-  subcategory_ids: z
-    .array(z.object({ value: z.string(), label: z.string() }))
-    .transform((subcategory_ids) => subcategory_ids.map(({ value }) => value))
-    .default([]),
-  authority_ids: z
-    .array(z.object({ value: z.string(), label: z.string() }))
-    .transform((authority_ids) => authority_ids.map(({ value }) => value))
-    .default([]),
   state_id: z
     .object({ value: z.string(), label: z.string() })
     .transform((state_id) => state_id.value)
@@ -52,6 +44,18 @@ export const TenderSchema = z.object({
     .object({ value: z.string(), label: z.string() })
     .transform((city_id) => city_id.value)
     .default(null),
+  category_id: z
+    .object({ value: z.string(), label: z.string() })
+    .transform((category_id) => category_id.value)
+    .default(null),
+  subcategory_ids: z
+    .array(z.object({ value: z.string(), label: z.string() }))
+    .transform((subcategory_ids) => subcategory_ids.map(({ value }) => value))
+    .default([]),
+  authority_ids: z
+    .array(z.object({ value: z.string(), label: z.string() }))
+    .transform((authority_ids) => authority_ids.map(({ value }) => value))
+    .default([]),
   industry_ids: z
     .array(z.object({ value: z.string(), label: z.string() }))
     .transform((industry_ids) => industry_ids.map(({ value }) => value))

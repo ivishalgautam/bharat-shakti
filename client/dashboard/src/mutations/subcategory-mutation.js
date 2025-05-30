@@ -10,6 +10,14 @@ export const useGetSubCategories = (searchParams = "page=1") => {
   });
 };
 
+export const useGetSubCategoriesByCategory = (categoryIds = "") => {
+  return useQuery({
+    queryKey: ["subcategories", categoryIds],
+    queryFn: () => subcategory.getByCategory(categoryIds),
+    enabled: !!categoryIds,
+  });
+};
+
 export const useGetSubcategory = (id) => {
   return useQuery({
     queryKey: ["subcategories", id],
