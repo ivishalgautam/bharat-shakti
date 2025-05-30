@@ -14,7 +14,7 @@ export const endpoints = {
   keywords: { getAll: "/keywords" },
   industries: { getAll: "/industries" },
   states: { getAll: "/states" },
-  cities: { getAll: "/cities" },
+  cities: { getAll: "/cities", getByStateIds: "/cities/get-by-state-ids" },
   sectors: { getAll: "/sectors" },
   authorities: { getAll: "/authorities" },
   wishlists: { getAll: "/wishlists" },

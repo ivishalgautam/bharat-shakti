@@ -10,6 +10,13 @@ const get = async () => {
   return data?.data?.cities ?? [];
 };
 
+const getByStateIds = async (ids) => {
+  const { data } = await axios.get(
+    `${config.api_base}${endpoints.cities.getByStateIds}?state_ids=${ids}`,
+  );
+  return data?.data?.cities ?? [];
+};
+
 const getFeatured = async () => {
   const { data } = await axios.get(
     `${config.api_base}${endpoints.cities.getAll}?featured=true`,
@@ -19,6 +26,7 @@ const getFeatured = async () => {
 
 const cities = {
   get: get,
+  getByStateIds: getByStateIds,
   getFeatured: getFeatured,
 };
 

@@ -1,6 +1,6 @@
 import { useFormattedOptions } from "@/hooks/use-formatted-options";
 import useGetAuthorities from "@/hooks/use-get-authorities";
-import useGetCities from "@/hooks/use-get-cities";
+import useGetCities, { useGetCitiesByStateIds } from "@/hooks/use-get-cities";
 import useGetIndustries from "@/hooks/use-get-industries";
 import useGetSectors from "@/hooks/use-get-sectors";
 import useGetStates from "@/hooks/use-get-states";
@@ -83,7 +83,7 @@ export default function PreferencesForm({
   const { data: categories } = useGetCategories();
   const { data: subcategories } = useGetSubcategories();
   const { data: authorities } = useGetAuthorities();
-  const { data: cities } = useGetCities();
+  const { data: cities } = useGetCitiesByStateIds(selectedStates);
   const { data: industries } = useGetIndustries();
   const { data: sectors } = useGetSectors();
   const { data: states } = useGetStates();
@@ -287,6 +287,44 @@ export default function PreferencesForm({
                 />
               </div>
 
+              {/* States */}
+              <div>
+                <Label>States</Label>
+                <Controller
+                  control={control}
+                  name="state_ids"
+                  render={({ field: { onChange, value } }) => {
+                    return (
+                      <MySelect
+                        options={formattedStates}
+                        value={value}
+                        isMulti
+                        onChange={onChange}
+                      />
+                    );
+                  }}
+                />
+              </div>
+
+              {/* Cities */}
+              <div>
+                <Label>Cities</Label>
+                <Controller
+                  control={control}
+                  name="city_ids"
+                  render={({ field: { onChange, value } }) => {
+                    return (
+                      <MySelect
+                        options={formattedCities}
+                        value={value}
+                        isMulti
+                        onChange={onChange}
+                      />
+                    );
+                  }}
+                />
+              </div>
+
               {/* categories */}
               <div>
                 <Label>Categories</Label>
@@ -344,25 +382,6 @@ export default function PreferencesForm({
                 />
               </div>
 
-              {/* Cities */}
-              <div>
-                <Label>Cities</Label>
-                <Controller
-                  control={control}
-                  name="city_ids"
-                  render={({ field: { onChange, value } }) => {
-                    return (
-                      <MySelect
-                        options={formattedCities}
-                        value={value}
-                        isMulti
-                        onChange={onChange}
-                      />
-                    );
-                  }}
-                />
-              </div>
-
               {/* Industry */}
               <div>
                 <Label>Industries</Label>
@@ -392,25 +411,6 @@ export default function PreferencesForm({
                     return (
                       <MySelect
                         options={formattedSectors}
-                        value={value}
-                        isMulti
-                        onChange={onChange}
-                      />
-                    );
-                  }}
-                />
-              </div>
-
-              {/* States */}
-              <div>
-                <Label>States</Label>
-                <Controller
-                  control={control}
-                  name="state_ids"
-                  render={({ field: { onChange, value } }) => {
-                    return (
-                      <MySelect
-                        options={formattedStates}
                         value={value}
                         isMulti
                         onChange={onChange}

@@ -4,10 +4,15 @@ import Link from "next/link";
 import { Button, buttonVariants } from "./ui/button";
 import Logo from "./logo";
 import UserDropdown from "./user-dropdown";
-import useLocalStorage from "@/hooks/use-local-storage";
+import { useLocalStorage } from "@/hooks/use-local-storage";
+import { Skeleton } from "./ui/skeleton";
 
 export default function Header() {
-  const [user] = useLocalStorage("user", null);
+  const [user, setUser, isHydrated] = useLocalStorage("user", null);
+
+  if (!isHydrated) {
+    return <Skeleton className={"h-20 rounded-none bg-gray-200"} />;
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white">

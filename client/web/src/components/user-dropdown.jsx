@@ -1,5 +1,4 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,32 +8,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import config from "@/config";
-import { handleLogout, useAuth } from "@/providers/auth-provider";
+import { handleLogout } from "@/providers/auth-provider";
 
 import { FileSliders, LayoutDashboard, LogOutIcon } from "lucide-react";
 import { signOut } from "next-auth/react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function UserDropdown({ user }) {
-  // const { user } = useAuth();
   const router = useRouter();
-
+  const fallbackName = user.first_name.charAt(0) + user.last_name.charAt(0);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="h-auto rounded-full p-0 hover:bg-transparent"
-        >
-          <Avatar>
-            {/* <AvatarImage src={`${config.file_base}${user.image_url}`} /> */}
-            <AvatarFallback className="border border-primary bg-primary/20 uppercase">
-              {user.first_name.charAt(0) + user.last_name.charAt(0)}
-            </AvatarFallback>
-          </Avatar>
-        </Button>
+        <Avatar>
+          <AvatarFallback className="border border-primary bg-primary/20 uppercase">
+            {fallbackName}
+          </AvatarFallback>
+        </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-64 dark:border-none" align="end">
         <DropdownMenuLabel className="flex min-w-0 flex-col">

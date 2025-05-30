@@ -177,14 +177,11 @@ export default function TenderDetails({ data }) {
           <div className="flex flex-col gap-4">
             <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
               <div>
-                <h1 className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-3xl font-bold text-transparent">
-                  {tenderData.name}
-                </h1>
-                <div className="mt-2 flex items-center gap-2 text-indigo-600">
+                <Badge className={"space-x-1"}>
                   <span>Bid #{tenderData.bid_number}</span>
                   <span>•</span>
                   <span>{tenderData.organisation}</span>
-                </div>
+                </Badge>
               </div>
               <div className="space-y-2 text-end">
                 {user?.plan_tier === "premium" && tenderData.wishlist_count && (
@@ -199,7 +196,6 @@ export default function TenderDetails({ data }) {
                     onClick={() =>
                       applyMutation.mutate({ tender_id: tenderData.id })
                     }
-                    className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700"
                   >
                     Apply Now
                   </Button>
@@ -208,7 +204,6 @@ export default function TenderDetails({ data }) {
                   ) : (
                     <Button
                       variant="outline"
-                      className="border-indigo-300 text-indigo-700 hover:bg-indigo-50"
                       onClick={() =>
                         isFollowed
                           ? unfollowMutation.mutate({ id: tenderData.id })
@@ -297,28 +292,28 @@ export default function TenderDetails({ data }) {
             className="w-full"
             onValueChange={setActiveTab}
           >
-            <TabsList className="grid grid-cols-2 bg-indigo-100 p-1 md:grid-cols-4 lg:w-[600px]">
+            <TabsList className="grid grid-cols-2 bg-primary/10 p-1 md:grid-cols-4 lg:w-[600px]">
               <TabsTrigger
                 value="overview"
-                className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white"
+                className="data-[state=active]:bg-primary data-[state=active]:text-white"
               >
                 Overview
               </TabsTrigger>
               <TabsTrigger
                 value="specifications"
-                className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white"
+                className="data-[state=active]:bg-primary data-[state=active]:text-white"
               >
                 Specifications
               </TabsTrigger>
               <TabsTrigger
                 value="documents"
-                className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white"
+                className="data-[state=active]:bg-primary data-[state=active]:text-white"
               >
                 Documents
               </TabsTrigger>
               <TabsTrigger
                 value="related"
-                className="data-[state=active]:bg-indigo-600 data-[state=active]:text-white"
+                className="data-[state=active]:bg-primary data-[state=active]:text-white"
               >
                 Related
               </TabsTrigger>
@@ -329,7 +324,7 @@ export default function TenderDetails({ data }) {
               <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
                 <div className="lg:col-span-2">
                   <Card className="overflow-hidden border-0 shadow-lg">
-                    <CardHeader className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white">
+                    <CardHeader className="bg-primary text-white">
                       <CardTitle>Tender Details</CardTitle>
                       <CardDescription className="text-indigo-100">
                         Key information about this tender
@@ -349,55 +344,64 @@ export default function TenderDetails({ data }) {
                       >
                         <div
                           className={cn(
-                            "flex flex-col gap-1 rounded-lg bg-blue-50 p-3",
+                            "flex flex-col gap-1 rounded-lg bg-primary/5 p-3",
                           )}
                         >
-                          <p className="text-sm font-medium text-blue-600">
+                          <p className="text-sm font-medium text-primary">
                             Department
                           </p>
                           <p className={cn("font-medium")}>
-                            {tenderData.department}
+                            {tenderData.department
+                              ? tenderData.department
+                              : "N/a"}
                           </p>
                         </div>
-                        <div className="flex flex-col gap-1 rounded-lg bg-purple-50 p-3">
-                          <p className="text-sm font-medium text-purple-600">
+                        <div className="flex flex-col gap-1 rounded-lg bg-primary/5 p-3">
+                          <p className="text-sm font-medium text-primary">
                             Organisation
                           </p>
                           <p className={cn("font-medium")}>
-                            {tenderData.organisation}
+                            {tenderData.organisation
+                              ? tenderData.organisation
+                              : "N/a"}
                           </p>
                         </div>
-                        <div className="flex flex-col gap-1 rounded-lg bg-emerald-50 p-3">
-                          <p className="text-sm font-medium text-emerald-600">
+                        <div className="flex flex-col gap-1 rounded-lg bg-primary/5 p-3">
+                          <p className="text-sm font-medium text-primary">
                             Office
                           </p>
                           <p className={cn("font-medium")}>
-                            {tenderData.office}
+                            {tenderData.office ? tenderData.office : "N/a"}
                           </p>
                         </div>
-                        <div className="flex flex-col gap-1 rounded-lg bg-amber-50 p-3">
-                          <p className="text-sm font-medium text-amber-600">
+                        <div className="flex flex-col gap-1 rounded-lg bg-primary/5 p-3">
+                          <p className="text-sm font-medium text-primary">
                             Consignee
                           </p>
                           <p className={cn("font-medium")}>
-                            {tenderData.consignee}
+                            {tenderData.consignee
+                              ? tenderData.consignee
+                              : "N/a"}
                           </p>
                         </div>
-                        <div className="flex flex-col gap-1 rounded-lg bg-rose-50 p-3">
-                          <p className="text-sm font-medium text-rose-600">
+                        <div className="flex flex-col gap-1 rounded-lg bg-primary/5 p-3">
+                          <p className="text-sm font-medium text-primary">
                             Dated
                           </p>
                           <p className={cn("font-medium")}>
-                            {tenderData.dated}
+                            {tenderData.dated
+                              ? formatDate(tenderData.dated)
+                              : "N/a"}
                           </p>
                         </div>
-                        <div className="flex flex-col gap-1 rounded-lg bg-cyan-50 p-3">
-                          <p className="text-sm font-medium text-cyan-600">
+                        <div className="flex flex-col gap-1 rounded-lg bg-primary/5 p-3">
+                          <p className="text-sm font-medium text-primary">
                             Bid End Date & Time
                           </p>
                           <p className={cn("font-medium")}>
-                            {formatDate(tenderData.bid_end_date_time)} at{" "}
-                            {formatTime(tenderData.bid_end_date_time)}
+                            {tenderData.bid_end_date_time
+                              ? `${formatDate(tenderData.bid_end_date_time)} at ${formatTime(tenderData.bid_end_date_time)}`
+                              : "N/a"}
                           </p>
                         </div>
                       </div>
@@ -405,60 +409,68 @@ export default function TenderDetails({ data }) {
                       <Separator className="bg-indigo-100" />
 
                       <div>
-                        <h3 className="mb-3 text-lg font-semibold text-indigo-700">
+                        <h3 className="mb-3 text-lg font-semibold text-primary">
                           Qualification Requirements
                         </h3>
 
                         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                          <div className="flex items-center gap-3 rounded-lg bg-gradient-to-r from-indigo-50 to-blue-50 p-3">
-                            <div className="rounded-full bg-indigo-100 p-2">
-                              <TrendingUp className="h-5 w-5 text-indigo-600" />
+                          <div className="flex items-center gap-3 rounded-lg bg-primary/5 p-3">
+                            <div className="rounded-full bg-primary/10 p-2">
+                              <TrendingUp className="h-5 w-5 text-primary" />
                             </div>
                             <div className="flex flex-col gap-1">
-                              <p className="text-sm font-medium text-indigo-600">
+                              <p className="text-sm font-medium text-primary">
                                 Min. Average Annual Turnover
                               </p>
                               <p className={cn("font-medium")}>
-                                {tenderData.minimum_average_annual_turnover}
+                                {tenderData.minimum_average_annual_turnover
+                                  ? tenderData.minimum_average_annual_turnover
+                                  : "N/a"}
                               </p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-3 rounded-lg bg-gradient-to-r from-purple-50 to-indigo-50 p-3">
-                            <div className="rounded-full bg-purple-100 p-2">
-                              <Clock3 className="h-5 w-5 text-purple-600" />
+                          <div className="flex items-center gap-3 rounded-lg bg-primary/5 p-3">
+                            <div className="rounded-full bg-primary/10 p-2">
+                              <Clock3 className="h-5 w-5 text-primary" />
                             </div>
                             <div className="flex flex-col gap-1">
-                              <p className="text-sm font-medium text-purple-600">
+                              <p className="text-sm font-medium text-primary">
                                 Years of Past Experience
                               </p>
                               <p className={cn("font-medium")}>
-                                {tenderData.years_of_past_experience}
+                                {tenderData.years_of_past_experience
+                                  ? tenderData.years_of_past_experience
+                                  : "N/a"}
                               </p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-3 rounded-lg bg-gradient-to-r from-emerald-50 to-green-50 p-3">
-                            <div className="rounded-full bg-emerald-100 p-2">
-                              <FileCheck className="h-5 w-5 text-emerald-600" />
+                          <div className="flex items-center gap-3 rounded-lg bg-primary/5 p-3">
+                            <div className="rounded-full bg-primary/10 p-2">
+                              <FileCheck className="h-5 w-5 text-primary" />
                             </div>
                             <div className="flex flex-col gap-1">
-                              <p className="text-sm font-medium text-emerald-600">
+                              <p className="text-sm font-medium text-primary">
                                 Evaluation Method
                               </p>
                               <p className={cn("font-medium")}>
-                                {tenderData.evaluation_method}
+                                {tenderData.evaluation_method
+                                  ? tenderData.evaluation_method
+                                  : "N/a"}
                               </p>
                             </div>
                           </div>
-                          <div className="flex items-center gap-3 rounded-lg bg-gradient-to-r from-amber-50 to-yellow-50 p-3">
-                            <div className="rounded-full bg-amber-100 p-2">
-                              <Award className="h-5 w-5 text-amber-600" />
+                          <div className="flex items-center gap-3 rounded-lg bg-primary/5 p-3">
+                            <div className="rounded-full bg-primary/10 p-2">
+                              <Award className="h-5 w-5 text-primary" />
                             </div>
                             <div className="flex flex-col gap-1">
-                              <p className="text-sm font-medium text-amber-600">
+                              <p className="text-sm font-medium text-primary">
                                 EPBG Percentage
                               </p>
                               <p className={cn("font-medium")}>
-                                {tenderData.epbg_percentage}%
+                                {tenderData.epbg_percentage
+                                  ? `${tenderData.epbg_percentage}%`
+                                  : "N/a"}
                               </p>
                             </div>
                           </div>
@@ -468,15 +480,15 @@ export default function TenderDetails({ data }) {
                       <Separator className="bg-indigo-100" />
 
                       <div>
-                        <h3 className="mb-3 text-lg font-semibold text-indigo-700">
+                        <h3 className="mb-3 text-lg font-semibold text-primary">
                           Pre-qualification Criteria
                         </h3>
-                        <div
-                          className={cn(
-                            "rounded-lg bg-gradient-to-r from-indigo-50 to-purple-50 p-4",
-                          )}
-                        >
-                          <p>{tenderData.pre_qualification_criteria}</p>
+                        <div className={cn("rounded-lg bg-primary/5 p-4")}>
+                          <p>
+                            {tenderData.pre_qualification_criteria
+                              ? tenderData.pre_qualification_criteria
+                              : "N/a"}
+                          </p>
                         </div>
                       </div>
                     </CardContent>
@@ -485,7 +497,7 @@ export default function TenderDetails({ data }) {
 
                 <div>
                   <Card className="overflow-hidden border-0 shadow-lg">
-                    <CardHeader className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white">
+                    <CardHeader className="bg-primary text-white">
                       <CardTitle>Location & Categories</CardTitle>
                     </CardHeader>
                     <CardContent className="relative grid gap-6 p-6">
@@ -498,73 +510,69 @@ export default function TenderDetails({ data }) {
                         }}
                       />
                       <div className="flex flex-col gap-2">
-                        <h3 className="flex items-center gap-2 text-sm font-medium text-purple-700">
+                        <h3 className="flex items-center gap-2 text-sm font-medium">
                           <MapPin className="h-4 w-4" /> States
                         </h3>
                         <div className={cn("flex flex-wrap gap-2")}>
-                          {tenderData.states?.map((state) => (
-                            <Badge
-                              key={state.id}
-                              className={`${categoryColors.states}`}
-                            >
-                              {state.name}
-                            </Badge>
-                          ))}
+                          {tenderData?.states?.length
+                            ? tenderData.states?.map((state) => (
+                                <Badge key={state.id} variant={"outline"}>
+                                  {state.name}
+                                </Badge>
+                              ))
+                            : "N/a"}
                         </div>
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <h3 className="flex items-center gap-2 text-sm font-medium text-blue-700">
+                        <h3 className="flex items-center gap-2 text-sm font-medium">
                           <MapPin className="h-4 w-4" /> Cities
                         </h3>
                         <div className={cn("flex flex-wrap gap-2")}>
-                          {tenderData.cities?.map((city) => (
-                            <Badge
-                              key={city.id}
-                              className={`${categoryColors.cities}`}
-                            >
-                              {city.name}
-                            </Badge>
-                          ))}
+                          {tenderData?.cities?.length
+                            ? tenderData.cities?.map((city) => (
+                                <Badge key={city.id} variant={"outline"}>
+                                  {city.name}
+                                </Badge>
+                              ))
+                            : "N/a"}
                         </div>
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <h3 className="flex items-center gap-2 text-sm font-medium text-emerald-700">
+                        <h3 className="flex items-center gap-2 text-sm font-medium">
                           <Briefcase className="h-4 w-4" /> Sectors
                         </h3>
                         <div className={cn("flex flex-wrap gap-2", {})}>
-                          {tenderData.sectors?.map((sector) => (
-                            <Badge
-                              key={sector.id}
-                              className={`${categoryColors.sectors}`}
-                            >
-                              {sector.name}
-                            </Badge>
-                          ))}
+                          {tenderData?.sectors?.length
+                            ? tenderData.sectors?.map((sector) => (
+                                <Badge key={sector.id} variant={"outline"}>
+                                  {sector.name}
+                                </Badge>
+                              ))
+                            : "N/a"}
                         </div>
                       </div>
 
                       <div className="flex flex-col gap-2">
-                        <h3 className="flex items-center gap-2 text-sm font-medium text-amber-700">
+                        <h3 className="flex items-center gap-2 text-sm font-medium">
                           <FileText className="h-4 w-4" /> Keywords
                         </h3>
                         <div className={cn("flex flex-wrap gap-2", {})}>
-                          {tenderData.keywords?.map((keyword) => (
-                            <Badge
-                              key={keyword.id}
-                              className={`${categoryColors.keywords}`}
-                            >
-                              {keyword.name}
-                            </Badge>
-                          ))}
+                          {tenderData?.keywords?.length
+                            ? tenderData.keywords?.map((keyword) => (
+                                <Badge key={keyword.id} variant={"outline"}>
+                                  {keyword.name}
+                                </Badge>
+                              ))
+                            : "N/a"}
                         </div>
                       </div>
                     </CardContent>
                   </Card>
 
                   <Card className="mt-6 overflow-hidden border-0 shadow-lg">
-                    <CardHeader className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white">
+                    <CardHeader className="bg-primary text-white">
                       <CardTitle>Important Dates</CardTitle>
                     </CardHeader>
                     <CardContent className="relative grid gap-4 bg-gradient-to-b from-emerald-50 to-white p-6">
@@ -585,7 +593,9 @@ export default function TenderDetails({ data }) {
                             Tender Date
                           </p>
                           <p className={cn("text-sm text-emerald-600", {})}>
-                            {tenderData.dated}
+                            {tenderData.dated
+                              ? formatDate(tenderData.dated)
+                              : "N/a"}
                           </p>
                         </div>
                       </div>
@@ -598,8 +608,9 @@ export default function TenderDetails({ data }) {
                             Bid End Date & Time
                           </p>
                           <p className={cn("text-sm text-teal-600", {})}>
-                            {formatDate(tenderData.bid_end_date_time)} at{" "}
-                            {formatTime(tenderData.bid_end_date_time)}
+                            {tenderData.bid_end_date_time
+                              ? `${formatDate(tenderData.bid_end_date_time)} at ${formatTime(tenderData.bid_end_date_time)}`
+                              : "N/a"}
                           </p>
                         </div>
                       </div>
@@ -612,7 +623,7 @@ export default function TenderDetails({ data }) {
             {/* Specifications Tab */}
             <TabsContent value="specifications" className={cn("mt-6")}>
               <Card className="overflow-hidden border-0 shadow-lg">
-                <CardHeader className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white">
+                <CardHeader className="bg-primary text-white">
                   <CardTitle>Tender Specifications</CardTitle>
                   <CardDescription className="text-blue-100">
                     Detailed specifications for this tender
@@ -628,55 +639,59 @@ export default function TenderDetails({ data }) {
                     }}
                   />
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div className="flex items-center gap-3 rounded-lg bg-blue-50 p-3">
-                      <div className="rounded-full bg-blue-100 p-2">
-                        <FileText className="h-5 w-5 text-blue-600" />
+                    <div className="flex items-center gap-3 rounded-lg bg-primary/5 p-3">
+                      <div className="rounded-full bg-primary/10 p-2">
+                        <FileText className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex flex-col gap-1">
-                        <p className="text-sm font-medium text-blue-600">
+                        <p className="text-sm font-medium text-primary">
                           Quantity
                         </p>
                         <p className={cn("font-medium", {})}>
-                          {tenderData.quantity}
+                          {tenderData.quantity ? tenderData.quantity : "N/a"}
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 rounded-lg bg-cyan-50 p-3">
-                      <div className="rounded-full bg-cyan-100 p-2">
-                        <FileText className="h-5 w-5 text-cyan-600" />
+                    <div className="flex items-center gap-3 rounded-lg bg-primary/5 p-3">
+                      <div className="rounded-full bg-primary/10 p-2">
+                        <FileText className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex flex-col gap-1">
-                        <p className="text-sm font-medium text-cyan-600">
+                        <p className="text-sm font-medium text-primary">
                           Unit of Measurement
                         </p>
                         <p className={cn("font-medium", {})}>
-                          {tenderData.uom}
+                          {tenderData.uom ? tenderData.uom : "N/a"}
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 rounded-lg bg-indigo-50 p-3">
-                      <div className="rounded-full bg-indigo-100 p-2">
-                        <FileText className="h-5 w-5 text-indigo-600" />
+                    <div className="flex items-center gap-3 rounded-lg bg-primary/5 p-3">
+                      <div className="rounded-full bg-primary/10 p-2">
+                        <FileText className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex flex-col gap-1">
-                        <p className="text-sm font-medium text-indigo-600">
+                        <p className="text-sm font-medium text-primary">
                           Number of Items
                         </p>
                         <p className={cn("font-medium", {})}>
-                          {tenderData.no_of_items}
+                          {tenderData.no_of_items
+                            ? tenderData.no_of_items
+                            : "N/a"}
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 rounded-lg bg-purple-50 p-3">
-                      <div className="rounded-full bg-purple-100 p-2">
-                        <FileText className="h-5 w-5 text-purple-600" />
+                    <div className="flex items-center gap-3 rounded-lg bg-primary/5 p-3">
+                      <div className="rounded-full bg-primary/10 p-2">
+                        <FileText className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex flex-col gap-1">
-                        <p className="text-sm font-medium text-purple-600">
+                        <p className="text-sm font-medium text-primary">
                           Distribution
                         </p>
                         <p className={cn("font-medium", {})}>
-                          {tenderData.distribution}
+                          {tenderData.distribution
+                            ? tenderData.distribution
+                            : "N/a"}
                         </p>
                       </div>
                     </div>
@@ -685,7 +700,7 @@ export default function TenderDetails({ data }) {
                   <Separator className="bg-blue-100" />
 
                   <div>
-                    <h3 className="mb-3 text-lg font-semibold text-blue-700">
+                    <h3 className="mb-3 text-lg font-semibold text-primary">
                       Additional Information
                     </h3>
                     <div className="grid grid-cols-1 gap-4">
@@ -901,9 +916,9 @@ export default function TenderDetails({ data }) {
             {/* Documents Tab */}
             <TabsContent value="documents" className={cn("mt-6")}>
               <Card className="overflow-hidden border-0 shadow-lg">
-                <CardHeader className="bg-gradient-to-r from-amber-500 to-orange-500 text-white">
+                <CardHeader className="bg-primary text-white">
                   <CardTitle>Tender Documents</CardTitle>
-                  <CardDescription className="text-amber-100">
+                  <CardDescription className="">
                     Download specification documents and drawings
                   </CardDescription>
                 </CardHeader>
@@ -918,96 +933,100 @@ export default function TenderDetails({ data }) {
                     }}
                   />
                   <div>
-                    <h3 className="mb-3 text-lg font-semibold text-amber-700">
+                    <h3 className="mb-3 text-lg font-semibold text-primary">
                       Buyer Specification Documents
                     </h3>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      {tenderData.buyer_specification_document?.map(
-                        (doc, index) => (
-                          <Card
-                            key={index}
-                            className="flex items-center gap-3 border-0 bg-gradient-to-r from-amber-50 to-orange-50 p-3 shadow-md transition-shadow hover:shadow-lg"
-                          >
-                            <div className="rounded-full bg-amber-100 p-2">
-                              <FileText className="h-5 w-5 text-amber-600" />
-                            </div>
-                            <div className="flex-1">
-                              <p className="font-medium text-amber-700">
-                                Document {index + 1}
-                              </p>
-                              <p
-                                className={cn(
-                                  "max-w-[250px] truncate text-sm text-amber-600",
-                                  { "blur-sm": !user },
-                                )}
+                      {tenderData.buyer_specification_document?.length
+                        ? tenderData.buyer_specification_document?.map(
+                            (doc, index) => (
+                              <Card
+                                key={index}
+                                className="flex items-center gap-3 border-0 bg-gradient-to-r from-amber-50 to-orange-50 p-3 shadow-md transition-shadow hover:shadow-lg"
                               >
-                                {doc.split("\\").pop()}
-                              </p>
-                            </div>
-                            {user && (hasFreeAccess || hasViewedTender) && (
-                              <a
-                                target="_blank"
-                                download
-                                href={`${config.file_base}${doc}`}
-                                className={cn(
-                                  buttonVariants({ size: "sm" }),
-                                  "bg-amber-500 text-white hover:bg-amber-600",
+                                <div className="rounded-full bg-amber-100 p-2">
+                                  <FileText className="h-5 w-5 text-amber-600" />
+                                </div>
+                                <div className="flex-1">
+                                  <p className="font-medium text-amber-700">
+                                    Document {index + 1}
+                                  </p>
+                                  <p
+                                    className={cn(
+                                      "max-w-[250px] truncate text-sm text-amber-600",
+                                      { "blur-sm": !user },
+                                    )}
+                                  >
+                                    {doc.split("\\").pop()}
+                                  </p>
+                                </div>
+                                {user && (hasFreeAccess || hasViewedTender) && (
+                                  <a
+                                    target="_blank"
+                                    download
+                                    href={`${config.file_base}${doc}`}
+                                    className={cn(
+                                      buttonVariants({ size: "sm" }),
+                                      "bg-amber-500 text-white hover:bg-amber-600",
+                                    )}
+                                  >
+                                    <Download className="mr-2 h-4 w-4" />
+                                    Download
+                                  </a>
                                 )}
-                              >
-                                <Download className="mr-2 h-4 w-4" />
-                                Download
-                              </a>
-                            )}
-                          </Card>
-                        ),
-                      )}
+                              </Card>
+                            ),
+                          )
+                        : "Not found!"}
                     </div>
                   </div>
 
                   <Separator className="bg-amber-100" />
 
                   <div>
-                    <h3 className="mb-3 text-lg font-semibold text-orange-700">
+                    <h3 className="mb-3 text-lg font-semibold text-primary">
                       Drawings
                     </h3>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      {tenderData.drawing?.map((doc, index) => (
-                        <Card
-                          key={index}
-                          className="flex items-center gap-3 border-0 bg-gradient-to-r from-orange-50 to-amber-50 p-3 shadow-md transition-shadow hover:shadow-lg"
-                        >
-                          <div className="rounded-full bg-orange-100 p-2">
-                            <FileText className="h-5 w-5 text-orange-600" />
-                          </div>
-                          <div className="flex-1">
-                            <p className="font-medium text-orange-700">
-                              Drawing {index + 1}
-                            </p>
-                            <p
-                              className={cn(
-                                "max-w-[250px] truncate text-sm text-orange-600",
-                                { "blur-sm": !user },
-                              )}
+                      {tenderData?.drawing?.length
+                        ? tenderData.drawing?.map((doc, index) => (
+                            <Card
+                              key={index}
+                              className="flex items-center gap-3 border-0 bg-gradient-to-r from-orange-50 to-amber-50 p-3 shadow-md transition-shadow hover:shadow-lg"
                             >
-                              {doc.split("\\").pop()}
-                            </p>
-                          </div>
-                          {user && hasStandardAccess && (
-                            <a
-                              target="_blank"
-                              download
-                              href={`${config.file_base}${doc}`}
-                              className={cn(
-                                buttonVariants({ size: "sm" }),
-                                "bg-orange-500 text-white hover:bg-orange-600",
+                              <div className="rounded-full bg-orange-100 p-2">
+                                <FileText className="h-5 w-5 text-orange-600" />
+                              </div>
+                              <div className="flex-1">
+                                <p className="font-medium text-orange-700">
+                                  Drawing {index + 1}
+                                </p>
+                                <p
+                                  className={cn(
+                                    "max-w-[250px] truncate text-sm text-orange-600",
+                                    { "blur-sm": !user },
+                                  )}
+                                >
+                                  {doc.split("\\").pop()}
+                                </p>
+                              </div>
+                              {user && hasStandardAccess && (
+                                <a
+                                  target="_blank"
+                                  download
+                                  href={`${config.file_base}${doc}`}
+                                  className={cn(
+                                    buttonVariants({ size: "sm" }),
+                                    "bg-orange-500 text-white hover:bg-orange-600",
+                                  )}
+                                >
+                                  <Download className="mr-2 h-4 w-4" />
+                                  Download
+                                </a>
                               )}
-                            >
-                              <Download className="mr-2 h-4 w-4" />
-                              Download
-                            </a>
-                          )}
-                        </Card>
-                      ))}
+                            </Card>
+                          ))
+                        : "Not found!"}
                     </div>
                   </div>
                 </CardContent>
@@ -1017,7 +1036,7 @@ export default function TenderDetails({ data }) {
             {/* Related Tab */}
             <TabsContent value="related" className={cn("mt-6")}>
               <Card className="overflow-hidden border-0 shadow-lg">
-                <CardHeader className="bg-gradient-to-r from-emerald-500 to-green-500 text-white">
+                <CardHeader className="bg-primary text-white">
                   <CardTitle>Related Entities</CardTitle>
                   <CardDescription className="text-emerald-100">
                     Organizations and authorities related to this tender
@@ -1033,78 +1052,85 @@ export default function TenderDetails({ data }) {
                     }}
                   />
                   <div>
-                    <h3 className="mb-3 text-lg font-semibold text-emerald-700">
+                    <h3 className="mb-3 text-lg font-semibold text-primary">
                       Authorities
                     </h3>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {tenderData.authorities?.map((authority) => (
-                        <Card
-                          key={authority.id}
-                          className="overflow-hidden border-0 shadow-md transition-shadow hover:shadow-lg"
-                        >
-                          <div className="relative aspect-video bg-gradient-to-r from-emerald-400 to-green-400">
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <Building className="h-12 w-12 text-white" />
-                            </div>
-                          </div>
-                          <CardContent className="bg-gradient-to-b from-emerald-50 to-white p-4">
-                            <h4
-                              className={cn(
-                                "font-semibold text-emerald-700",
-                                {},
-                              )}
+                      {tenderData.authorities?.length
+                        ? tenderData.authorities?.map((authority) => (
+                            <Card
+                              key={authority.id}
+                              className="overflow-hidden border-0 shadow-md transition-shadow hover:shadow-lg"
                             >
-                              {authority.name}
-                            </h4>
-                            <p
-                              className={cn(
-                                "mt-1 text-sm text-emerald-600",
-                                {},
-                              )}
-                            >
-                              {authority.is_featured
-                                ? "Featured Authority"
-                                : "Authority"}
-                            </p>
-                          </CardContent>
-                        </Card>
-                      ))}
+                              <div className="relative aspect-video bg-gradient-to-r from-emerald-400 to-green-400">
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <Building className="h-12 w-12 text-white" />
+                                </div>
+                              </div>
+                              <CardContent className="bg-gradient-to-b from-emerald-50 to-white p-4">
+                                <h4
+                                  className={cn(
+                                    "font-semibold text-emerald-700",
+                                    {},
+                                  )}
+                                >
+                                  {authority.name}
+                                </h4>
+                                <p
+                                  className={cn(
+                                    "mt-1 text-sm text-emerald-600",
+                                    {},
+                                  )}
+                                >
+                                  {authority.is_featured
+                                    ? "Featured Authority"
+                                    : "Authority"}
+                                </p>
+                              </CardContent>
+                            </Card>
+                          ))
+                        : "Not found!"}
                     </div>
                   </div>
 
                   <Separator className="bg-emerald-100" />
 
                   <div>
-                    <h3 className="mb-3 text-lg font-semibold text-green-700">
+                    <h3 className="mb-3 text-lg font-semibold text-primary">
                       Sectors
                     </h3>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {tenderData.sectors?.map((sector) => (
-                        <Card
-                          key={sector.id}
-                          className="overflow-hidden border-0 shadow-md transition-shadow hover:shadow-lg"
-                        >
-                          <div className="relative aspect-video bg-gradient-to-r from-green-400 to-teal-400">
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <Briefcase className="h-12 w-12 text-white" />
-                            </div>
-                          </div>
-                          <CardContent className="bg-gradient-to-b from-green-50 to-white p-4">
-                            <h4
-                              className={cn("font-semibold text-green-700", {})}
+                      {tenderData?.sectors?.length
+                        ? tenderData.sectors?.map((sector) => (
+                            <Card
+                              key={sector.id}
+                              className="overflow-hidden border-0 shadow-md transition-shadow hover:shadow-lg"
                             >
-                              {sector.name}
-                            </h4>
-                            <p
-                              className={cn("mt-1 text-sm text-green-600", {})}
-                            >
-                              {sector.is_featured
-                                ? "Featured Sector"
-                                : "Sector"}
-                            </p>
-                          </CardContent>
-                        </Card>
-                      ))}
+                              <div className="relative aspect-video bg-gradient-to-r from-green-400 to-teal-400">
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                  <Briefcase className="h-12 w-12 text-white" />
+                                </div>
+                              </div>
+                              <CardContent className="bg-gradient-to-b from-green-50 to-white p-4">
+                                <h4
+                                  className={cn(
+                                    "font-semibold text-green-700",
+                                    {},
+                                  )}
+                                >
+                                  {sector.name}
+                                </h4>
+                                <p
+                                  className={cn("mt-1 text-sm text-green-600")}
+                                >
+                                  {sector.is_featured
+                                    ? "Featured Sector"
+                                    : "Sector"}
+                                </p>
+                              </CardContent>
+                            </Card>
+                          ))
+                        : "Not found!"}
                     </div>
                   </div>
                 </CardContent>

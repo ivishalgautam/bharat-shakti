@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import useGetAuthorities from "@/hooks/use-get-authorities";
 import { useFormattedOptions } from "@/hooks/use-formatted-options";
 import useGetStates from "@/hooks/use-get-states";
-import useGetCities from "@/hooks/use-get-cities";
+import useGetCities, { useGetCitiesByStateIds } from "@/hooks/use-get-cities";
 import useGetSectors from "@/hooks/use-get-sectors";
 import { parseAsString, useQueryState } from "nuqs";
 import { FilterBox } from "./filter-box";
@@ -49,27 +49,6 @@ export default function TendersFilters() {
   const [isApplyFilter, setIsApplyFilter] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isSaveFilter, setIsSaveFilter] = useState(false);
-
-  const { data: categoriesData } = useGetCategories();
-  const formattedCategories = useFormattedOptions(categoriesData);
-
-  const { data: subcategoriesData } = useGetSubcategories();
-  const formattedSubcategories = useFormattedOptions(subcategoriesData);
-
-  const { data: authoritiesData } = useGetAuthorities();
-  const formattedAuthorities = useFormattedOptions(authoritiesData);
-
-  const { data: industriesData } = useGetIndustries();
-  const formattedKeywords = useFormattedOptions(industriesData);
-
-  const { data: statesData } = useGetStates();
-  const formattedStates = useFormattedOptions(statesData);
-
-  const { data: citiesData } = useGetCities();
-  const formattedCities = useFormattedOptions(citiesData);
-
-  const { data: sectorsData } = useGetSectors();
-  const formattedSectors = useFormattedOptions(sectorsData);
 
   const { data, isError, error, isLoading, isFetched } = useQuery({
     queryKey: ["preferences", preferenceId],
@@ -131,6 +110,26 @@ export default function TendersFilters() {
     "amount_max",
     parseAsString.withDefault(""),
   );
+  const { data: categoriesData } = useGetCategories();
+  const formattedCategories = useFormattedOptions(categoriesData);
+
+  const { data: subcategoriesData } = useGetSubcategories();
+  const formattedSubcategories = useFormattedOptions(subcategoriesData);
+
+  const { data: authoritiesData } = useGetAuthorities();
+  const formattedAuthorities = useFormattedOptions(authoritiesData);
+
+  const { data: industriesData } = useGetIndustries();
+  const formattedKeywords = useFormattedOptions(industriesData);
+
+  const { data: statesData } = useGetStates();
+  const formattedStates = useFormattedOptions(statesData);
+
+  const { data: citiesData } = useGetCitiesByStateIds(states);
+  const formattedCities = useFormattedOptions(citiesData);
+
+  const { data: sectorsData } = useGetSectors();
+  const formattedSectors = useFormattedOptions(sectorsData);
 
   const isAnyFilterActive = useMemo(() => {
     return (
@@ -195,7 +194,6 @@ export default function TendersFilters() {
     const values = value.split(".");
     return options.filter((opt) => values.includes(opt.value));
   };
-  console.log({ isSaveFilter });
   // if (isUserLoading) return <Skeleton className={"h-52 w-full bg-gray-300"} />;
 
   return (

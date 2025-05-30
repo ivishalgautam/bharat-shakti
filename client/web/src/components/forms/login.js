@@ -1,5 +1,4 @@
 "use client";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
@@ -10,14 +9,10 @@ import { Label } from "../ui/label";
 import { LoaderCircle } from "lucide-react";
 import auth from "@/services/auth";
 
-import {
-  RiFacebookFill,
-  RiGithubFill,
-  RiGoogleFill,
-  RiTwitterXFill,
-} from "@remixicon/react";
+import { RiGoogleFill } from "@remixicon/react";
 import { signIn } from "next-auth/react";
 import { Separator } from "../ui/separator";
+import { toast } from "@/hooks/use-toast";
 
 export default function LoginForm({ redirectLink = "" }) {
   const {
@@ -35,11 +30,14 @@ export default function LoginForm({ redirectLink = "" }) {
     },
     onError: (error) => {
       console.log(error);
-      toast.error(
-        error?.response?.data?.message ??
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description:
+          error?.response?.data?.message ??
           error?.message ??
           "Something went wrong!",
-      );
+      });
     },
   });
 
@@ -101,7 +99,6 @@ export default function LoginForm({ redirectLink = "" }) {
               placeholder="Password"
               {...register("password", {
                 required: true,
-                minLength: 8,
               })}
             />
             {errors.password && (
