@@ -191,6 +191,17 @@ const getBySlug = async (req, slug) => {
   });
 };
 
+const getByCategoryIds = async (ids = []) => {
+  return await SubCategoryModel.findAll({
+    where: {
+      category_id: {
+        [Op.in]: ids,
+      },
+    },
+    raw: true,
+  });
+};
+
 const deleteById = async (req, id, { transaction }) => {
   return await SubCategoryModel.destroy({
     where: { id: req.params.id || id },
@@ -225,6 +236,7 @@ export default {
   getById: getById,
   getByPk: getByPk,
   getBySlug: getBySlug,
+  getByCategoryIds: getByCategoryIds,
   deleteById: deleteById,
   count: count,
 };

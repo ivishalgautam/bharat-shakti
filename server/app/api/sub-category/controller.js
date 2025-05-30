@@ -132,6 +132,21 @@ const getBySlug = async (req, res) => {
   }
 };
 
+const getByCategoryIds = async (req, res) => {
+  try {
+    const ids = req?.query?.category_ids?.split(".") ?? null;
+    if (!ids) return res.send({ status: true, data: { subcategories: [] } });
+    res.code(status.ACCEPTED).send({
+      status: true,
+      data: {
+        subcategories: await table.SubCategoryModel.getByCategoryIds(ids ?? []),
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 const importSubcategories = async (req, res) => {
   const parts = req.parts();
   for await (const part of parts) {
@@ -246,5 +261,6 @@ export default {
   get: get,
   getById: getById,
   getBySlug: getBySlug,
+  getByCategoryIds: getByCategoryIds,
   importSubcategories: importSubcategories,
 };
