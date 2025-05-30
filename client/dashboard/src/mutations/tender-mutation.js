@@ -44,7 +44,7 @@ export const useCreateTender = (handleSuccess) => {
   });
 };
 
-export const useUpdateTender = (id) => {
+export const useUpdateTender = (id, callback = null) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -56,6 +56,7 @@ export const useUpdateTender = (id) => {
       });
 
       queryClient.invalidateQueries(["tenders"]);
+      typeof callback === "function" && callback();
     },
     onError: (error) => {
       console.error("Mutation Error:", error);

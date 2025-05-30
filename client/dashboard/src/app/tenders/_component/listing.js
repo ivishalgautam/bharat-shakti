@@ -28,10 +28,8 @@ export default function Listing() {
   const deleteMutation = useDeleteTender(() => {
     setIsModal(false);
   });
-  const updateMutation = useUpdateTender();
 
   const openModal = () => setIsModal(true);
-  const handleUpdate = (data) => updateMutation.mutate(data);
 
   useEffect(() => {
     if (!searchParamsStr) {
