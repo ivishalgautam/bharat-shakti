@@ -23,6 +23,7 @@ import {
   useGetSubcategory,
   useUpdateSubcategory,
 } from "@/mutations/subcategory-mutation";
+import MySelect from "../my-select";
 
 const categoryTypes = [
   { value: "goods", label: "Goods" },
@@ -183,7 +184,7 @@ export default function SubcategoryForm({ id, type = "create" }) {
             control={control}
             name="category_id"
             render={({ field }) => (
-              <ReactSelect
+              <MySelect
                 options={formattedCategories}
                 onChange={field.onChange}
                 value={field.value}

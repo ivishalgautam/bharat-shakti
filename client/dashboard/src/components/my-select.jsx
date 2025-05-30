@@ -11,6 +11,16 @@ const MySelect = ({
   const id = Date.now().toString();
   const [isMounted, setIsMounted] = useState(false);
 
+  const customStyles = {
+    option: (provided) => ({
+      ...provided,
+      textTransform: "capitalize",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      textTransform: "capitalize",
+    }),
+  };
   useEffect(() => setIsMounted(true), []);
   return isMounted ? (
     <ReactSelect
@@ -19,6 +29,7 @@ const MySelect = ({
       placeholder={placeholder}
       isMulti={isMulti}
       {...props}
+      styles={customStyles}
     />
   ) : null;
 };

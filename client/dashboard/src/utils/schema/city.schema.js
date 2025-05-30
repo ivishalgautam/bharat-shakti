@@ -14,6 +14,10 @@ export const citySchema = z.object({
       })
     )
     .optional(),
+  state_id: z
+    .object({ value: z.string(), label: z.string() })
+    .transform((state_id) => state_id.value)
+    .default(null),
   meta_title: z.string().default(""),
   meta_description: z.string().default(""),
   meta_keywords: z.string().default(""),

@@ -20,6 +20,9 @@ import Image from "next/image";
 import config from "@/config";
 import Spinner from "../ui/spinner";
 import ErrorMessage from "../ui/error";
+import { useGetStates } from "@/mutations/state-mutation";
+import { useFormattedOptions } from "@/hooks/use-formatted-options";
+import ReactSelect from "react-select";
 
 export default function CityForm({ id, type = "create" }) {
   const [images, setImages] = useState([]);
@@ -39,6 +42,9 @@ export default function CityForm({ id, type = "create" }) {
     reset();
     router.replace("/cities?limit=10");
   };
+  const { data: { states } = {} } = useGetStates();
+  const formattedStates = useFormattedOptions(states);
+
   const createMutation = useCreateCity(handleSuccess);
   const updateMutation = useUpdateCity(id);
   const { data, isLoading, isError, error } = useGetCity(id);
@@ -66,13 +72,17 @@ export default function CityForm({ id, type = "create" }) {
   useEffect(() => {
     if (data) {
       setValue("name", data.name);
+      setValue(
+        "state_id",
+        formattedStates.find((so) => so.value === data.state_id)
+      );
       setValue("is_featured", data.is_featured);
       setValue("meta_title", data.meta_title);
       setValue("meta_keywords", data.meta_keywords);
       setValue("meta_description", data.meta_description);
       setImages(data.image);
     }
-  }, [data, setValue, setImages]);
+  }, [data, setValue, setImages, formattedStates]);
 
   if (type === "edit" && isLoading) return <Spinner />;
   if (type === "edit" && isError) return <ErrorMessage error={error} />;
@@ -136,6 +146,19 @@ export default function CityForm({ id, type = "create" }) {
             )}
           </>
         )}
+      </div>
+      <div>
+        <Controller
+          name="state_id"
+          control={control}
+          render={({ field }) => (
+            <ReactSelect
+              options={formattedStates}
+              onChange={field.onChange}
+              value={field.value}
+            />
+          )}
+        />
       </div>
 
       <div className="space-y-1">

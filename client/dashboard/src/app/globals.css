@@ -134,3 +134,9 @@
 .PhoneInputInput {
   @apply outline-none;
 }
+
+.css-hlgwow,
+.css-1nmdiq5-menu,
+.css-9jq23d {
+  text-transform: capitalize !important;
+}

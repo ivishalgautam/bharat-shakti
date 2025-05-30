@@ -33,7 +33,7 @@ export const columns = (openModal, setId, handleUpdate) => [
     cell: ({ row }) => {
       const name = row.getValue("name");
       return (
-        <div className="flex items-center justify-start gap-2">
+        <div className="flex items-center justify-start gap-2 capitalize">
           <Badge variant={"outline"}>{name}</Badge>
         </div>
       );
