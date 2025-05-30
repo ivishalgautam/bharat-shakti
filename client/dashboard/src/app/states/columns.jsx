@@ -50,6 +50,16 @@ export const columns = (openModal, setId, handleUpdate) => [
     },
   },
   {
+    accessorKey: "city_count",
+    header: ({ column }) => {
+      return <Button variant="ghost">Cities</Button>;
+    },
+    cell: ({ row }) => {
+      const count = row.getValue("city_count");
+      return <Badge>{count}</Badge>;
+    },
+  },
+  {
     accessorKey: "is_featured",
     header: ({ column }) => {
       return <Button variant="ghost">FEATURED</Button>;
