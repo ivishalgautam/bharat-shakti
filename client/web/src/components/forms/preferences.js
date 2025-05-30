@@ -40,6 +40,7 @@ export default function PreferencesForm({
   selectedAmountMin,
   selectedAmountMax,
 }) {
+  console.log({ selectedCategories });
   const {
     register,
     handleSubmit,

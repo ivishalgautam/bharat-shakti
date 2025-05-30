@@ -145,6 +145,21 @@ export default function Preferences({
                         updateMutation={updateMutation}
                         id={preference.id}
                         type={"edit"}
+                        {...{
+                          isSaveFilter,
+                          setIsSaveFilter,
+                          selectedCategories: categories,
+                          selectedSubcategories: subcategories,
+                          selectedAuthorities: authorities,
+                          selectedIndustries: industries,
+                          selectedSectors: sectors,
+                          selectedStates: states,
+                          selectedCities: cities,
+                          selectedDateFrom: dateFrom,
+                          selectedDateTo: dateTo,
+                          selectedAmountMin: amountMin,
+                          selectedAmountMax: amountMax,
+                        }}
                       />
                     </div>
                   )}
