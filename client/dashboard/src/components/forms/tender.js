@@ -230,7 +230,6 @@ export default function TenderForm({ type, updateMutation, id }) {
         "sector_ids",
         formattedSectors.filter((au) => data.sector_ids?.includes(au.value))
       );
-
       setFileUrls((prev) => ({
         ...prev,
         buyer_specification_document_urls:
@@ -278,6 +277,7 @@ export default function TenderForm({ type, updateMutation, id }) {
   const handleDrop = (name, acceptedFiles) => {
     setFiles((prev) => ({ ...prev, [name]: acceptedFiles }));
   };
+  console.log({ errors });
 
   const isFormPending =
     (type === "create" && createMutation.isPending) ||
@@ -435,38 +435,22 @@ export default function TenderForm({ type, updateMutation, id }) {
                 />
               </div>
 
-              {/* name */}
-              {/* <div className="space-y-1">
-                <Label htmlFor="name" className="block text-sm font-medium">
-                  Tender name
-                </Label>
-                <Input
-                  id="name"
-                  {...register("name")}
-                  placeholder="Enter tender name"
-                />
-
-                {errors.name && (
-                  <p className="text-red-500 text-sm">{errors.name.message}</p>
-                )}
-              </div> */}
-
-              {/* tender amount */}
+              {/* tender_value */}
               <div className="space-y-1">
                 <Label
-                  htmlFor="tender_amount"
+                  htmlFor="tender_value"
                   className="block text-sm font-medium"
                 >
-                  Tender Amount
+                  Tender Value
                 </Label>
                 <Input
                   type="number"
-                  id="tender_amount"
-                  {...register("tender_amount", { valueAsNumber: true })}
-                  placeholder="Enter tender amount"
+                  id="tender_value"
+                  step="0.01"
+                  {...register("tender_value", { valueAsNumber: true })}
+                  placeholder="Enter tender value"
                 />
               </div>
-
               {/* bid number */}
               <div className="space-y-1">
                 <Label
@@ -679,22 +663,6 @@ export default function TenderForm({ type, updateMutation, id }) {
                   type="number"
                   {...register("emd_amount")}
                   placeholder="Enter EMD amount"
-                />
-              </div>
-
-              {/* tender_value */}
-              <div className="space-y-1">
-                <Label
-                  htmlFor="tender_value"
-                  className="block text-sm font-medium"
-                >
-                  Tender Value
-                </Label>
-                <Input
-                  id="tender_value"
-                  type="number"
-                  {...register("tender_value")}
-                  placeholder="Enter tender value"
                 />
               </div>
 

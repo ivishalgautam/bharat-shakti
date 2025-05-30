@@ -1,15 +1,9 @@
 import { z } from "zod";
 
 export const TenderSchema = z.object({
-  // name: z
-  //   .string({ required_error: "Tender name is required!" })
-  //   .min(1, { message: "tender name is required!" }),
-  tender_amount: z.number().int().optional().default(0),
-  // bid_start_date: z.string(),
-  // bid_end_date: z.string(),
+  tender_value: z.number().multipleOf(0.01).optional().default(0),
   bid_number: z.string().default(""),
   dated: z.string().default(""),
-  // bid_start_date_time: z.coerce.date(),
   bid_end_date_time: z.coerce.date(),
   department: z.string().default(""),
   organisation: z.string().default(""),
@@ -22,7 +16,6 @@ export const TenderSchema = z.object({
   years_of_past_experience: z.string().default(""),
   evaluation_method: z.string().default(""),
   emd_amount: z.string().default(""),
-  tender_value: z.string().default(""),
   ote_lte: z.string().default(""),
   epbg_percentage: z.string().default(""),
   consignee: z.string().default(""),
@@ -37,17 +30,17 @@ export const TenderSchema = z.object({
   startup_exemption_for_turnover: z.boolean().default(false),
 
   state_id: z
-    .object({ value: z.string(), label: z.string() })
-    .transform((state_id) => state_id.value)
-    .default(null),
+    .union([z.object({ value: z.string(), label: z.string() }), z.null()])
+    .optional()
+    .transform((state_id) => (state_id ? state_id.value : null)),
   city_id: z
-    .object({ value: z.string(), label: z.string() })
-    .transform((city_id) => city_id.value)
-    .default(null),
+    .union([z.object({ value: z.string(), label: z.string() }), z.null()])
+    .optional()
+    .transform((city_id) => (city_id ? city_id.value : null)),
   category_id: z
-    .object({ value: z.string(), label: z.string() })
-    .transform((category_id) => category_id.value)
-    .default(null),
+    .union([z.object({ value: z.string(), label: z.string() }), z.null()])
+    .optional()
+    .transform((category_id) => (category_id ? category_id.value : null)),
   subcategory_ids: z
     .array(z.object({ value: z.string(), label: z.string() }))
     .transform((subcategory_ids) => subcategory_ids.map(({ value }) => value))
