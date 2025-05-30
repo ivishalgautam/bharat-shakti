@@ -161,16 +161,18 @@ export default function TenderForm({ type, updateMutation, id }) {
       console.log({ data });
       // setValue("name", data.name);
       setValue("tender_amount", data.tender_amount);
-      setValue(
-        "bid_start_date_time",
-        moment(data.bid_start_date_time).format("YYYY-MM-DDTHH:mm")
-      );
-      setValue(
-        "bid_end_date_time",
-        moment(data.bid_end_date_time).format("YYYY-MM-DDTHH:mm")
-      );
+      data.bid_start_date_time &&
+        setValue(
+          "bid_start_date_time",
+          moment(data.bid_start_date_time).format("YYYY-MM-DDTHH:mm")
+        );
+      data.bid_end_date_time &&
+        setValue(
+          "bid_end_date_time",
+          moment(data.bid_end_date_time).format("YYYY-MM-DDTHH:mm")
+        );
       setValue("bid_number", data.bid_number);
-      setValue("dated", data.dated.split("T").shift());
+      data.dated && setValue("dated", data.dated.split("T").shift());
       setValue("department", data.department);
       setValue("organisation", data.organisation);
       setValue("office", data.office);
