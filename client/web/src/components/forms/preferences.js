@@ -4,7 +4,9 @@ import useGetCities, { useGetCitiesByStateIds } from "@/hooks/use-get-cities";
 import useGetIndustries from "@/hooks/use-get-industries";
 import useGetSectors from "@/hooks/use-get-sectors";
 import useGetStates from "@/hooks/use-get-states";
-import useGetSubcategories from "@/hooks/use-get-subcategories";
+import useGetSubcategories, {
+  useGetSubcategoriesByCategory,
+} from "@/hooks/use-get-subcategories";
 import { preferenceSchema } from "@/utils/schema/preference";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
@@ -80,13 +82,14 @@ export default function PreferencesForm({
     },
   });
 
-  const { data: categories } = useGetCategories();
-  const { data: subcategories } = useGetSubcategories();
-  const { data: authorities } = useGetAuthorities();
+  const { data: states } = useGetStates();
   const { data: cities } = useGetCitiesByStateIds(selectedStates);
+  const { data: categories } = useGetCategories();
+  const { data: subcategories } =
+    useGetSubcategoriesByCategory(selectedCategories);
+  const { data: authorities } = useGetAuthorities();
   const { data: industries } = useGetIndustries();
   const { data: sectors } = useGetSectors();
-  const { data: states } = useGetStates();
 
   const formattedCategories = useFormattedOptions(categories);
   const formattedSubcategories = useFormattedOptions(subcategories);

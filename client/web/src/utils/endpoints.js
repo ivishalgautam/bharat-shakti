@@ -26,7 +26,10 @@ export const endpoints = {
   plans: { getAll: "/plans" },
   subscriptions: { getAll: "/subscriptions" },
   categories: { getAll: "/categories" },
-  subcategories: { getAll: "/sub-categories" },
+  subcategories: {
+    getAll: "/sub-categories",
+    getByCategory: "/sub-categories/get-by-category",
+  },
   files: {
     getFiles: "/upload",
     deleteKey: "/upload/s3",

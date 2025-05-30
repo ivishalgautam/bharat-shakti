@@ -24,7 +24,9 @@ import useGetIndustries from "@/hooks/use-get-industries";
 import { useAuth } from "@/providers/auth-provider";
 import { useQuery } from "@tanstack/react-query";
 import preference from "@/services/preference";
-import useGetSubcategories from "@/hooks/use-get-subcategories";
+import useGetSubcategories, {
+  useGetSubcategoriesByCategory,
+} from "@/hooks/use-get-subcategories";
 import useGetCategories from "@/hooks/use-get-categories";
 import { Small } from "../ui/typography";
 import { Skeleton } from "../ui/skeleton";
@@ -110,10 +112,17 @@ export default function TendersFilters() {
     "amount_max",
     parseAsString.withDefault(""),
   );
+
+  const { data: statesData } = useGetStates();
+  const formattedStates = useFormattedOptions(statesData);
+
+  const { data: citiesData } = useGetCitiesByStateIds(states);
+  const formattedCities = useFormattedOptions(citiesData);
+
   const { data: categoriesData } = useGetCategories();
   const formattedCategories = useFormattedOptions(categoriesData);
 
-  const { data: subcategoriesData } = useGetSubcategories();
+  const { data: subcategoriesData } = useGetSubcategoriesByCategory(categories);
   const formattedSubcategories = useFormattedOptions(subcategoriesData);
 
   const { data: authoritiesData } = useGetAuthorities();
@@ -121,12 +130,6 @@ export default function TendersFilters() {
 
   const { data: industriesData } = useGetIndustries();
   const formattedKeywords = useFormattedOptions(industriesData);
-
-  const { data: statesData } = useGetStates();
-  const formattedStates = useFormattedOptions(statesData);
-
-  const { data: citiesData } = useGetCitiesByStateIds(states);
-  const formattedCities = useFormattedOptions(citiesData);
 
   const { data: sectorsData } = useGetSectors();
   const formattedSectors = useFormattedOptions(sectorsData);
@@ -447,11 +450,11 @@ export default function TendersFilters() {
         </CardContent>
       </Card>
 
-      {/* select filters */}
+      {/* selected filters */}
       {isAnyFilterActive && (
         <div className="col-span-full mt-4">
           <ScrollArea className="w-full whitespace-nowrap rounded-md">
-            <div className="flex w-max space-x-1 p-4">
+            <div className="flex w-max space-x-1 p-4 capitalize">
               <Button variant="destructive" onClick={resetFilters}>
                 Reset All
               </Button>

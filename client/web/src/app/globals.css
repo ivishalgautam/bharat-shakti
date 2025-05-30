@@ -125,3 +125,8 @@
 .PhoneInput {
   display: flex;
 }
+
+.css-hlgwow,
+.css-1nmdiq5-menu {
+  text-transform: capitalize !important;
+}

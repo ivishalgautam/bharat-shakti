@@ -6,8 +6,16 @@ const get = async () => {
   return data?.subcategories ?? [];
 };
 
+const getByCategoryIds = async (categoryIds) => {
+  const { data } = await http().get(
+    `${endpoints.subcategories.getByCategory}?category_ids=${categoryIds}`,
+  );
+  return data?.subcategories ?? [];
+};
+
 const subcategory = {
   get: get,
+  getByCategoryIds: getByCategoryIds,
 };
 
 export default subcategory;

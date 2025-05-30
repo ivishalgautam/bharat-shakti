@@ -121,7 +121,7 @@ export function FilterBox({
                       aria-hidden="true"
                     />
                   )}
-                  <span>{option.label}</span>
+                  <span className="capitalize">{option.label}</span>
                 </CommandItem>
               ))}
             </CommandGroup>
