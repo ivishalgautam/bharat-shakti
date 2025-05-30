@@ -314,6 +314,11 @@ export default function TenderForm({ type, updateMutation, id }) {
                     );
                   }}
                 />
+                {errors.category_id && (
+                  <span className="text-sm text-red-500">
+                    {errors.category_id.message}
+                  </span>
+                )}
               </div>
 
               {/* sub categories */}
@@ -334,6 +339,11 @@ export default function TenderForm({ type, updateMutation, id }) {
                       );
                     }}
                   />
+                  {errors.subcategory_ids && (
+                    <span className="text-sm text-red-500">
+                      {errors.subcategory_ids.message}
+                    </span>
+                  )}
                 </div>
               )}
 
@@ -356,6 +366,11 @@ export default function TenderForm({ type, updateMutation, id }) {
                     );
                   }}
                 />
+                {errors.state_id && (
+                  <span className="text-sm text-red-500">
+                    {errors.state_id.message}
+                  </span>
+                )}
               </div>
 
               {/* City */}
@@ -375,6 +390,11 @@ export default function TenderForm({ type, updateMutation, id }) {
                       );
                     }}
                   />
+                  {errors.city_id && (
+                    <span className="text-sm text-red-500">
+                      {errors.city_id.message}
+                    </span>
+                  )}
                 </div>
               )}
 

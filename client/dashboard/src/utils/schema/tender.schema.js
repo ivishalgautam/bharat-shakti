@@ -30,21 +30,19 @@ export const TenderSchema = z.object({
   startup_exemption_for_turnover: z.boolean().default(false),
 
   state_id: z
-    .union([z.object({ value: z.string(), label: z.string() }), z.null()])
-    .optional()
-    .transform((state_id) => (state_id ? state_id.value : null)),
+    .object({ value: z.string(), label: z.string() })
+    .transform((state_id) => state_id.value),
   city_id: z
-    .union([z.object({ value: z.string(), label: z.string() }), z.null()])
-    .optional()
-    .transform((city_id) => (city_id ? city_id.value : null)),
+    .object({ value: z.string(), label: z.string() })
+    .transform((city_id) => city_id.value),
   category_id: z
-    .union([z.object({ value: z.string(), label: z.string() }), z.null()])
-    .optional()
-    .transform((category_id) => (category_id ? category_id.value : null)),
+    .object({ value: z.string(), label: z.string() })
+    .transform((category_id) => category_id.value),
   subcategory_ids: z
     .array(z.object({ value: z.string(), label: z.string() }))
-    .transform((subcategory_ids) => subcategory_ids.map(({ value }) => value))
-    .default([]),
+    .min(1, { message: "At least one subcategory is required" })
+    .transform((subcategory_ids) => subcategory_ids.map(({ value }) => value)),
+
   authority_ids: z
     .array(z.object({ value: z.string(), label: z.string() }))
     .transform((authority_ids) => authority_ids.map(({ value }) => value))
