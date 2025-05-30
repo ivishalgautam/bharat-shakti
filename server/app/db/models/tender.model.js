@@ -84,6 +84,16 @@ const init = async (sequelize) => {
         type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
       },
+      category_id: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        references: {
+          model: constants.models.CATEGORY_TABLE,
+          key: "id",
+          deferrable: Deferrable.INITIALLY_IMMEDIATE,
+        },
+        onDelete: "SET NULL",
+      },
       state_id: {
         type: DataTypes.UUID,
         allowNull: true,
@@ -178,6 +188,7 @@ const create = async (req, { transaction }) => {
       splitting_applied: req.body.splitting_applied,
       save_to_my_business: req.body.save_to_my_business,
 
+      category_id: req.body.category_id,
       subcategory_ids: req.body.subcategory_ids,
       authority_ids: req.body.authority_ids,
       state_id: req.body.state_id,
@@ -237,6 +248,7 @@ const update = async (req, id, { transaction }) => {
       splitting_applied: req.body.splitting_applied,
       save_to_my_business: req.body.save_to_my_business,
 
+      category_id: req.body.category_id,
       subcategory_ids: req.body.subcategory_ids,
       authority_ids: req.body.authority_ids,
       state_id: req.body.state_id,
