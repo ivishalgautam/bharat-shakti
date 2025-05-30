@@ -166,6 +166,25 @@ const getByPk = async (req, id) => {
   return await CityModel.findByPk(req?.params?.id || id);
 };
 
+const getByState = async (req, id) => {
+  return await CityModel.findAll({
+    where: {
+      state_id: req?.params?.id || id,
+    },
+    raw: true,
+  });
+};
+const getByStateIds = async (ids = []) => {
+  return await CityModel.findAll({
+    where: {
+      state_id: {
+        [Op.in]: ids,
+      },
+    },
+    raw: true,
+  });
+};
+
 const getBySlug = async (req, slug) => {
   return await CityModel.findOne({
     where: {
@@ -207,7 +226,9 @@ export default {
   update: update,
   getById: getById,
   getByPk: getByPk,
+  getByState: getByState,
   getBySlug: getBySlug,
   deleteById: deleteById,
+  getByStateIds: getByStateIds,
   count: count,
 };

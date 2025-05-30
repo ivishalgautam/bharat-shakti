@@ -1,7 +1,7 @@
 "use strict";
 import moment from "moment";
 import constants from "../../lib/constants/index.js";
-import sequelizeFwk, { Op, QueryTypes } from "sequelize";
+import sequelizeFwk, { Deferrable, Op, QueryTypes } from "sequelize";
 import { toPgArray } from "../../helpers/to-pg-array.js";
 const { DataTypes } = sequelizeFwk;
 
@@ -65,7 +65,6 @@ const init = async (sequelize) => {
       delivery_days: { type: DataTypes.STRING, defaultValue: "" },
       distribution: { type: DataTypes.STRING, defaultValue: "" },
       pre_qualification_criteria: { type: DataTypes.STRING, defaultValue: "" },
-
       save_to_my_business: { type: DataTypes.BOOLEAN, defaultValue: false },
       splitting_applied: { type: DataTypes.BOOLEAN, defaultValue: false },
       mse_exemption_for_turnover: {
@@ -85,9 +84,25 @@ const init = async (sequelize) => {
         type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
       },
-      city_ids: {
-        type: DataTypes.ARRAY(DataTypes.UUID),
-        defaultValue: [],
+      state_id: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        references: {
+          model: constants.models.STATE_TABLE,
+          key: "id",
+          deferrable: Deferrable.INITIALLY_IMMEDIATE,
+        },
+        onDelete: "SET NULL",
+      },
+      city_id: {
+        type: DataTypes.UUID,
+        allowNull: true,
+        references: {
+          model: constants.models.CITY_TABLE,
+          key: "id",
+          deferrable: Deferrable.INITIALLY_IMMEDIATE,
+        },
+        onDelete: "SET NULL",
       },
       industry_ids: {
         type: DataTypes.ARRAY(DataTypes.UUID),
@@ -97,14 +112,9 @@ const init = async (sequelize) => {
         type: DataTypes.ARRAY(DataTypes.UUID),
         defaultValue: [],
       },
-      state_ids: {
-        type: DataTypes.ARRAY(DataTypes.UUID),
-        defaultValue: [],
-      },
       keywords: {
         type: DataTypes.ARRAY(DataTypes.STRING),
       },
-
       view_count: {
         type: DataTypes.BIGINT,
         defaultValue: 0,
@@ -170,10 +180,10 @@ const create = async (req, { transaction }) => {
 
       subcategory_ids: req.body.subcategory_ids,
       authority_ids: req.body.authority_ids,
-      city_ids: req.body.city_ids,
+      state_id: req.body.state_id,
+      city_id: req.body.city_id,
       industry_ids: req.body.industry_ids,
       sector_ids: req.body.sector_ids,
-      state_ids: req.body.state_ids,
       keywords: req.body.keywords_str,
 
       meta_title: req.body.meta_title,
@@ -229,10 +239,10 @@ const update = async (req, id, { transaction }) => {
 
       subcategory_ids: req.body.subcategory_ids,
       authority_ids: req.body.authority_ids,
-      city_ids: req.body.city_ids,
+      state_id: req.body.state_id,
+      city_id: req.body.city_id,
       industry_ids: req.body.industry_ids,
       sector_ids: req.body.sector_ids,
-      state_ids: req.body.state_ids,
       keywords: req.body.keywords,
 
       view_count: req.body.view_count,
@@ -309,13 +319,13 @@ const get = async (req) => {
 
   const states = req.query.states ? String(req.query.states).split(".") : null;
   if (states) {
-    whereConditions.push(`tdr.state_ids && :stateIds`);
+    whereConditions.push(`tdr.state_id = ANY(:stateIds)`);
     queryParams.stateIds = `{${states.join(",")}}`;
   }
 
   const cities = req.query.cities ? String(req.query.cities).split(".") : null;
   if (cities) {
-    whereConditions.push(`tdr.city_ids && :cityIds`);
+    whereConditions.push(`tdr.city_id = ANY(:cityIds)`);
     queryParams.cityIds = `{${cities.join(",")}}`;
   }
 
@@ -378,10 +388,10 @@ const get = async (req) => {
       COUNT(tdr.id) OVER()::integer as total
     FROM ${constants.models.TENDER_TABLE} tdr
     LEFT JOIN ${constants.models.AUTHORITY_TABLE} atr ON atr.id = ANY(tdr.authority_ids)
-    LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = ANY(tdr.city_ids)
+    LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = tdr.state_id
+    LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = tdr.city_id
     LEFT JOIN ${constants.models.INDUSTRY_TABLE} ind ON ind.id = ANY(tdr.industry_ids)
     LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = ANY(tdr.sector_ids)
-    LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = ANY(tdr.state_ids)
     ${whereClause}
     GROUP BY tdr.id
     ORDER BY tdr.created_at DESC
@@ -392,10 +402,10 @@ const get = async (req) => {
       tdr.*
     FROM ${constants.models.TENDER_TABLE} tdr
     LEFT JOIN ${constants.models.AUTHORITY_TABLE} atr ON atr.id = ANY(tdr.authority_ids)
-    LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = ANY(tdr.city_ids)
+    LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = tdr.state_id
+    LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = tdr.city_id
     LEFT JOIN ${constants.models.INDUSTRY_TABLE} ind ON ind.id = ANY(tdr.industry_ids)
     LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = ANY(tdr.sector_ids)
-    LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = ANY(tdr.state_ids)
     ${whereClause}
     GROUP BY tdr.id
     ORDER BY tdr.created_at DESC
@@ -427,9 +437,9 @@ const getWithPlan = async (req) => {
       `(tdr.bid_number ILIKE :query OR array_to_string(tdr.keywords, '') ILIKE :query
         OR EXISTS (SELECT 1 FROM ${constants.models.INDUSTRY_TABLE} ind WHERE ind.id = ANY(tdr.industry_ids) AND ind.name ILIKE :query)
         OR EXISTS (SELECT 1 FROM ${constants.models.AUTHORITY_TABLE} atr WHERE atr.id = ANY(tdr.authority_ids) AND atr.name ILIKE :query)
-        OR EXISTS (SELECT 1 FROM ${constants.models.CITY_TABLE} ct WHERE ct.id = ANY(tdr.city_ids) AND ct.name ILIKE :query)
+        OR EXISTS (SELECT 1 FROM ${constants.models.CITY_TABLE} ct WHERE ct.id = tdr.city_id AND ct.name ILIKE :query)
         OR EXISTS (SELECT 1 FROM ${constants.models.SECTOR_TABLE} sct WHERE sct.id = ANY(tdr.sector_ids) AND sct.name ILIKE :query)
-        OR EXISTS (SELECT 1 FROM ${constants.models.STATE_TABLE} st WHERE st.id = ANY(tdr.state_ids) AND st.name ILIKE :query))`
+        OR EXISTS (SELECT 1 FROM ${constants.models.STATE_TABLE} st WHERE st.id = tdr.state_id AND st.name ILIKE :query))`
     );
     queryParams.query = `%${q}%`;
   }
@@ -475,13 +485,13 @@ const getWithPlan = async (req) => {
 
   const states = req.query.states ? String(req.query.states).split(".") : null;
   if (states) {
-    whereConditions.push(`tdr.state_ids && :stateIds`);
+    whereConditions.push(`tdr.state_id = ANY(:stateIds)`);
     queryParams.stateIds = `{${states.join(",")}}`;
   }
 
   const cities = req.query.cities ? String(req.query.cities).split(".") : null;
   if (cities) {
-    whereConditions.push(`tdr.city_ids && :cityIds`);
+    whereConditions.push(`tdr.city_id = ANY(:cityIds)`);
     queryParams.cityIds = `{${cities.join(",")}}`;
   }
 
@@ -544,10 +554,10 @@ const getWithPlan = async (req) => {
       COUNT(tdr.id) OVER()::integer as total
     FROM ${constants.models.TENDER_TABLE} tdr
     LEFT JOIN ${constants.models.AUTHORITY_TABLE} atr ON atr.id = ANY(tdr.authority_ids)
-    LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = ANY(tdr.city_ids)
+    LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = tdr.city_id
     LEFT JOIN ${constants.models.INDUSTRY_TABLE} ind ON ind.id = ANY(tdr.industry_ids)
     LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = ANY(tdr.sector_ids)
-    LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = ANY(tdr.state_ids)
+    LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = tdr.state_id
     ${whereClause}
     GROUP BY tdr.id
     ORDER BY tdr.created_at DESC
@@ -562,10 +572,10 @@ const getWithPlan = async (req) => {
       END as is_followed
     FROM ${constants.models.TENDER_TABLE} tdr
     LEFT JOIN ${constants.models.AUTHORITY_TABLE} atr ON atr.id = ANY(tdr.authority_ids)
-    LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = ANY(tdr.city_ids)
+    LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.id = tdr.city_id
     LEFT JOIN ${constants.models.INDUSTRY_TABLE} ind ON ind.id = ANY(tdr.industry_ids)
     LEFT JOIN ${constants.models.SECTOR_TABLE} sct ON sct.id = ANY(tdr.sector_ids)
-    LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = ANY(tdr.state_ids)
+    LEFT JOIN ${constants.models.STATE_TABLE} st ON st.id = tdr.state_id
     LEFT JOIN ${constants.models.WISHLIST_TABLE} ws ON ws.user_id = :userId AND ws.tender_id = tdr.id
     ${whereClause}
     GROUP BY tdr.id, ws.tender_id
@@ -606,10 +616,10 @@ const getSimilarTenders = async (req, tenderId, tender) => {
       tdr.keywords && :keywords
       OR tdr.subcategory_ids && :subcategory_ids
       OR tdr.authority_ids && :authority_ids
-      OR tdr.city_ids && :city_ids
+      OR tdr.city_id = ANY(:city_ids)
       OR tdr.industry_ids && :industry_ids
       OR tdr.sector_ids && :sector_ids
-      OR tdr.state_ids && :state_ids
+      OR tdr.state_id = :state_id
     )
   ORDER BY tdr.created_at DESC
   LIMIT 3;
@@ -625,7 +635,7 @@ const getSimilarTenders = async (req, tenderId, tender) => {
       city_ids: toPgArray(tender.city_ids),
       industry_ids: toPgArray(tender.industry_ids),
       sector_ids: toPgArray(tender.sector_ids),
-      state_ids: toPgArray(tender.state_ids),
+      state_id: tender.state_id,
     },
     type: QueryTypes.SELECT,
   });
@@ -633,7 +643,7 @@ const getSimilarTenders = async (req, tenderId, tender) => {
 
 async function getTendersByUserPreferences(req, preference) {
   let whereConditions = [
-    "(tdr.keywords && :keywords OR tdr.subcategory_ids && :subcategory_ids OR tdr.authority_ids && :authority_ids OR tdr.city_ids && :city_ids OR tdr.industry_ids && :industry_ids OR tdr.sector_ids && :sector_ids OR tdr.state_ids && :state_ids )",
+    "(tdr.keywords && :keywords OR tdr.subcategory_ids && :subcategory_ids OR tdr.authority_ids && :authority_ids OR tdr.city_id = ANY(:city_ids) OR tdr.industry_ids && :industry_ids OR tdr.sector_ids && :sector_ids OR tdr.state_id = ANY(:state_ids))",
   ];
   const queryParams = {
     userId: req.user_data.id,
@@ -652,9 +662,9 @@ async function getTendersByUserPreferences(req, preference) {
       `(tdr.bid_number ILIKE :query OR array_to_string(tdr.keywords, '') ILIKE :query
         OR EXISTS (SELECT 1 FROM ${constants.models.INDUSTRY_TABLE} ind WHERE ind.id = ANY(tdr.industry_ids) AND ind.name ILIKE :query)
         OR EXISTS (SELECT 1 FROM ${constants.models.AUTHORITY_TABLE} atr WHERE atr.id = ANY(tdr.authority_ids) AND atr.name ILIKE :query)
-        OR EXISTS (SELECT 1 FROM ${constants.models.CITY_TABLE} ct WHERE ct.id = ANY(tdr.city_ids) AND ct.name ILIKE :query)
+        OR EXISTS (SELECT 1 FROM ${constants.models.CITY_TABLE} ct WHERE ct.id = tdr.city_id AND ct.name ILIKE :query)
         OR EXISTS (SELECT 1 FROM ${constants.models.SECTOR_TABLE} sct WHERE sct.id = ANY(tdr.sector_ids) AND sct.name ILIKE :query)
-        OR EXISTS (SELECT 1 FROM ${constants.models.STATE_TABLE} st WHERE st.id = ANY(tdr.state_ids) AND st.name ILIKE :query))`
+        OR EXISTS (SELECT 1 FROM ${constants.models.STATE_TABLE} st WHERE st.id = tdr.state_id AND st.name ILIKE :query))`
     );
     queryParams.query = `%${q}%`;
   }
@@ -700,13 +710,13 @@ async function getTendersByUserPreferences(req, preference) {
 
   const states = req.query.states ? String(req.query.states).split(".") : null;
   if (states) {
-    whereConditions.push(`tdr.state_ids && :stateIds`);
+    whereConditions.push(`tdr.state_id = ANY(:stateIds)`);
     queryParams.stateIds = `{${states.join(",")}}`;
   }
 
   const cities = req.query.cities ? String(req.query.cities).split(".") : null;
   if (cities) {
-    whereConditions.push(`tdr.city_ids && :cityIds`);
+    whereConditions.push(`tdr.city_id = ANY(:cityIds)`);
     queryParams.cityIds = `{${cities.join(",")}}`;
   }
 
@@ -845,7 +855,7 @@ const getBySlug = async (req, slug) => {
       (
         SELECT COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', ct.id, 'name', ct.name)), '[]')
         FROM ${constants.models.CITY_TABLE} ct
-        WHERE ct.id = ANY(tdr.city_ids)
+        WHERE ct.id = tdr.city_id
       ) AS cities,
       (
         SELECT COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', ind.id, 'name', ind.name)), '[]')
@@ -860,7 +870,7 @@ const getBySlug = async (req, slug) => {
       (
         SELECT COALESCE(JSON_AGG(JSON_BUILD_OBJECT('id', st.id, 'name', st.name)), '[]')
         FROM ${constants.models.STATE_TABLE} st
-        WHERE st.id = ANY(tdr.state_ids)
+        WHERE st.id = tdr.state_id
       ) AS states
     FROM ${constants.models.TENDER_TABLE} tdr
     WHERE tdr.slug = :slug

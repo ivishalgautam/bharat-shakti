@@ -112,6 +112,37 @@ const getById = async (req, res) => {
   }
 };
 
+const getByState = async (req, res) => {
+  try {
+    const record = await table.StateModel.getById(req);
+    if (!record)
+      return res
+        .code(status.NOT_FOUND)
+        .send({ status: false, message: "State not found!" });
+
+    res
+      .code(status.ACCEPTED)
+      .send({ status: true, data: await table.CityModel.getByState(req) });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getByStateIds = async (req, res) => {
+  try {
+    const ids = req?.query?.state_ids?.split(".") ?? null;
+    if (!ids) return res.send({ status: true, data: { cities: [] } });
+    res.code(status.ACCEPTED).send({
+      status: true,
+      data: {
+        cities: await table.CityModel.getByStateIds(ids ?? []),
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 const importCities = async (req, res) => {
   const parts = req.parts();
   for await (const part of parts) {
@@ -226,5 +257,7 @@ export default {
   deleteById: deleteById,
   get: get,
   getById: getById,
+  getByState: getByState,
   importCities: importCities,
+  getByStateIds: getByStateIds,
 };

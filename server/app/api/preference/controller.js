@@ -65,10 +65,10 @@ const getById = async (req, res) => {
       data: data ?? {
         subcategory_ids: [],
         authority_ids: [],
-        city_ids: [],
         industry_ids: [],
-        sector_ids: [],
-        state_ids: [],
+        sector_id: [],
+        state_id: null,
+        city_id: null,
       },
     });
   } catch (error) {

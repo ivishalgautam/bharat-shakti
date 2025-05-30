@@ -37,10 +37,10 @@ export const tenderSchema = z.object({
 
   subcategory_ids: z.array(z.string().uuid()).default([]),
   authority_ids: z.array(z.string().uuid()).default([]),
-  city_ids: z.array(z.string().uuid()).default([]),
+  state_id: z.string().uuid().nullable().default(null),
+  city_id: z.string().uuid().nullable().default(null),
   keyword_ids: z.array(z.string().uuid()).default([]),
   sector_ids: z.array(z.string().uuid()).default([]),
-  state_ids: z.array(z.string().uuid()).default([]),
 
   keywords: z.array(z.string()),
 

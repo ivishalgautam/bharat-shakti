@@ -13,10 +13,12 @@ export default async function routes(fastify, opts) {
     controller.update
   );
   fastify.get("/:id", {}, controller.getById);
+  fastify.get("/get-by-state/:id", {}, controller.getByState);
   fastify.delete("/:id", {}, controller.deleteById);
 }
 
 export async function citiesPublicRoutes(fastify, opts) {
   fastify.get("/", {}, controller.get);
   fastify.post("/import", {}, controller.importCities);
+  fastify.get("/get-by-state-ids", {}, controller.getByStateIds);
 }
