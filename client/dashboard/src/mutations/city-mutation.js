@@ -9,6 +9,13 @@ export const useGetCities = (searchParams = "page=1") => {
     enabled: !!searchParams,
   });
 };
+export const useGetCitiesByState = (stateId) => {
+  return useQuery({
+    queryKey: ["cities", stateId],
+    queryFn: () => city.getByState(stateId),
+    enabled: !!stateId,
+  });
+};
 
 export const useGetCity = (id) => {
   return useQuery({

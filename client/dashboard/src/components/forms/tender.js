@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { TenderSchema } from "@/utils/schema/tender.schema";
 import { useGetSectors } from "@/mutations/sector-mutation";
 import { useGetAuthorities } from "@/mutations/authority-mutation";
-import { useGetCities } from "@/mutations/city-mutation";
+import { useGetCities, useGetCitiesByState } from "@/mutations/city-mutation";
 import { useGetStates } from "@/mutations/state-mutation";
 import { useFormattedOptions } from "@/hooks/use-formatted-options";
 import MySelect from "../my-select";
@@ -36,6 +36,8 @@ import { useGetSubCategories } from "@/mutations/subcategory-mutation";
 import moment from "moment";
 import { useRouter } from "next/navigation";
 import { useGetCategories } from "@/mutations/category-mutation";
+import Spinner from "../ui/spinner";
+import ErrorMessage from "../ui/error";
 
 const defaultValues = {
   // name: "",
@@ -72,10 +74,10 @@ const defaultValues = {
   bid_to_ra_enabled: false,
 
   authority_ids: [],
-  city_ids: [],
+  state_id: "",
+  city_id: "",
   industry_ids: [],
   sector_ids: [],
-  state_ids: [],
 
   keywords: [],
   meta_title: "",
@@ -94,7 +96,6 @@ export default function TenderForm({ type, updateMutation, id }) {
   });
   const keywordsInputId = useId();
 
-  const [render, rerender] = useState(0);
   const {
     register,
     handleSubmit,
@@ -105,20 +106,20 @@ export default function TenderForm({ type, updateMutation, id }) {
   } = useForm({ resolver: zodResolver(TenderSchema), defaultValues });
   const router = useRouter();
   const keywordsArray = watch("keywords");
+  const state = watch("state_id");
   const [exampleTags, setExampleTags] = useState(keywordsArray ?? []);
   const [activeTagIndex, setActiveTagIndex] = useState(null);
   const createMutation = useCreateTender(function () {
     router.push("/tenders?page=1&limit=10");
   });
-  const { data } = useGetTender(id);
-
+  const { data, isLoading, isError, error } = useGetTender(id);
   const { data: { categories } = {} } = useGetCategories();
   const { data: { subcategories } = {} } = useGetSubCategories();
   const { data: { authorities } = {} } = useGetAuthorities();
-  const { data: { cities } = {} } = useGetCities();
+  const { data: { states } = {} } = useGetStates();
+  const { data: { cities } = {} } = useGetCitiesByState(state?.value);
   const { data: { industries } = {} } = useGetIndustries();
   const { data: { sectors } = {} } = useGetSectors();
-  const { data: { states } = {} } = useGetStates();
 
   const formattedCategories = useFormattedOptions(categories);
   const formattedSubcategories = useFormattedOptions(subcategories);
@@ -161,7 +162,7 @@ export default function TenderForm({ type, updateMutation, id }) {
         moment(data.bid_end_date_time).format("YYYY-MM-DDTHH:mm")
       );
       setValue("bid_number", data.bid_number);
-      setValue("dated", data.dated);
+      setValue("dated", data.dated.split("T").shift());
       setValue("department", data.department);
       setValue("organisation", data.organisation);
       setValue("office", data.office);
@@ -210,8 +211,8 @@ export default function TenderForm({ type, updateMutation, id }) {
         )
       );
       setValue(
-        "city_ids",
-        formattedCities.filter((au) => data.city_ids?.includes(au.value))
+        "state_id",
+        formattedStates.find((au) => data.state_id === au.value)
       );
       setValue(
         "industry_ids",
@@ -223,10 +224,7 @@ export default function TenderForm({ type, updateMutation, id }) {
         "sector_ids",
         formattedSectors.filter((au) => data.sector_ids?.includes(au.value))
       );
-      setValue(
-        "state_ids",
-        formattedStates.filter((au) => data.state_ids?.includes(au.value))
-      );
+
       setFileUrls((prev) => ({
         ...prev,
         buyer_specification_document_urls:
@@ -239,20 +237,27 @@ export default function TenderForm({ type, updateMutation, id }) {
         ...prev,
         drawing_urls: data?.drawing ?? [],
       }));
-      rerender((prev) => prev + 1);
-      // authority_ids city_ids industry_ids sector_ids state_ids
+      // rerender((prev) => prev + 1);
     }
   }, [
     data,
     setValue,
     formattedSubcategories,
     formattedAuthorities,
-    formattedCities,
     formattedIndustries,
     formattedSectors,
     formattedStates,
   ]);
-  // console.log({ fileUrls });
+
+  useEffect(() => {
+    if (data) {
+      setValue(
+        "city_id",
+        formattedCities.find((au) => data.city_id === au.value)
+      );
+    }
+  }, [setValue, data, formattedCities]);
+
   const handleDrop = (name, acceptedFiles) => {
     setFiles((prev) => ({ ...prev, [name]: acceptedFiles }));
   };
@@ -260,6 +265,9 @@ export default function TenderForm({ type, updateMutation, id }) {
   const isFormPending =
     (type === "create" && createMutation.isPending) ||
     (type === "edit" && updateMutation.isPending);
+
+  if (type === "edit" && isLoading) return <Spinner />;
+  if (type === "edit" && isError) return <ErrorMessage error={error} />;
 
   return (
     <Card className="w-full mx-auto">
@@ -307,6 +315,47 @@ export default function TenderForm({ type, updateMutation, id }) {
                 />
               </div>
 
+              {/* State */}
+              <div>
+                <Label>State</Label>
+                <Controller
+                  control={control}
+                  name="state_id"
+                  render={({ field: { onChange, value } }) => {
+                    return (
+                      <MySelect
+                        options={formattedStates}
+                        value={value}
+                        onChange={(value) => {
+                          onChange(value);
+                          setValue("city_id", "");
+                        }}
+                      />
+                    );
+                  }}
+                />
+              </div>
+
+              {/* City */}
+              {state && (
+                <div>
+                  <Label>City</Label>
+                  <Controller
+                    control={control}
+                    name="city_id"
+                    render={({ field: { onChange, value } }) => {
+                      return (
+                        <MySelect
+                          options={formattedCities}
+                          value={value}
+                          onChange={onChange}
+                        />
+                      );
+                    }}
+                  />
+                </div>
+              )}
+
               {/* authorities */}
               <div>
                 <Label>Authorities</Label>
@@ -317,25 +366,6 @@ export default function TenderForm({ type, updateMutation, id }) {
                     return (
                       <MySelect
                         options={formattedAuthorities}
-                        value={value}
-                        isMulti
-                        onChange={onChange}
-                      />
-                    );
-                  }}
-                />
-              </div>
-
-              {/* Cities */}
-              <div>
-                <Label>Cities</Label>
-                <Controller
-                  control={control}
-                  name="city_ids"
-                  render={({ field: { onChange, value } }) => {
-                    return (
-                      <MySelect
-                        options={formattedCities}
                         value={value}
                         isMulti
                         onChange={onChange}
@@ -374,25 +404,6 @@ export default function TenderForm({ type, updateMutation, id }) {
                     return (
                       <MySelect
                         options={formattedSectors}
-                        value={value}
-                        isMulti
-                        onChange={onChange}
-                      />
-                    );
-                  }}
-                />
-              </div>
-
-              {/* States */}
-              <div>
-                <Label>States</Label>
-                <Controller
-                  control={control}
-                  name="state_ids"
-                  render={({ field: { onChange, value } }) => {
-                    return (
-                      <MySelect
-                        options={formattedStates}
                         value={value}
                         isMulti
                         onChange={onChange}
@@ -467,27 +478,6 @@ export default function TenderForm({ type, updateMutation, id }) {
                   {...register("dated")}
                   placeholder="Select date"
                 />
-              </div>
-
-              {/* bid start date time */}
-              <div className="space-y-1">
-                <Label
-                  htmlFor="bid_start_date_time"
-                  className="block text-sm font-medium"
-                >
-                  Bid Start Date/Time
-                </Label>
-                <Input
-                  id="bid_start_date_time"
-                  type="datetime-local"
-                  {...register("bid_start_date_time")}
-                  placeholder="Select start date and time"
-                />
-                {errors.bid_start_date_time && (
-                  <p className="text-red-500 text-sm">
-                    {errors.bid_start_date_time.message}
-                  </p>
-                )}
               </div>
 
               {/* bid end date time */}

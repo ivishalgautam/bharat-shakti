@@ -25,12 +25,20 @@ const get = async (searchParams = "") => {
   return data;
 };
 
+const getByState = async (stateId) => {
+  const { data } = await http().get(
+    `${endpoints.cities.getByState}/${stateId}`
+  );
+  return { cities: data };
+};
+
 const city = {
   create: create,
   update: update,
   deleteById: deleteById,
   getById: getById,
   get: get,
+  getByState: getByState,
 };
 
 export default city;

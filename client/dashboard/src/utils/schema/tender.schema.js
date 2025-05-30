@@ -9,7 +9,7 @@ export const TenderSchema = z.object({
   // bid_end_date: z.string(),
   bid_number: z.string().default(""),
   dated: z.string().default(""),
-  bid_start_date_time: z.coerce.date(),
+  // bid_start_date_time: z.coerce.date(),
   bid_end_date_time: z.coerce.date(),
   department: z.string().default(""),
   organisation: z.string().default(""),
@@ -44,10 +44,14 @@ export const TenderSchema = z.object({
     .array(z.object({ value: z.string(), label: z.string() }))
     .transform((authority_ids) => authority_ids.map(({ value }) => value))
     .default([]),
-  city_ids: z
-    .array(z.object({ value: z.string(), label: z.string() }))
-    .transform((city_ids) => city_ids.map(({ value }) => value))
-    .default([]),
+  state_id: z
+    .object({ value: z.string(), label: z.string() })
+    .transform((state_id) => state_id.value)
+    .default(null),
+  city_id: z
+    .object({ value: z.string(), label: z.string() })
+    .transform((city_id) => city_id.value)
+    .default(null),
   industry_ids: z
     .array(z.object({ value: z.string(), label: z.string() }))
     .transform((industry_ids) => industry_ids.map(({ value }) => value))
@@ -55,10 +59,6 @@ export const TenderSchema = z.object({
   sector_ids: z
     .array(z.object({ value: z.string(), label: z.string() }))
     .transform((sector_ids) => sector_ids.map(({ value }) => value))
-    .default([]),
-  state_ids: z
-    .array(z.object({ value: z.string(), label: z.string() }))
-    .transform((state_ids) => state_ids.map(({ value }) => value))
     .default([]),
   keywords: z.array(z.string()).optional(),
   meta_title: z.string().default(""),

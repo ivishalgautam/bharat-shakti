@@ -21,7 +21,7 @@ export const endpoints = {
   keywords: { getAll: "/keywords" },
   industries: { getAll: "/industries" },
   states: { getAll: "/states" },
-  cities: { getAll: "/cities" },
+  cities: { getAll: "/cities", getByState: "/cities/get-by-state" },
   files: {
     getFiles: "/upload",
     deleteKey: "/upload/s3",
