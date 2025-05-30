@@ -64,7 +64,7 @@ const deleteById = async (req, res) => {
       return res
         .code(status.NOT_FOUND)
         .send({ status: false, message: "State not found!" });
-
+    console.log({ record });
     await table.StateModel.deleteById(req, 0, { transaction });
 
     if (record.image?.length) {
