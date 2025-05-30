@@ -96,7 +96,7 @@ const get = async (req) => {
   SELECT
       COUNT(ct.id) OVER()::integer as total
     FROM ${constants.models.CITY_TABLE} ct
-    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON ct.id = ANY(tdr.city_ids)
+    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON ct.id = tdr.city_id
     ${whereClause}
     GROUP BY ct.id
     ORDER BY ct.created_at DESC
@@ -107,7 +107,7 @@ const get = async (req) => {
       ct.*,
       COUNT(tdr.id)::integer as tenders_count
     FROM ${constants.models.CITY_TABLE} ct
-    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON ct.id = ANY(tdr.city_ids)
+    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON ct.id = tdr.city_id
     ${whereClause}
     GROUP BY ct.id
     ORDER BY ct.created_at DESC
