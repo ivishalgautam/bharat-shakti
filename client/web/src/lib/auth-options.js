@@ -29,7 +29,6 @@ export const authOptions = {
       try {
         const { data } = await auth.login(payload);
         const cookieStore = await cookies();
-
         cookieStore.set("token", data.token, {
           path: "/",
           expires: new Date(data.expire_time),

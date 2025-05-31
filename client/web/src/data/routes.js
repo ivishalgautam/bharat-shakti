@@ -1,4 +1,11 @@
-import { BookHeart, Eye, FileUser, Settings, User } from "lucide-react";
+import {
+  BookHeart,
+  Eye,
+  FileUser,
+  IndianRupee,
+  Settings,
+  User,
+} from "lucide-react";
 
 const ROLES = {
   ADMIN: "admin",
@@ -49,5 +56,12 @@ export const allRoutes = [
     roles: [ROLES.USER],
     tier: [TIER.STANDARD, TIER.PREMIUM],
     icon: Settings,
+  },
+  {
+    label: "Plans",
+    link: "/dashboard/plans",
+    roles: [ROLES.USER],
+    tier: [TIER.STANDARD, TIER.PREMIUM, TIER.FREE],
+    icon: IndianRupee,
   },
 ];

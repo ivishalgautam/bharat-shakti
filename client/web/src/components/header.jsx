@@ -6,9 +6,17 @@ import Logo from "./logo";
 import UserDropdown from "./user-dropdown";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { Skeleton } from "./ui/skeleton";
+import { useAuth } from "@/providers/auth-provider";
+import { useEffect } from "react";
 
 export default function Header() {
   const [user, setUser, isHydrated] = useLocalStorage("user", null);
+  const { user: user1 } = useAuth();
+  useEffect(() => {
+    if (!user && user1) {
+      setUser(user1);
+    }
+  }, [user1, setUser, user]);
 
   if (!isHydrated) {
     return <Skeleton className={"h-20 rounded-none bg-gray-200"} />;
