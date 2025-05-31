@@ -349,7 +349,7 @@ const importTenders = async (req, res) => {
             subcat1 &&
             subcat2 &&
             stateRecord &&
-            cityRecord
+            (cityRecord || true)
           ) {
             await table.TenderModel.update(
               {

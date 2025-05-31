@@ -203,7 +203,7 @@ const importCities = async (req, res) => {
               { transaction }
             );
           }
-          console.log({ stateRecord: stateRecord.id });
+          // console.log({ stateRecord: stateRecord.id });
           const cityPromises = obj[state].map(async (city) => {
             const citySlug = slugify(city, { lower: true });
             const isCityExist = await table.CityModel.getBySlug(0, citySlug);
