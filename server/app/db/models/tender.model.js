@@ -285,7 +285,7 @@ const get = async (req) => {
   let q = req.query.q;
   if (q) {
     whereConditions.push(
-      `(tdr.bid_number ILIKE :query OR array_to_string(tdr.keywords, '') ILIKE :query)`
+      `(tdr.bid_number ILIKE :query OR tdr.organisation OR array_to_string(tdr.keywords, '') ILIKE :query)`
     );
     queryParams.query = `%${q}%`;
   }
@@ -446,7 +446,7 @@ const getWithPlan = async (req) => {
   let q = req.query.q;
   if (q) {
     whereConditions.push(
-      `(tdr.bid_number ILIKE :query OR array_to_string(tdr.keywords, '') ILIKE :query
+      `(tdr.bid_number ILIKE :query OR tdr.organisation OR array_to_string(tdr.keywords, '') ILIKE :query
         OR EXISTS (SELECT 1 FROM ${constants.models.INDUSTRY_TABLE} ind WHERE ind.id = ANY(tdr.industry_ids) AND ind.name ILIKE :query)
         OR EXISTS (SELECT 1 FROM ${constants.models.AUTHORITY_TABLE} atr WHERE atr.id = ANY(tdr.authority_ids) AND atr.name ILIKE :query)
         OR EXISTS (SELECT 1 FROM ${constants.models.CITY_TABLE} ct WHERE ct.id = tdr.city_id AND ct.name ILIKE :query)
