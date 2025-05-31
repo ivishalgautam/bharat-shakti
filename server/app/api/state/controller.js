@@ -6,6 +6,16 @@ import constants from "../../lib/constants/index.js";
 import { stateSchema } from "../../utils/schema/state.schema.js";
 import { getItemsToDelete } from "../../helpers/filter.js";
 
+import path from "path";
+import fs from "fs";
+import util from "util";
+import xlsx from "xlsx";
+import { pipeline } from "stream";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const pump = util.promisify(pipeline);
+
 const status = constants.http.status;
 const message = constants.http.message;
 
@@ -64,7 +74,6 @@ const deleteById = async (req, res) => {
       return res
         .code(status.NOT_FOUND)
         .send({ status: false, message: "State not found!" });
-    console.log({ record });
     await table.StateModel.deleteById(req, 0, { transaction });
 
     if (record.image?.length) {
@@ -104,10 +113,79 @@ const getById = async (req, res) => {
   }
 };
 
+const importStates = async (req, res) => {
+  const parts = req.parts();
+  for await (const part of parts) {
+    if (part.file) {
+      const tempPath = path.join(
+        __dirname,
+        "../../../",
+        "uploads",
+        part.filename
+      );
+      await pump(part.file, fs.createWriteStream(tempPath));
+
+      const workbook = xlsx.readFile(tempPath);
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const data = xlsx.utils.sheet_to_json(sheet);
+      // Clean up temp file
+      fs.unlinkSync(tempPath);
+      // name slug category_id
+      const transaction = await sequelize.transaction();
+
+      const stateCityData = data.map(({ state, city }) => ({
+        state,
+        city,
+      }));
+      const obj = {};
+      stateCityData.forEach(({ state, city }) => {
+        if (!obj[state]) {
+          obj[state] = [];
+        }
+
+        if (city && !obj[state].includes(city)) {
+          obj[state].push(city);
+        }
+      });
+      try {
+        const promises = Object.keys(obj).map(async (state) => {
+          const stateSlug = slugify(state, { lower: true });
+          let stateRecord = null;
+          const isStateExist = await table.StateModel.getBySlug(0, stateSlug);
+          if (!isStateExist) {
+            // stateRecord = isStateExist;
+            stateRecord = await table.StateModel.create(
+              {
+                body: {
+                  slug: stateSlug,
+                  name: state,
+                  type: state,
+                },
+              },
+              { transaction }
+            );
+          }
+        });
+
+        await Promise.all(promises);
+        await transaction.commit();
+        return res.send("created");
+      } catch (error) {
+        await transaction.rollback();
+        throw error;
+      }
+    }
+  }
+
+  return res.code(400).send({ error: "No file uploaded" });
+};
+
 export default {
   create: create,
   update: update,
   deleteById: deleteById,
   get: get,
   getById: getById,
+  importStates: importStates,
 };

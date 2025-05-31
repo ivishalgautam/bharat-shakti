@@ -171,8 +171,8 @@ const importCities = async (req, res) => {
       }));
       const obj = {};
       stateCityData.forEach(({ state, city }) => {
-        let stateLower = String(state).trim().toLowerCase();
-        let cityLower = String(city).trim().toLowerCase();
+        let stateLower = state ? String(state).trim().toLowerCase() : null;
+        let cityLower = city ? String(city).trim().toLowerCase() : null;
 
         if (!obj[stateLower]) {
           obj[stateLower] = [];
@@ -182,10 +182,9 @@ const importCities = async (req, res) => {
           obj[stateLower].push(cityLower);
         }
       });
-
       try {
         const promises = Object.keys(obj).map(async (state) => {
-          const stateSlug = slugify(state);
+          const stateSlug = slugify(state, { lower: true });
 
           let stateRecord = null;
           const isStateExist = await table.StateModel.getBySlug(0, stateSlug);
@@ -204,11 +203,11 @@ const importCities = async (req, res) => {
               { transaction }
             );
           }
-
-          console.log({ stateRecord });
+          console.log({ stateRecord: stateRecord.id });
           const cityPromises = obj[state].map(async (city) => {
-            const citySlug = slugify(city);
+            const citySlug = slugify(city, { lower: true });
             const isCityExist = await table.CityModel.getBySlug(0, citySlug);
+            console.log({ isCityExist });
             if (isCityExist) {
               await table.CityModel.update(
                 {

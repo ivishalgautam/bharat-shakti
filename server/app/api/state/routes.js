@@ -18,4 +18,5 @@ export default async function routes(fastify, opts) {
 
 export async function statePublicRoutes(fastify, opts) {
   fastify.get("/", {}, controller.get);
+  fastify.post("/import", {}, controller.importStates);
 }

@@ -63,19 +63,19 @@ const create = async (req, { transaction }) => {
 const get = async (req) => {
   let whereConditions = [];
   const queryParams = {};
-  let q = req.query.q;
+  let q = req.query?.q;
   if (q) {
     whereConditions.push(`st.name ILIKE :query`);
     queryParams.query = `%${q}%`;
   }
 
-  const featured = req.query.featured;
+  const featured = req.query?.featured;
   if (featured) {
     whereConditions.push(`st.is_featured = true`);
   }
 
-  const page = req.query.page ? Number(req.query.page) : 1;
-  const limit = req.query.limit ? Number(req.query.limit) : null;
+  const page = req.query?.page ? Number(req.query.page) : 1;
+  const limit = req.query?.limit ? Number(req.query.limit) : null;
   const offset = (page - 1) * limit;
 
   let whereClause = "";

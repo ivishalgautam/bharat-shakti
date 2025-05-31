@@ -196,7 +196,7 @@ const importSubcategories = async (req, res) => {
       });
       try {
         const promises = Object.keys(obj).map(async (category) => {
-          const categorySlug = slugify(category);
+          const categorySlug = slugify(category, { lower: true });
 
           let categoryRecord = null;
           const isCategoryExist = await table.CategoryModel.getBySlug(
@@ -219,7 +219,7 @@ const importSubcategories = async (req, res) => {
             );
           }
           const subcatePromises = obj[category].map(async (subcat) => {
-            const subCatSlug = slugify(subcat);
+            const subCatSlug = slugify(subcat, { lower: true });
             const isSubCatExist = await table.SubCategoryModel.getBySlug(
               0,
               subCatSlug
