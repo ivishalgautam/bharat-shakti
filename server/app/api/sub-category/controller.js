@@ -254,6 +254,7 @@ const importSubcategories = async (req, res) => {
 
   return res.code(400).send({ error: "No file uploaded" });
 };
+
 export default {
   create: create,
   update: update,

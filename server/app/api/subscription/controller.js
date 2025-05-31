@@ -25,6 +25,7 @@ const create = async (req, res) => {
         .send({ status: false, message: "You already have an active plan." });
 
     req.body.plan_tier = planRecord.plan_tier;
+    req.body.plan_id = planRecord.id;
     req.body.start_date = moment();
     req.body.end_date = moment().add("months", planRecord.duration_in_months);
     req.body.duration_in_months = planRecord.duration_in_months;

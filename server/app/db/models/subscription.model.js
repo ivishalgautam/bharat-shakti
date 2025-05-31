@@ -1,7 +1,7 @@
 "use strict";
 import moment from "moment";
 import constants from "../../lib/constants/index.js";
-import { Deferrable, DataTypes, Op } from "sequelize";
+import { Deferrable, DataTypes, Op, QueryTypes } from "sequelize";
 
 let SubscriptionModel = null;
 
@@ -22,6 +22,16 @@ const init = async (sequelize) => {
         onDelete: "CASCADE",
         references: {
           model: constants.models.USER_TABLE,
+          key: "id",
+          deferrable: Deferrable.INITIALLY_IMMEDIATE,
+        },
+      },
+      plan_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+        onDelete: "CASCADE",
+        references: {
+          model: constants.models.PLAN_TABLE,
           key: "id",
           deferrable: Deferrable.INITIALLY_IMMEDIATE,
         },
@@ -64,6 +74,7 @@ const create = async (req, { transaction }) => {
   return await SubscriptionModel.create(
     {
       user_id: req.user_data.id,
+      plan_id: req.body.plan_id,
       plan_tier: req.body.plan_tier,
       start_date: req.body.start_date,
       end_date: req.body.end_date,
@@ -82,8 +93,17 @@ const update = async (req, id, { transaction }) => {
 };
 
 const get = async (req) => {
-  return await SubscriptionModel.findAll({
-    user_id: req.user_data.id,
+  let query = `
+  SELECT
+      sub.*,
+      pln.features
+    FROM ${constants.models.SUBSCRIPTION_TABLE} sub
+    LEFT JOIN ${constants.models.PLAN_TABLE} pln ON sub.plan_id = pln.id
+  `;
+
+  return await SubscriptionModel.sequelize.query(query, {
+    type: QueryTypes.SELECT,
+    raw: true,
   });
 };
 
