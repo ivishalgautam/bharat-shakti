@@ -358,7 +358,7 @@ const importTenders = async (req, res) => {
                   category_id: categoryRecord.id,
                   subcategory_ids: [subcat1.id, subcat2.id],
                   state_id: stateRecord.id,
-                  city_id: cityRecord.id,
+                  city_id: cityRecord?.id ?? null,
                 },
               },
               0,
