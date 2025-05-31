@@ -160,45 +160,44 @@ const importExcelData = async (req, res) => {
 
           await Promise.all(promises);
         } else if (type === "tenders") {
-          const promises = data.map(async (item) => {
+          const promises = data.map(async (item, index) => {
             const slug = slugify(item.bid_number, { lower: true });
-            const record = await table.TenderModel.getBySlug(0, slug);
-            const categorySlug = slugify(item.category, { lower: true });
-            const categoryRecord = await table.CategoryModel.getBySlug(
-              0,
-              categorySlug
-            );
-            const [subcat1, subcat2] = await Promise.all([
-              table.SubCategoryModel.getBySlug(
-                0,
-                slugify(item.classification1, { lower: true })
-              ),
-              table.SubCategoryModel.getBySlug(
-                0,
-                slugify(item.classification2, { lower: true })
-              ),
-            ]);
-            const stateRecord = await table.StateModel.getBySlug(
-              0,
-              slugify(item?.state ?? "", { lower: true })
-            );
-            const cityRecord = await table.CityModel.getBySlug(
-              0,
-              slugify(item?.city ?? "", { lower: true })
-            );
-
-            if (categoryRecord && subcat1 && subcat2 && stateRecord) {
-              await table.TenderModel.update(
+            const record = await table.TenderModel.isSlugExist(slug);
+            if (!record) {
+              await table.TenderModel.create(
                 {
-                  params: { id: record.id },
                   body: {
-                    category_id: categoryRecord.id,
-                    subcategory_ids: [subcat1.id, subcat2.id],
-                    state_id: stateRecord.id,
-                    city_id: cityRecord?.id ?? null,
+                    slug: slug,
+                    bid_number: item.bid_number,
+                    dated: moment(item.dated, "DD-MM-YYYY").toISOString(),
+                    bid_start_date_time: moment(
+                      item.bid_start_date_time,
+                      "DD-MM-YYYY HH:mm:ss"
+                    ).toISOString(),
+                    bid_end_date_time: moment(
+                      item.bid_end_date_time,
+                      "DD-MM-YYYY HH:mm:ss"
+                    ).toISOString(),
+                    department: item.department,
+                    organisation: item.organisation,
+                    office: item.office,
+                    item_gem_arpts: item.item_gem_arpts,
+                    quantity: item.quantity,
+                    uom: item.uom,
+                    no_of_items: item.no_of_items,
+                    mse_exemption_for_turnover: item.mse_exemption_for_turnover,
+                    startup_exemption_for_turnover:
+                      item.startup_exemption_for_turnover,
+                    bid_to_ra_enabled: Boolean(item.bid_to_ra_enabled),
+                    evaluation_method: item.evaluation_method,
+                    emd_amount: parseFloat(item.emd_amount) || 0,
+                    tender_value: parseFloat(item.tender_value) || 0,
+                    tender_amount: parseFloat(item.tender_value) || 0,
+                    ote_lte: String(item.ote_lte).toLowerCase(),
+                    epbg_percentage: item.epbg_percentage ?? 0,
+                    delivery_days: item.delivery_days ?? 0,
                   },
                 },
-                0,
                 { transaction }
               );
             }
