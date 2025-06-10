@@ -26,6 +26,9 @@ export const metadata = {
     title: "Latest Indian Government Tenders 2025 | BharatShaktiTenders.com",
     description:
       "Access the latest 2025 tenders from Central & State Governments, PSUs, GeM, and infrastructure projects. Register on BharatShaktiTenders.com to get free SMS/Email alerts and bid online with ease.",
+    image:
+      "https://bharatshaktitenders.com/_next/image?url=%2Flogo.jpg&w=384&q=75",
+    type: "website",
   },
 };
 
