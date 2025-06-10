@@ -14,7 +14,7 @@ export default function ImageWithFallback({
   const [isImageError, setIsImageError] = useState(false);
   return (
     <Image
-      src={isImageError ? "/image-not-found.png" : `${baseUrl}/${src}`}
+      src={isImageError ? "/Image-not-found.png" : `${baseUrl}/${src}`}
       width={width}
       height={height}
       alt={alt}
