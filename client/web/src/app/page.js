@@ -18,9 +18,9 @@ export default function Home() {
       <Suspense fallback={"Loading..."}>
         <HeroThree />
       </Suspense> */}
-      <Suspense fallback={"Loading..."}>
+      {/* <Suspense fallback={"Loading..."}>
         <ExploreByIndustries />
-      </Suspense>
+      </Suspense> */}
       <Suspense fallback={"Loading..."}>
         <ExploreByStates />
       </Suspense>
