@@ -104,7 +104,7 @@ const get = async (req) => {
     LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.state_id = st.id
     ${whereClause}
     GROUP BY st.id
-    ORDER BY st.created_at DESC
+    ORDER BY st.name ASC
     LIMIT :limit OFFSET :offset
   `;
 
