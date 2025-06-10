@@ -92,7 +92,7 @@ function Step({ index, currentStep, label, isLastStep }) {
 }
 
 export default function PricingSection() {
-  const [duration, setDuration] = useState("1");
+  const [duration, setDuration] = useState("3");
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
