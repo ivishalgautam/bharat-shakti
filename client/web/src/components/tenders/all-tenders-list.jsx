@@ -1,12 +1,10 @@
 "use client";
-
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import TenderCard from "../cards/tender-card";
 import TendersPagination from "./tenders-pagination";
 import { useSearchParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -99,36 +97,6 @@ export default function AllTendersListing() {
           <div className="grid grid-cols-[repeat(auto-fill,minmax(400px,1fr))] gap-4">
             {data?.tenders.map((tender, ind) => (
               <React.Fragment key={tender.id}>
-                {/* <TenderCard
-                  tender={tender}
-                  key={tender.id}
-                  followMutation={followMutation}
-                  unfollowMutation={unfollowMutation}
-                />
-                <TenderCardDashboard
-                  tender={tender}
-                  key={tender.id}
-                  followMutation={followMutation}
-                  unfollowMutation={unfollowMutation}
-                />
-                <TenderCardHighlightBar
-                  tender={tender}
-                  key={tender.id}
-                  followMutation={followMutation}
-                  unfollowMutation={unfollowMutation}
-                />
-                <TenderCardMinimalist
-                  tender={tender}
-                  key={tender.id}
-                  followMutation={followMutation}
-                  unfollowMutation={unfollowMutation}
-                />
-                <TenderCardModernSplit
-                  tender={tender}
-                  key={tender.id}
-                  followMutation={followMutation}
-                  unfollowMutation={unfollowMutation}
-                /> */}
                 <TenderCardPremium
                   tender={tender}
                   key={tender.id}

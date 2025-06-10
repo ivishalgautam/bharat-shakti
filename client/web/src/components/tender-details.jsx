@@ -54,14 +54,13 @@ export default function TenderDetails({ data }) {
   const queryClient = useQueryClient();
   const { user, isUserLoading } = useContext(AuthContext);
   const tenderData = user ? data : { ...data, ...fakeTenderData };
-
   const {
     data: viewedTenders = { data: [], total: 0 },
     isLoading: isViewedTendersLoading,
     isError: isViewedTendersError,
     error: viewedTendersError,
   } = useQuery({
-    queryFn: viewTenders.get,
+    queryFn: () => viewTenders.get(""),
     queryKey: ["viewed-tenders"],
     enabled: !!user,
   });

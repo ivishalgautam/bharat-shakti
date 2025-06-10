@@ -397,12 +397,12 @@ export default function PricingSection() {
           </div>
 
           <Tabs
-            defaultValue="1"
+            defaultValue="3"
             className="w-full max-w-3xl"
             onValueChange={setDuration}
           >
-            <TabsList className="grid w-full grid-cols-4 border border-primary/30 bg-primary/5">
-              {["1", "3", "6", "12"].map((month) => (
+            <TabsList className="grid w-full grid-cols-3 border border-primary/30 bg-primary/5">
+              {["3", "6", "12"].map((month) => (
                 <TabsTrigger
                   className="text-black data-[state=active]:bg-primary data-[state=active]:text-white"
                   key={month}
