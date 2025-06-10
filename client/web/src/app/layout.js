@@ -16,8 +16,11 @@ const geistMono = localFont({
 });
 
 export const metadata = {
-  title:
-    "BharatShaktiTenders.com – India’s #1 Portal for Government & PSU Tenders",
+  title: {
+    default:
+      "BharatShaktiTenders.com – India’s #1 Portal for Government & PSU Tenders",
+    template: "%s | Bharat Shakti",
+  },
   description:
     "Discover the latest 2025 government tenders from Central & State departments across India. Bid online for GeM, PSU, infrastructure, and defense projects. Get free tender alerts via SMS & Email. Stay ahead with real-time updates and seamless e-bidding on BharatShaktiTenders.com – your trusted gateway to public procurement opportunities.",
   keywords:

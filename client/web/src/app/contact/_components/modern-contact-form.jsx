@@ -24,7 +24,10 @@ const formSchema = z.object({
   company: z
     .string()
     .min(2, { message: "Company name must be at least 2 characters." }),
-  phone: z.string().min(5, { message: "Please enter a valid phone number." }),
+  phone: z.string().regex(/^(?:\+91|91)?[6-9]\d{9}$/, {
+    message:
+      "Please enter a valid Indian phone number (10 digits starting with 6-9).",
+  }),
   inquiry_type: z.string({
     required_error: "Please select an inquiry type.",
   }),
@@ -109,6 +112,11 @@ export default function ModernContactForm() {
               className="h-12 rounded-xl border-slate-200 transition-colors focus:border-slate-400"
               {...register("name")}
             />
+            {errors.name && (
+              <span className="text-sm text-red-500">
+                {errors.name.message}
+              </span>
+            )}
           </div>
 
           <div>
@@ -118,6 +126,11 @@ export default function ModernContactForm() {
               className="h-12 rounded-xl border-slate-200 transition-colors focus:border-slate-400"
               {...register("email")}
             />
+            {errors.email && (
+              <span className="text-sm text-red-500">
+                {errors.email.message}
+              </span>
+            )}
           </div>
         </div>
 
@@ -129,6 +142,11 @@ export default function ModernContactForm() {
               className="h-12 rounded-xl border-slate-200 transition-colors focus:border-slate-400"
               {...register("company")}
             />
+            {errors.company && (
+              <span className="text-sm text-red-500">
+                {errors.company.message}
+              </span>
+            )}
           </div>
 
           <div>
@@ -138,6 +156,11 @@ export default function ModernContactForm() {
               className="h-12 rounded-xl border-slate-200 transition-colors focus:border-slate-400"
               {...register("phone")}
             />
+            {errors.phone && (
+              <span className="text-sm text-red-500">
+                {errors.phone.message}
+              </span>
+            )}
           </div>
         </div>
 
@@ -170,6 +193,11 @@ export default function ModernContactForm() {
               );
             }}
           />
+          {errors.inquiry_type && (
+            <span className="text-sm text-red-500">
+              {errors.inquiry_type.message}
+            </span>
+          )}
         </div>
 
         <div>
@@ -179,6 +207,11 @@ export default function ModernContactForm() {
             className="min-h-[140px] resize-none rounded-xl border-slate-200 transition-colors focus:border-slate-400"
             {...register("message")}
           />
+          {errors.message && (
+            <span className="text-sm text-red-500">
+              {errors.message.message}
+            </span>
+          )}
         </div>
 
         <Button

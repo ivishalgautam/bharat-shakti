@@ -31,14 +31,23 @@ export default function AboutUsMinimalist() {
           <div>
             <h2 className="mb-6 text-4xl font-light">Our Story</h2>
             <p className="mb-6 leading-relaxed text-gray-600">
-              Founded in 2020, Bharat Shakti emerged from a simple observation:
-              the tender bidding process was outdated, complex, and often
-              inaccessible to smaller businesses.
+              BharatShakti is an AI-powered tender discovery platform built to
+              simplify and streamline how MSMEs, traders, and government
+              suppliers engage with public procurement opportunities. Every day,
+              thousands of tenders are published by various government
+              departments and agencies. Yet, many promising businesses miss out
+              on these valuable opportunities due to the overwhelming volume of
+              data, inconsistent terminology, and the lack of a centralized,
+              intelligent system to identify relevant tenders on time.
             </p>
             <p className="mb-8 leading-relaxed text-gray-600">
-              Today, we&apos;re proud to serve thousands of businesses
-              worldwide, helping them navigate the complex world of government
-              and private sector procurement with confidence and success.
+              At BharatShakti, we aim to solve this challenge by combining
+              cutting-edge technology with deep industry insight. Our platform
+              uses advanced web scraping, intelligent categorization, and
+              real-time analytics to ensure that users receive timely and
+              relevant tender notifications. Beyond discovery, BharatShakti also
+              offers historical data insights, pricing trends, and competitor
+              activity to help businesses make informed bidding decisions.
             </p>
           </div>
           <div className="relative">
@@ -60,10 +69,9 @@ export default function AboutUsMinimalist() {
             <Target className="mb-4 h-12 w-12 text-blue-600" />
             <h3 className="mb-4 text-2xl font-bold">Our Mission</h3>
             <p className="leading-relaxed text-gray-600">
-              To democratize access to government and private sector tenders by
-              providing a transparent, efficient, and user-friendly platform
-              that connects businesses with opportunities while ensuring fair
-              competition and optimal outcomes for all stakeholders.
+              {
+                "Our vision is to empower Indian enterprises by making government procurement more accessible, efficient, and transparent. Whether you're an established supplier or a growing MSME, BharatShakti ensures that you stay ahead of the curve, never miss a deadline, and seize every opportunity that matters."
+              }
             </p>
           </div>
           <div className="transform rounded-2xl bg-white p-8 shadow-xl transition-transform hover:scale-105">

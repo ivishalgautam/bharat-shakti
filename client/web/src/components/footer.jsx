@@ -77,28 +77,37 @@ export default function Footer() {
             <h3 className="text-lg font-medium">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="#" className="text-slate-400 hover:text-white">
+                <Link href="/" className="text-slate-400 hover:text-white">
                   Home
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-slate-400 hover:text-white">
+                <Link
+                  href="/tenders"
+                  className="text-slate-400 hover:text-white"
+                >
+                  Tenders
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="text-slate-400 hover:text-white">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-slate-400 hover:text-white">
-                  Services
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-slate-400 hover:text-white">
-                  Pricing
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-slate-400 hover:text-white">
+                <Link
+                  href="/contact"
+                  className="text-slate-400 hover:text-white"
+                >
                   Contact
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/pricing"
+                  className="text-slate-400 hover:text-white"
+                >
+                  Pricing
                 </Link>
               </li>
             </ul>

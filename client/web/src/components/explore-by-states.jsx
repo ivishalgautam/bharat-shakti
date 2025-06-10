@@ -21,7 +21,7 @@ export default function ExploreByStates() {
   if (isError) return <ErrorMessage error={error} />;
 
   return (
-    <Section className="bg-gradient-to-b from-primary/80 to-secondary/80">
+    <Section className="bg-gradient-to-b from-primary/30 to-transparent">
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center gap-4">
           <div className="flex items-center">
