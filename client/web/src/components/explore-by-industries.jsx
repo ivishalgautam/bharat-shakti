@@ -6,9 +6,10 @@ import { useQuery } from "@tanstack/react-query";
 import ErrorMessage from "./ui/error";
 import { Skeleton } from "./ui/skeleton";
 import Section from "./layout/section";
-import industries from "@/services/industry";
+import industries from "@/services/industries";
 import IndustryCard from "./cards/keyword";
 import SectionHeading from "./layout/section-heading";
+import { useRouter } from "next/navigation";
 
 export default function ExploreByIndustries() {
   const { data, isLoading, isError, error } = useQuery({
@@ -16,6 +17,7 @@ export default function ExploreByIndustries() {
     queryKey: ["featured-industries"],
     staleTime: 1000 * 60 * 2,
   });
+  const router = useRouter();
   if (isError) return <ErrorMessage error={error} />;
 
   return (
@@ -37,6 +39,8 @@ export default function ExploreByIndustries() {
             effect="expandIcon"
             icon={ArrowRight}
             iconPlacement="right"
+            onClick={() => router.push("/industries")}
+            type="button"
           >
             View all industries
           </Button>

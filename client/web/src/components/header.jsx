@@ -38,14 +38,26 @@ export default function Header() {
           >
             Tenders
           </Link>
-          <Link href="#" className="text-sm font-medium hover:text-primary">
+          {/* <Link href="#" className="text-sm font-medium hover:text-primary">
             Services
-          </Link>
-          <Link href="#" className="text-sm font-medium hover:text-primary">
+          </Link> */}
+          <Link
+            href="/about"
+            className="text-sm font-medium hover:text-primary"
+          >
             About Us
           </Link>
-          <Link href="#" className="text-sm font-medium hover:text-primary">
+          <Link
+            href="/contact"
+            className="text-sm font-medium hover:text-primary"
+          >
             Contact
+          </Link>
+          <Link
+            href="/pricing"
+            className="text-sm font-medium hover:text-primary"
+          >
+            Pricing
           </Link>
         </nav>
         <div className="flex items-center gap-2">

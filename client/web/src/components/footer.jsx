@@ -3,6 +3,8 @@
 import Link from "next/link";
 import React from "react";
 import Logo from "./logo";
+import { companyDetails } from "@/data/constants";
+import { Locate, Mail, MapPin, Phone } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -163,61 +165,18 @@ export default function Footer() {
           </div>
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Contact</h3>
-            <ul className="space-y-2 text-sm">
-              <li className="flex items-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="mr-2 h-5 w-5 text-slate-400"
-                >
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
-                </svg>
-                <span className="text-slate-400">+1 (555) 123-4567</span>
+            <ul className="space-y-4 text-sm">
+              <li className="flex items-start justify-start gap-1">
+                <Phone className="shrink-0" size={20} />
+                <span className="text-slate-400">{companyDetails.contact}</span>
               </li>
-              <li className="flex items-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="mr-2 h-5 w-5 text-slate-400"
-                >
-                  <rect width="20" height="16" x="2" y="4" rx="2" />
-                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                </svg>
-                <span className="text-slate-400">info@tenderbid.com</span>
+              <li className="flex items-start justify-start gap-1">
+                <Mail className="shrink-0" size={20} />
+                <span className="text-slate-400">{companyDetails.mail}</span>
               </li>
-              <li className="flex items-start">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="mr-2 h-5 w-5 text-slate-400"
-                >
-                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
-                  <circle cx="12" cy="10" r="3" />
-                </svg>
-                <span className="text-slate-400">
-                  123 Business Avenue, Suite 500, New York, NY 10001
-                </span>
+              <li className="flex items-start justify-start gap-1">
+                <MapPin className="shrink-0" size={20} />
+                <span className="text-slate-400">{companyDetails.address}</span>
               </li>
             </ul>
           </div>

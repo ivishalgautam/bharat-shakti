@@ -10,3 +10,9 @@ export const fakeTenderData = {
     "This is for the logged-in user",
   ],
 };
+
+export const companyDetails = {
+  contact: "+91 94208 20822",
+  mail: "contact@bharatshaktitenders.com",
+  address: "No.18741, Gedam Layout, Ground Floor, Hingna,  Nagpur 441110",
+};

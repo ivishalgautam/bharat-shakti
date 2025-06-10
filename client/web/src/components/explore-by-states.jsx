@@ -9,6 +9,7 @@ import { Skeleton } from "./ui/skeleton";
 import Section from "./layout/section";
 import StateCard from "./cards/state-card";
 import SectionHeading from "./layout/section-heading";
+import { useRouter } from "next/navigation";
 
 export default function ExploreByStates() {
   const { data, isLoading, isError, error } = useQuery({
@@ -16,7 +17,7 @@ export default function ExploreByStates() {
     queryKey: ["featured-states"],
     staleTime: 1000 * 60 * 2,
   });
-
+  const router = useRouter();
   if (isError) return <ErrorMessage error={error} />;
 
   return (
@@ -42,6 +43,8 @@ export default function ExploreByStates() {
             effect="expandIcon"
             icon={ArrowRight}
             iconPlacement="right"
+            onClick={() => router.push("/states")}
+            type="button"
           >
             View all states
           </Button>

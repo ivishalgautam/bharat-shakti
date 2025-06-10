@@ -5,6 +5,7 @@ import React from "react";
 import { Muted } from "../ui/typography";
 import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
+import ImageWithFallback from "../image-with-fallback";
 
 export default function StateCard({ state }) {
   return (
@@ -13,10 +14,10 @@ export default function StateCard({ state }) {
       className="w-full overflow-hidden rounded-lg border bg-card text-center shadow-sm transition-colors hover:border-primary"
     >
       <div className="mx-auto aspect-video overflow-hidden p-2">
-        <Image
+        <ImageWithFallback
           width={150}
           height={150}
-          src={`${config.file_base}${state.image}`}
+          src={state.image}
           alt={state.name}
           className="h-full w-full object-contain object-center mix-blend-multiply drop-shadow-xl transition-transform group-hover:scale-110"
         />

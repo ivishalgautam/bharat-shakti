@@ -3,9 +3,9 @@ import config from "@/config";
 const { endpoints } = require("@/utils/endpoints");
 const { default: axios } = require("axios");
 
-const get = async () => {
+const get = async (searchParams = "") => {
   const { data } = await axios.get(
-    `${config.api_base}${endpoints.industries.getAll}`,
+    `${config.api_base}${endpoints.industries.getAll}?${searchParams}`,
   );
   return data?.data?.industries ?? [];
 };

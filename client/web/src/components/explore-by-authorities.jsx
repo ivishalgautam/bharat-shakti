@@ -12,6 +12,7 @@ import ErrorMessage from "./ui/error";
 import Section from "./layout/section";
 import AuthorityCard from "./cards/authority";
 import SectionHeading from "./layout/section-heading";
+import { useRouter } from "next/navigation";
 
 export default function ExploreByAuthorities() {
   const { data, isLoading, isError, error } = useQuery({
@@ -19,7 +20,7 @@ export default function ExploreByAuthorities() {
     queryFn: authorities.getFeatured,
     staleTime: 1000 * 60 * 2,
   });
-
+  const router = useRouter();
   if (isError) return <ErrorMessage error={error} />;
 
   return (
@@ -41,6 +42,8 @@ export default function ExploreByAuthorities() {
             effect="expandIcon"
             icon={ArrowRight}
             iconPlacement="right"
+            onClick={() => router.push("/authorities")}
+            type="button"
           >
             View all authorities
           </Button>
