@@ -97,8 +97,8 @@ const get = async (req) => {
   let query = `
   SELECT
       st.*,
-      COUNT(tdr.id)::integer as tenders_count,
-      COUNT(ct.id)::integer as city_count
+      COUNT(DISTINCT tdr.id)::integer AS tenders_count,
+      COUNT(DISTINCT ct.id)::integer AS city_count
     FROM ${constants.models.STATE_TABLE} st
     LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON st.id = tdr.state_id
     LEFT JOIN ${constants.models.CITY_TABLE} ct ON ct.state_id = st.id
