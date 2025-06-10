@@ -22,7 +22,7 @@ export default function AuthorityCard({ authority }) {
         />
       </figure>
       <div className="flex flex-col items-center justify-center font-medium">
-        <span>{authority.name}</span>
+        <span className="capitalize">{authority.name}</span>
         <Muted>{authority.tenders_count ?? 0} Tenders</Muted>
         <Button
           size="sm"

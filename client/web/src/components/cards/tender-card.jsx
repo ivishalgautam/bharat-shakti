@@ -26,7 +26,7 @@ export default function TenderCard({
       <CardHeader>
         <div className="flex items-start justify-between">
           <div>
-            <CardTitle className="text-lg text-primary">
+            <CardTitle className="text-lg capitalize text-primary">
               {tender.name}
             </CardTitle>
             <p className="mt-1 text-xs text-muted-foreground">

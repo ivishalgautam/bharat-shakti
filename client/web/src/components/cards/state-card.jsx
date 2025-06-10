@@ -22,7 +22,7 @@ export default function StateCard({ state }) {
         />
       </div>
       <div className="bg-gray-50 p-4 font-medium">
-        <span>{state.name}</span>
+        <span className="capitalize">{state.name}</span>
         <Muted>{state.tenders_count ?? 0} Tenders</Muted>
         <Button
           size="sm"

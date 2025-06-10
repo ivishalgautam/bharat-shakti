@@ -22,7 +22,7 @@ export default function IndustryCard({ industry }) {
         />
       </div>
       <div className="p-4 font-medium">
-        <span>{industry.name}</span>
+        <span className="capitalize">{industry.name}</span>
         <Muted>{industry.tenders_count ?? 0} Tenders</Muted>
         <Button
           size="sm"
