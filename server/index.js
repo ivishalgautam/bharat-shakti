@@ -16,7 +16,10 @@ try {
  */
 const start = async () => {
   try {
-    await app.listen({ port: config.port }); // For fastify server
+    // await server(app);
+    await app.listen({ port: config.port }, () => {
+      // app.cron.startAllJobs();
+    });
   } catch (e) {
     app.log.error(e);
     process.exit(1);

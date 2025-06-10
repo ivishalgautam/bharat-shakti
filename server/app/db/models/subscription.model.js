@@ -107,6 +107,10 @@ const get = async (req) => {
   });
 };
 
+const getAll = async () => {
+  return await SubscriptionModel.findAll({});
+};
+
 const deleteById = async (req, id, { transaction }) => {
   return await SubscriptionModel.destroy({
     where: { id: req.params.id || id },
@@ -138,6 +142,7 @@ export default {
   create: create,
   update: update,
   get: get,
+  getAll: getAll,
   deleteById: deleteById,
   getById: getById,
   getLastActivePlanByUserId: getLastActivePlanByUserId,
