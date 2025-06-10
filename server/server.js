@@ -8,8 +8,6 @@ import { fileURLToPath } from "url";
 import cors from "@fastify/cors";
 import { dirname } from "path";
 import path from "path";
-import { readdirSync } from "fs";
-import { pathToFileURL } from "url";
 import fastifyCron from "fastify-cron";
 
 // import internal modules
@@ -19,24 +17,7 @@ import routes from "./app/routes/v1/index.js";
 import publicRoutes from "./app/routes/v1/public.js";
 import uploadFileRoutes from "./app/api/upload_files/routes.js";
 import { ErrorHandler } from "./app/utils/error-handler.js";
-
-const cronJobsPath = path.join(process.cwd(), "app/cron");
-const loadCronJobs = async () => {
-  const jobFiles = readdirSync(cronJobsPath).filter((file) =>
-    file.endsWith(".js")
-  );
-  const jobs = [];
-
-  for (const file of jobFiles) {
-    const fileUrl = pathToFileURL(path.join(cronJobsPath, file));
-    const jobModule = await import(fileUrl.href);
-    if (jobModule.default) {
-      jobs.push(jobModule.default);
-    }
-  }
-
-  return jobs;
-};
+import freezeJob from "./app/cron/freeze-job.js";
 
 export default async function server(app) {
   app.setErrorHandler(ErrorHandler);
@@ -80,9 +61,7 @@ export default async function server(app) {
   app.register(publicRoutes, { prefix: "v1" });
   app.register(authRoutes, { prefix: "v1/auth" });
   app.register(uploadFileRoutes, { prefix: "v1/upload" });
-  const jobs = await loadCronJobs();
   app.register(fastifyCron, {
-    jobs,
-    startWhenReady: true,
+    jobs: [freezeJob],
   });
 }

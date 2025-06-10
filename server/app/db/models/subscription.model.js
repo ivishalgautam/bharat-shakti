@@ -108,7 +108,30 @@ const get = async (req) => {
 };
 
 const getAll = async () => {
-  return await SubscriptionModel.findAll({});
+  return await SubscriptionModel.findAll({
+    attributes: [
+      "id",
+      "start_date",
+      "end_date",
+      "duration_in_months",
+      "status",
+    ],
+    raw: true,
+  });
+};
+
+const getActiveSubscriptions = async () => {
+  return await SubscriptionModel.findAll({
+    where: { status: "active" },
+    attributes: [
+      "id",
+      "start_date",
+      "end_date",
+      "duration_in_months",
+      "status",
+    ],
+    raw: true,
+  });
 };
 
 const deleteById = async (req, id, { transaction }) => {
@@ -143,6 +166,7 @@ export default {
   update: update,
   get: get,
   getAll: getAll,
+  getActiveSubscriptions: getActiveSubscriptions,
   deleteById: deleteById,
   getById: getById,
   getLastActivePlanByUserId: getLastActivePlanByUserId,

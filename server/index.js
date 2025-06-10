@@ -18,7 +18,7 @@ const start = async () => {
   try {
     // await server(app);
     await app.listen({ port: config.port }, () => {
-      // app.cron.startAllJobs();
+      app.cron.startAllJobs();
     });
   } catch (e) {
     app.log.error(e);
