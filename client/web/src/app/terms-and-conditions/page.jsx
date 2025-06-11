@@ -71,7 +71,7 @@ export default function TermsAndConditions() {
                 <li>You agree to use the website only for lawful purposes.</li>
                 <li>
                   You must not engage in any activity that disrupts or
-                  interferes with the website's services.
+                  interferes with the website&apos;s services.
                 </li>
                 <li>
                   You are responsible for maintaining the confidentiality of
