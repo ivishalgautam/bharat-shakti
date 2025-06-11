@@ -140,7 +140,7 @@ export default function TenderCardPremium({
             <IndianRupee className="mr-1 h-4 w-4 text-muted-foreground" />
             <span className="mr-1 text-xs font-medium">Tender Value:</span>
             <span className="text-sm font-bold">
-              {rupee.format(tender.tender_amount)}
+              {rupee.format(tender.tender_value)}
             </span>
           </div>
           <div className="flex items-center">
