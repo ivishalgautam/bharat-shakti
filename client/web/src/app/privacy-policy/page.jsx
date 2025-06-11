@@ -678,23 +678,6 @@ export default function PrivacyPolicy() {
           </section>
         </div>
       </div>
-
-      {/* Footer */}
-      <div className="mt-16 bg-gray-900 py-8 text-white">
-        <div className="mx-auto max-w-4xl px-6 text-center">
-          <p className="text-gray-400">
-            © 2025 Bharat Shakti. All rights reserved. |{" "}
-            <a
-              href="https://bharatshaktitenders.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-400 underline hover:text-blue-300"
-            >
-              bharatshaktitenders.com
-            </a>
-          </p>
-        </div>
-      </div>
     </div>
   );
 }

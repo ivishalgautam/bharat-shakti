@@ -289,15 +289,6 @@ export default function ReturnRefundPolicy() {
           </div> */}
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="mt-16 bg-slate-900 py-8 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-slate-400">
-            © 2024 Bharatshakti Tenders. All rights reserved.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }
