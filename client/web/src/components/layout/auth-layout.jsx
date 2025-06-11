@@ -8,7 +8,7 @@ export default function AuthLayout({ children }) {
     <div className="max-h-screen">
       <div className="flex min-h-screen bg-gray-50">
         {/* Image Section */}
-        <div className="hidden flex-col items-center justify-center bg-gradient-to-br from-primary to-secondary p-12 text-white lg:flex lg:w-1/2">
+        <div className="hidden flex-col items-center justify-center bg-gradient-to-br from-primary/80 to-secondary/70 p-12 text-white lg:flex lg:w-1/2">
           <div className="max-w-md">
             <Image
               src="/login.svg"
