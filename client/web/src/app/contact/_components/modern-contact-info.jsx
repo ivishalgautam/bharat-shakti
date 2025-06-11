@@ -21,7 +21,9 @@ export default function ModernContactInfo() {
           </div>
           <div>
             <h3 className="mb-1 font-medium text-slate-900">Phone</h3>
-            <p className="text-slate-600">{companyDetails.contact}</p>
+            <p className="text-sm text-slate-600 sm:text-base">
+              {companyDetails.contact}
+            </p>
           </div>
         </div>
 
@@ -31,7 +33,9 @@ export default function ModernContactInfo() {
           </div>
           <div>
             <h3 className="mb-1 font-medium text-slate-900">Email</h3>
-            <p className="text-slate-600">{companyDetails.mail}</p>
+            <p className="text-sm text-slate-600 sm:text-base">
+              {companyDetails.mail}
+            </p>
           </div>
         </div>
 
@@ -41,7 +45,9 @@ export default function ModernContactInfo() {
           </div>
           <div>
             <h3 className="mb-1 font-medium text-slate-900">Office</h3>
-            <p className="text-slate-600">{companyDetails.address}</p>
+            <p className="text-sm text-slate-600 sm:text-base">
+              {companyDetails.address}
+            </p>
           </div>
         </div>
 
@@ -51,8 +57,12 @@ export default function ModernContactInfo() {
           </div>
           <div>
             <h3 className="mb-1 font-medium text-slate-900">Hours</h3>
-            <p className="text-slate-600">Monday - Friday: 9:00 AM - 6:00 PM</p>
-            <p className="text-slate-600">Saturday: 10:00 AM - 2:00 PM</p>
+            <p className="text-sm text-slate-600 sm:text-base">
+              Monday - Friday: 9:00 AM - 6:00 PM
+            </p>
+            <p className="text-sm text-slate-600 sm:text-base">
+              Saturday: 10:00 AM - 2:00 PM
+            </p>
           </div>
         </div>
       </div>

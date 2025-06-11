@@ -46,7 +46,7 @@ import application from "@/services/application";
 import { fakeTenderData } from "@/data/constants";
 import Spinner from "./spinner";
 import Link from "next/link";
-import { Small } from "./ui/typography";
+import { H3, Small } from "./ui/typography";
 import viewTenders from "@/services/view-tender";
 
 export default function TenderDetails({ data }) {
@@ -175,11 +175,10 @@ export default function TenderDetails({ data }) {
           {/* Header */}
           <div className="flex flex-col gap-4">
             <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-              <div>
+              <div className="">
+                <H3>{tenderData.organisation}</H3>
                 <Badge className={"space-x-1"}>
                   <span>Bid #{tenderData.bid_number}</span>
-                  <span>•</span>
-                  <span>{tenderData.organisation}</span>
                 </Badge>
               </div>
               <div className="space-y-2 text-end">
@@ -288,31 +287,31 @@ export default function TenderDetails({ data }) {
           {/* Tabs */}
           <Tabs
             defaultValue="overview"
-            className="w-full"
+            className="w-full overflow-hidden"
             onValueChange={setActiveTab}
           >
-            <TabsList className="grid grid-cols-2 bg-primary/10 p-1 md:grid-cols-4 lg:w-[600px]">
+            <TabsList className="w-full overflow-x-auto overflow-y-hidden bg-primary/10 p-1 sm:w-max lg:grid lg:grid-cols-4">
               <TabsTrigger
                 value="overview"
-                className="data-[state=active]:bg-primary data-[state=active]:text-white"
+                className="text-xs data-[state=active]:bg-primary data-[state=active]:text-white sm:text-base"
               >
                 Overview
               </TabsTrigger>
               <TabsTrigger
                 value="specifications"
-                className="data-[state=active]:bg-primary data-[state=active]:text-white"
+                className="text-xs data-[state=active]:bg-primary data-[state=active]:text-white sm:text-base"
               >
                 Specifications
               </TabsTrigger>
               <TabsTrigger
                 value="documents"
-                className="data-[state=active]:bg-primary data-[state=active]:text-white"
+                className="text-xs data-[state=active]:bg-primary data-[state=active]:text-white sm:text-base"
               >
                 Documents
               </TabsTrigger>
               <TabsTrigger
                 value="related"
-                className="data-[state=active]:bg-primary data-[state=active]:text-white"
+                className="text-xs data-[state=active]:bg-primary data-[state=active]:text-white sm:text-base"
               >
                 Related
               </TabsTrigger>
@@ -1164,7 +1163,7 @@ function LoginButton({
   const isGuest = !user;
 
   return (
-    <div className="absolute inset-0 z-10 flex items-center justify-center gap-2 rounded-lg backdrop-blur-sm">
+    <div className="absolute inset-0 z-10 flex items-center justify-center gap-2 rounded-lg p-4 backdrop-blur-sm">
       <div className="flex items-center justify-center gap-4 rounded-lg border bg-white p-4 shadow-sm">
         <div className="grow-0 rounded-full bg-red-500/30 p-2">
           <Lock className="text-red-500" size={15} />

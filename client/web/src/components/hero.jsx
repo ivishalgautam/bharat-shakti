@@ -53,7 +53,7 @@ export function Hero() {
         <div className="mx-auto max-w-7xl px-6 py-16 md:px-12 md:py-24 lg:px-16">
           <div className="grid items-center gap-8 md:grid-cols-12">
             <div className="space-y-6 md:col-span-5 lg:col-span-4">
-              <div className="inline-block rounded-full bg-primary/20 px-4 py-1 text-sm font-medium text-primary">
+              <div className="ms:text-sm inline-block text-nowrap rounded-full bg-primary/20 px-4 py-1 text-xs font-medium text-primary">
                 {"India's Leading Tender Search Platform"}
               </div>
               <h1 className="text-3xl font-semibold leading-tight text-white md:text-4xl">

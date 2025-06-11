@@ -20,7 +20,7 @@ export default function ContactPage() {
               heading="Let's Connect"
               headingClassNames="text-4xl"
             />
-            <p className="mx-auto max-w-2xl text-xl leading-relaxed text-slate-600">
+            <p className="mx-auto max-w-2xl text-base leading-relaxed text-slate-600 sm:text-xl">
               Ready to transform your tender bidding experience? Our experts are
               here to guide you every step of the way.
             </p>

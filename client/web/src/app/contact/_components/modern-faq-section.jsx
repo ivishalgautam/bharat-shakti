@@ -9,7 +9,7 @@ import {
 
 export default function ModernFaqSection() {
   return (
-    <div className="rounded-3xl border border-slate-100 bg-white p-12 shadow-sm">
+    <div className="rounded-3xl border border-slate-100 bg-white px-2 py-12 shadow-sm md:px-12">
       <div className="mb-12 text-center">
         <h2 className="mb-4 text-3xl font-light text-slate-900">
           Common Questions
