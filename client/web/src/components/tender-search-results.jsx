@@ -28,6 +28,7 @@ import {
 import AllTendersListing from "./tenders/all-tenders-list";
 import { ScrollArea } from "./ui/scroll-area";
 import TendersFiltersLayout from "./layout/tenders-filters-layout";
+import { Scrollbar } from "@radix-ui/react-scroll-area";
 
 // Mock data for tender results
 const MOCK_TENDERS = [
@@ -111,10 +112,11 @@ export function TenderSearchResults({ onClose }) {
             <span className="sr-only">Close</span>
           </Button>
         </div>
-        <ScrollArea className="h-[80vh] w-full">
+        <ScrollArea className="h-[80vh] w-full overflow-x-auto">
           <TendersFiltersLayout>
             <AllTendersListing />
           </TendersFiltersLayout>
+          <Scrollbar orientation="horizontal" />
         </ScrollArea>
       </div>
     </div>
