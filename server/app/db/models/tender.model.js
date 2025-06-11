@@ -18,10 +18,6 @@ const init = async (sequelize) => {
         defaultValue: DataTypes.UUIDV4,
         unique: true,
       },
-      tender_amount: {
-        type: DataTypes.STRING,
-        defaultValue: 0,
-      },
       slug: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -153,7 +149,6 @@ const init = async (sequelize) => {
 const create = async (req, { transaction }) => {
   return await TenderModel.create(
     {
-      tender_amount: req.body.tender_amount,
       slug: req.body.slug,
       unique: req.body.unique,
       bid_number: req.body.bid_number,
@@ -212,7 +207,6 @@ const bulkCreate = async (data) => {
 const update = async (req, id, { transaction }) => {
   const [rowCount, rows] = await TenderModel.update(
     {
-      tender_amount: req.body.tender_amount,
       slug: req.body.slug,
       unique: req.body.unique,
       bid_number: req.body.bid_number,
@@ -369,15 +363,15 @@ const get = async (req) => {
   const amountMax = Number(req.query.amount_max) || null;
   if (amountMin && amountMax) {
     whereConditions.push(
-      `(tdr.tender_amount::integer BETWEEN :amountMin AND :amountMax)`
+      `(CAST(tdr.tender_value AS numeric) BETWEEN :amountMin AND :amountMax)`
     );
     queryParams.amountMin = amountMin;
     queryParams.amountMax = amountMax;
   } else if (amountMin) {
-    whereConditions.push(`(tdr.tender_amount::integer >= :amountMin)`);
+    whereConditions.push(`(CAST(tdr.tender_value AS numeric) >= :amountMin)`);
     queryParams.amountMin = amountMin;
   } else if (amountMax) {
-    whereConditions.push(`(tdr.tender_amount::integer <= :amountMax)`);
+    whereConditions.push(`(CAST(tdr.tender_value AS numeric) <= :amountMax)`);
     queryParams.amountMax = amountMax;
   }
 
@@ -535,15 +529,15 @@ const getWithPlan = async (req) => {
   const amountMax = Number(req.query.amount_max) || null;
   if (amountMin && amountMax) {
     whereConditions.push(
-      `(tdr.tender_amount::integer BETWEEN :amountMin AND :amountMax)`
+      `(CAST(tdr.tender_value AS numeric) BETWEEN :amountMin AND :amountMax)`
     );
     queryParams.amountMin = amountMin;
     queryParams.amountMax = amountMax;
   } else if (amountMin) {
-    whereConditions.push(`(tdr.tender_amount::integer >= :amountMin)`);
+    whereConditions.push(`(CAST(tdr.tender_value AS numeric) >= :amountMin)`);
     queryParams.amountMin = amountMin;
   } else if (amountMax) {
-    whereConditions.push(`(tdr.tender_amount::integer <= :amountMax)`);
+    whereConditions.push(`(CAST(tdr.tender_value AS numeric) <= :amountMax)`);
     queryParams.amountMax = amountMax;
   }
 
@@ -760,15 +754,15 @@ async function getTendersByUserPreferences(req, preference) {
   const amountMax = Number(req.query.amount_max) || null;
   if (amountMin && amountMax) {
     whereConditions.push(
-      `(tdr.tender_amount::integer BETWEEN :amountMin AND :amountMax)`
+      `(CAST(tdr.tender_value AS numeric) BETWEEN :amountMin AND :amountMax)`
     );
     queryParams.amountMin = amountMin;
     queryParams.amountMax = amountMax;
   } else if (amountMin) {
-    whereConditions.push(`(tdr.tender_amount::integer >= :amountMin)`);
+    whereConditions.push(`(CAST(tdr.tender_value AS numeric) >= :amountMin)`);
     queryParams.amountMin = amountMin;
   } else if (amountMax) {
-    whereConditions.push(`(tdr.tender_amount::integer <= :amountMax)`);
+    whereConditions.push(`(CAST(tdr.tender_value AS numeric) <= :amountMax)`);
     queryParams.amountMax = amountMax;
   }
 

@@ -121,15 +121,15 @@ const get = async (req) => {
   const amountMax = Number(req.query.amount_max) || null;
   if (amountMin && amountMax) {
     whereConditions.push(
-      `(tdr.tender_amount::integer BETWEEN :amountMin AND :amountMax)`
+      `(CAST(tdr.tender_value AS numeric) BETWEEN :amountMin AND :amountMax)`
     );
     queryParams.amountMin = amountMin;
     queryParams.amountMax = amountMax;
   } else if (amountMin) {
-    whereConditions.push(`(tdr.tender_amount::integer >= :amountMin)`);
+    whereConditions.push(`(CAST(tdr.tender_value AS numeric) >= :amountMin)`);
     queryParams.amountMin = amountMin;
   } else if (amountMax) {
-    whereConditions.push(`(tdr.tender_amount::integer <= :amountMax)`);
+    whereConditions.push(`(CAST(tdr.tender_value AS numeric) <= :amountMax)`);
     queryParams.amountMax = amountMax;
   }
 
