@@ -73,7 +73,7 @@ export default function AllTendersListing() {
   if (isError) return <ErrorMessage error={error} />;
 
   return isLoading ? (
-    <div className="!mt-[68px] grid grid-cols-[repeat(auto-fit,minmax(400px,1fr))] gap-4">
+    <div className="!mt-[68px] grid grid-cols-[repeat(auto-fill,minmax(350px,1fr))] gap-4 md:grid-cols-[repeat(auto-fill,minmax(400px,1fr))]">
       {Array.from({ length: 10 }).map((_, key) => (
         <LoaderCard key={key} />
       ))}
@@ -94,7 +94,7 @@ export default function AllTendersListing() {
         </Card>
       ) : (
         <div className="space-y-4">
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(400px,1fr))] gap-4">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(350px,1fr))] gap-4 md:grid-cols-[repeat(auto-fill,minmax(400px,1fr))]">
             {data?.tenders.map((tender, ind) => (
               <React.Fragment key={tender.id}>
                 <TenderCardPremium

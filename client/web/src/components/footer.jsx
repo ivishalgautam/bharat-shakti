@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import React from "react";
-import Logo from "./logo";
 import { companyDetails } from "@/data/constants";
-import { Locate, Mail, MapPin, Phone } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
+import LogoWhite from "./logo-white";
 
 export default function Footer() {
   return (
@@ -12,7 +12,7 @@ export default function Footer() {
       <div className="container px-4 py-12 md:px-6 md:py-16 lg:py-20">
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
           <div className="space-y-4">
-            <Logo />
+            <LogoWhite />
             <p className="text-sm text-slate-400">
               Your trusted partner for finding and winning tender opportunities
               across the country.
@@ -112,36 +112,7 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Services</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="#" className="text-slate-400 hover:text-white">
-                  Tender Alerts
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-slate-400 hover:text-white">
-                  Bid Preparation
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-slate-400 hover:text-white">
-                  Document Verification
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-slate-400 hover:text-white">
-                  Competitor Analysis
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-slate-400 hover:text-white">
-                  Legal Consultation
-                </Link>
-              </li>
-            </ul>
-          </div>
+
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Resources</h3>
             <ul className="space-y-2 text-sm">
@@ -172,6 +143,69 @@ export default function Footer() {
               </li>
             </ul>
           </div>
+
+          {/* policies */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium">Policies</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link
+                  href="/privacy-policy"
+                  className="text-slate-400 hover:text-white"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms-and-conditions"
+                  className="text-slate-400 hover:text-white"
+                >
+                  Terms and conditions
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/return-refund-policy"
+                  className="text-slate-400 hover:text-white"
+                >
+                  Return and refund
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* <div className="space-y-4">
+            <h3 className="text-lg font-medium">Services</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="#" className="text-slate-400 hover:text-white">
+                  Tender Alerts
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="text-slate-400 hover:text-white">
+                  Bid Preparation
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="text-slate-400 hover:text-white">
+                  Document Verification
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="text-slate-400 hover:text-white">
+                  Competitor Analysis
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="text-slate-400 hover:text-white">
+                  Legal Consultation
+                </Link>
+              </li>
+            </ul>
+          </div> */}
+
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Contact</h3>
             <ul className="space-y-4 text-sm">

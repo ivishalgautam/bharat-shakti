@@ -417,7 +417,7 @@ export default function PricingSection() {
               {getPlans(duration).map((plan) => (
                 <Card
                   key={plan.id}
-                  className={`flex flex-col ${plan.is_popular ? "border-2 border-primary shadow-lg" : ""}`}
+                  className={`relative flex flex-col ${plan.is_popular ? "border-2 border-primary shadow-lg" : ""}`}
                 >
                   {plan.is_popular && (
                     <div className="absolute right-0 top-0 -translate-y-1/2 translate-x-0 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">

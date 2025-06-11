@@ -86,7 +86,7 @@ export default function TenderCardPremium({
                 <Tooltip>
                   <TooltipTrigger className="truncate text-ellipsis text-xs">
                     {tender.item_gem_arpts && tender.item_gem_arpts.length > 30
-                      ? String(tender.item_gem_arpts).substring(0, 30) + "..."
+                      ? String(tender.item_gem_arpts).substring(0, 20) + "..."
                       : "N/A"}
                   </TooltipTrigger>
                   <TooltipContent>

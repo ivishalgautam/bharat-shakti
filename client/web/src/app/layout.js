@@ -1,19 +1,40 @@
+import { Poppins } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import Layout from "@/components/layout";
 import { Toaster } from "@/components/ui/toaster";
 import SessionWrapper from "@/components/providers/session-provider";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-poppins",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+// const articular = localFont({
+//   src: [
+//     {
+//       path: "../../public/fonts/articulat-400.otf",
+//       weight: "400",
+//       style: "normal",
+//     },
+//     {
+//       path: "../../public/fonts/articulat-400-italic.otf",
+//       weight: "400",
+//       style: "italic",
+//     },
+//     {
+//       path: "../../public/fonts/articulat-700.otf",
+//       weight: "700",
+//       style: "normal",
+//     },
+//     {
+//       path: "../../public/fonts/articulat-700-italic.otf",
+//       weight: "700",
+//       style: "italic",
+//     },
+//   ],
+//   variable: "--font-articular",
+// });
 
 export const metadata = {
   title: {
@@ -29,8 +50,7 @@ export const metadata = {
     title: "Latest Indian Government Tenders 2025 | BharatShaktiTenders.com",
     description:
       "Access the latest 2025 tenders from Central & State Governments, PSUs, GeM, and infrastructure projects. Register on BharatShaktiTenders.com to get free SMS/Email alerts and bid online with ease.",
-    images:
-      "https://bharatshaktitenders.com/_next/image?url=%2Flogo.jpg&w=384&q=75",
+    images: "http://localhost:4000/_next/image?url=%2Flogo.png&w=1080&q=100",
     type: "website",
   },
 };
@@ -40,7 +60,7 @@ export default function RootLayout({ children }) {
     <SessionWrapper>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${poppins.className} antialiased`}
           suppressHydrationWarning={true}
         >
           <Layout>{children}</Layout>

@@ -4,13 +4,13 @@ import ExploreByStates from "@/components/explore-by-states";
 import Services from "@/components/services";
 import PlanPricingSection from "@/components/plan-pricing-section";
 import { Suspense } from "react";
-import { HeroOne } from "@/components/hero-one";
+import { Hero } from "@/components/hero";
 
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
       <Suspense fallback={"Loading..."}>
-        <HeroOne />
+        <Hero />
       </Suspense>
       {/* <Suspense fallback={"Loading..."}>
         <HeroTwo />

@@ -35,14 +35,12 @@ export default function TenderCard({
           </div>
           <Badge
             variant={
-              getRemainingDays(tender.bid_end_date_time) < 3
-                ? "destructive"
-                : "outline"
+              getRemainingDays(tender.dated) < 3 ? "destructive" : "outline"
             }
           >
-            {getRemainingDays(tender.bid_end_date_time) <= 0
+            {getRemainingDays(tender.dated) <= 0
               ? "Closed"
-              : `${getRemainingDays(tender.bid_end_date_time)} days left`}
+              : `${getRemainingDays(tender.dated)} days left`}
           </Badge>
         </div>
       </CardHeader>
@@ -81,7 +79,7 @@ export default function TenderCard({
           <div>
             <p className="text-xs font-medium">Bid End Date</p>
             <p className="text-xs text-muted-foreground">
-              {format(new Date(tender.bid_end_date_time), "PPP p")}
+              {format(new Date(tender.dated), "PPP p")}
             </p>
           </div>
         </div>

@@ -1,5 +1,5 @@
 "use client";
-import { Menu } from "lucide-react";
+import { Menu, Rocket } from "lucide-react";
 import Link from "next/link";
 import { Button, buttonVariants } from "./ui/button";
 import Logo from "./logo";
@@ -7,9 +7,41 @@ import UserDropdown from "./user-dropdown";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { Skeleton } from "./ui/skeleton";
 import { useAuth } from "@/providers/auth-provider";
-import { useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "./ui/sheet";
+
+export const navItems = [
+  {
+    label: "Home",
+    href: "/",
+  },
+  {
+    label: "Tenders",
+    href: "/tenders",
+  },
+  {
+    label: "About",
+    href: "/about",
+  },
+  {
+    label: "Contact",
+    href: "/contact",
+  },
+  {
+    label: "Pricing",
+    href: "/pricing",
+  },
+];
 
 export default function Header() {
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [user, setUser, isHydrated] = useLocalStorage("user", null);
   const { user: user1 } = useAuth();
   useEffect(() => {
@@ -26,39 +58,20 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-white">
       <div className="container flex h-20 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-2">
-          <Logo />
+          <Suspense>
+            <Logo />
+          </Suspense>
         </div>
-        <nav className="hidden gap-6 md:flex">
-          <Link href="/" className="text-sm font-medium hover:text-primary">
-            Home
-          </Link>
-          <Link
-            href="/tenders"
-            className="text-sm font-medium hover:text-primary"
-          >
-            Tenders
-          </Link>
-          {/* <Link href="#" className="text-sm font-medium hover:text-primary">
-            Services
-          </Link> */}
-          <Link
-            href="/about"
-            className="text-sm font-medium hover:text-primary"
-          >
-            About Us
-          </Link>
-          <Link
-            href="/contact"
-            className="text-sm font-medium hover:text-primary"
-          >
-            Contact
-          </Link>
-          <Link
-            href="/pricing"
-            className="text-sm font-medium hover:text-primary"
-          >
-            Pricing
-          </Link>
+        <nav className="hidden gap-6 lg:flex">
+          {navItems.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="text-sm font-medium hover:text-primary"
+            >
+              {item.label}
+            </Link>
+          ))}
         </nav>
         <div className="flex items-center gap-2">
           {user ? (
@@ -83,10 +96,44 @@ export default function Header() {
               </Link>
             </>
           )}
-          <Button variant="outline" size="icon" className="md:hidden">
-            <Menu />
-            <span className="sr-only">Toggle menu</span>
-          </Button>
+          <div className="block lg:hidden">
+            <div className="flex items-center justify-between">
+              <Sheet onOpenChange={setIsSheetOpen} open={isSheetOpen}>
+                <SheetTrigger asChild>
+                  <Button variant={"outline"} size={"icon"}>
+                    <Menu className="size-4" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="overflow-y-auto">
+                  <SheetHeader>
+                    <SheetTitle>
+                      <div
+                        className="flex items-center gap-2"
+                        onClick={() => setIsSheetOpen(false)}
+                      >
+                        <Logo />
+                      </div>
+                    </SheetTitle>
+                    <SheetDescription className="sr-only">
+                      Nav items
+                    </SheetDescription>
+                  </SheetHeader>
+                  <div className="my-4 flex flex-col gap-0">
+                    {navItems.map((menu, idx) => (
+                      <Link
+                        key={idx}
+                        href={menu.href}
+                        className="py-2 text-lg font-semibold"
+                        onClick={() => setIsSheetOpen(false)}
+                      >
+                        {menu.label}
+                      </Link>
+                    ))}
+                  </div>
+                </SheetContent>
+              </Sheet>
+            </div>
+          </div>
         </div>
       </div>
     </header>
