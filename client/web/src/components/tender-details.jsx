@@ -290,28 +290,28 @@ export default function TenderDetails({ data }) {
             className="w-full overflow-hidden"
             onValueChange={setActiveTab}
           >
-            <TabsList className="w-full overflow-x-auto overflow-y-hidden bg-primary/10 p-1 sm:w-max lg:grid lg:grid-cols-4">
+            <TabsList className="scrollbar-hide flex w-full items-center justify-start overflow-x-auto overflow-y-hidden bg-primary/10 p-1 sm:w-max">
               <TabsTrigger
                 value="overview"
-                className="text-xs data-[state=active]:bg-primary data-[state=active]:text-white sm:text-base"
+                className="text-xs data-[state=active]:bg-primary data-[state=active]:text-white sm:text-sm"
               >
                 Overview
               </TabsTrigger>
               <TabsTrigger
                 value="specifications"
-                className="text-xs data-[state=active]:bg-primary data-[state=active]:text-white sm:text-base"
+                className="text-xs data-[state=active]:bg-primary data-[state=active]:text-white sm:text-sm"
               >
                 Specifications
               </TabsTrigger>
               <TabsTrigger
                 value="documents"
-                className="text-xs data-[state=active]:bg-primary data-[state=active]:text-white sm:text-base"
+                className="text-xs data-[state=active]:bg-primary data-[state=active]:text-white sm:text-sm"
               >
                 Documents
               </TabsTrigger>
               <TabsTrigger
                 value="related"
-                className="text-xs data-[state=active]:bg-primary data-[state=active]:text-white sm:text-base"
+                className="text-xs data-[state=active]:bg-primary data-[state=active]:text-white sm:text-sm"
               >
                 Related
               </TabsTrigger>
