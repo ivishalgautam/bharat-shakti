@@ -46,7 +46,7 @@ export function Hero() {
   };
 
   return (
-    <div className="relative flex h-[90vh] flex-col items-center justify-center bg-gradient-to-r from-slate-900 to-slate-800">
+    <div className="relative flex min-h-[90vh] flex-col items-center justify-center bg-gradient-to-r from-slate-900 to-slate-800">
       {/* Hero Background */}
       {/* <div className="absolute inset-0 -z-10" /> */}
       <div className="relative overflow-hidden rounded-xl">
