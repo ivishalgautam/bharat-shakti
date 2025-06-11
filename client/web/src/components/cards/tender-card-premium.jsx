@@ -46,13 +46,13 @@ export default function TenderCardPremium({
         <div className="space-y-2 sm:flex sm:flex-row-reverse sm:items-start sm:justify-between sm:space-y-0">
           <div className="flex">
             {user?.plan_tier === "premium" && (
-              <Badge variant="" className={""}>
+              <Badge variant="" className={"mr-2"}>
                 <Eye size={15} className="mr-1" /> {tender.view_count}
               </Badge>
             )}
 
             <Badge
-              className="ml-2 text-xs"
+              className="text-xs"
               variant={isUrgent ? "destructive" : "outline"}
             >
               {isClosed
