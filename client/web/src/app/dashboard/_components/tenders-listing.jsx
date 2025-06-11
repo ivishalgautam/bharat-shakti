@@ -103,7 +103,7 @@ export default function TendersListing({ type }) {
         </Card>
       ) : (
         <div className="space-y-4">
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(400px,1fr))] gap-4">
+          <div className="grid gap-4 md:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] lg:grid-cols-[repeat(auto-fill,minmax(400px,1fr))]">
             {data?.data?.map((tender) => (
               <TenderCardPremium
                 tender={tender}

@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/table";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { parseAsInteger, useQueryState } from "nuqs";
 import {
   ChevronLeftIcon,
@@ -95,7 +95,7 @@ export function DataTable({
   return (
     <>
       <ScrollArea className="h-[calc(59vh)] rounded-md border">
-        <div className="">
+        <div className="w-screen">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -145,6 +145,7 @@ export function DataTable({
             </TableBody>
           </Table>
         </div>
+        <ScrollBar orientation="horizontal" />
       </ScrollArea>
 
       <div className="flex flex-col items-center justify-end gap-2 space-x-2 py-4 sm:flex-row">

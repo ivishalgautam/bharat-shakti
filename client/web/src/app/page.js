@@ -9,28 +9,28 @@ import { Hero } from "@/components/hero";
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col">
-      <Suspense fallback={"Loading..."}>
+      <Suspense>
         <Hero />
       </Suspense>
-      {/* <Suspense fallback={"Loading..."}>
+      {/* <Suspense>
         <HeroTwo />
       </Suspense>
-      <Suspense fallback={"Loading..."}>
+      <Suspense>
         <HeroThree />
       </Suspense> */}
-      {/* <Suspense fallback={"Loading..."}>
+      {/* <Suspense>
         <ExploreByIndustries />
       </Suspense> */}
-      <Suspense fallback={"Loading..."}>
+      <Suspense>
         <ExploreByStates />
       </Suspense>
-      <Suspense fallback={"Loading..."}>
+      <Suspense>
         <ExploreByAuthorities />
       </Suspense>
-      <Suspense fallback={"Loading..."}>
+      <Suspense>
         <Services />
       </Suspense>
-      <Suspense fallback={"Loading..."}>
+      <Suspense>
         <PlanPricingSection />
       </Suspense>
     </div>
