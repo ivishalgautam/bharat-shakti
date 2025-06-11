@@ -43,17 +43,7 @@ export default function TenderCardPremium({
   return (
     <div className="overflow-hidden rounded-lg border border-primary/30 bg-card text-card-foreground">
       <div className="bg-primary/10 p-6">
-        <div className="flex items-start justify-between">
-          <div>
-            <div className="mb-1 flex items-center">
-              <Badge
-                variant="secondary"
-                className="mr-2 border-primary/20 bg-primary/10 text-primary"
-              >
-                BID NO #{tender.bid_number}
-              </Badge>
-            </div>
-          </div>
+        <div className="space-y-2 sm:flex sm:flex-row-reverse sm:items-start sm:justify-between sm:space-y-0">
           <div className="flex">
             {user?.plan_tier === "premium" && (
               <Badge variant="" className={""}>
@@ -69,6 +59,17 @@ export default function TenderCardPremium({
                 ? "Closed"
                 : `${getRemainingDays(tender.bid_end_date_time)} days left`}
             </Badge>
+          </div>
+
+          <div>
+            <div className="mb-1 flex items-center">
+              <Badge
+                variant="secondary"
+                className="mr-2 border-primary/20 bg-primary/10 text-primary"
+              >
+                BID NO #{tender.bid_number}
+              </Badge>
+            </div>
           </div>
         </div>
       </div>
