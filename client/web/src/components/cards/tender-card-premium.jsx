@@ -30,8 +30,8 @@ export default function TenderCardPremium({
   unfollowMutation,
   user,
 }) {
-  const isUrgent = getRemainingDays(tender.dated) < 3;
-  const isClosed = getRemainingDays(tender.dated) <= 0;
+  const isUrgent = getRemainingDays(tender.bid_end_date_time) < 3;
+  const isClosed = getRemainingDays(tender.bid_end_date_time) <= 0;
 
   const viewMutation = useMutation({
     mutationFn: (data) => viewTenders.create(data),
@@ -70,7 +70,7 @@ export default function TenderCardPremium({
             >
               {isClosed
                 ? "Closed"
-                : `${getRemainingDays(tender.dated)} days left`}
+                : `${getRemainingDays(tender.bid_end_date_time)} days left`}
             </Badge>
           </div>
         </div>
@@ -113,7 +113,7 @@ export default function TenderCardPremium({
             <div>
               <p className="text-xs font-medium">Bid Start Date</p>
               <p className="text-xs text-muted-foreground">
-                {format(new Date(tender.bid_start_date_time), "PPP p")}
+                {format(new Date(tender.dated), "PPP p")}
               </p>
             </div>
           </div>
@@ -124,9 +124,9 @@ export default function TenderCardPremium({
               <p className="text-xs text-muted-foreground">
                 {format(
                   new Date(
-                    tender.dated.includes("T")
-                      ? tender.dated
-                      : tender.dated.split(" ").join("T"),
+                    tender.bid_end_date_time.includes("T")
+                      ? tender.bid_end_date_time
+                      : tender.bid_end_date_time.split(" ").join("T"),
                   ),
                   "PPP p",
                 )}
