@@ -53,9 +53,6 @@ export default function TenderCardPremium({
                 BID NO #{tender.bid_number}
               </Badge>
             </div>
-            {/* <h3 className="line-clamp-2 text-lg font-bold text-primary">
-              {tender?.name || tender?.tender_name}
-            </h3> */}
           </div>
           <div className="flex">
             {user?.plan_tier === "premium" && (
@@ -135,15 +132,15 @@ export default function TenderCardPremium({
           </div>
         </div>
 
-        <div className="mb-6 flex flex-col items-center gap-4 border-y py-3 sm:flex-row">
-          <div className="flex items-center">
+        <div className="mb-6 flex flex-col items-start gap-4 border-y py-3">
+          <div className="flex items-center justify-start">
             <IndianRupee className="mr-1 h-4 w-4 text-muted-foreground" />
             <span className="mr-1 text-xs font-medium">Tender Value:</span>
             <span className="text-sm font-bold">
               {rupee.format(tender.tender_value)}
             </span>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center justify-start">
             <IndianRupee className="mr-1 h-4 w-4 text-muted-foreground" />
             <span className="mr-1 text-xs font-medium">EMD Amount:</span>
             <span className="text-sm font-bold">

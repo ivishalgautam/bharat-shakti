@@ -16,6 +16,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
+import { cn } from "@/lib/utils";
 
 export const navItems = [
   {
@@ -74,10 +75,9 @@ export default function Header() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          {user ? (
-            <UserDropdown user={user} />
-          ) : (
-            <>
+          {user && <UserDropdown user={user} />}
+          {!user && (
+            <div className="hidden space-x-2 lg:block">
               <Link
                 href="/login"
                 className={buttonVariants({
@@ -94,7 +94,7 @@ export default function Header() {
               >
                 Register
               </Link>
-            </>
+            </div>
           )}
           <div className="block lg:hidden">
             <div className="flex items-center justify-between">
@@ -108,7 +108,7 @@ export default function Header() {
                   <SheetHeader>
                     <SheetTitle>
                       <div
-                        className="flex items-center gap-2"
+                        className="flex items-center justify-center gap-2"
                         onClick={() => setIsSheetOpen(false)}
                       >
                         <Logo />
@@ -123,13 +123,42 @@ export default function Header() {
                       <Link
                         key={idx}
                         href={menu.href}
-                        className="py-2 text-lg font-semibold"
+                        className="inline-block rounded-lg px-4 py-2 text-lg hover:bg-primary hover:text-white"
                         onClick={() => setIsSheetOpen(false)}
                       >
                         {menu.label}
                       </Link>
                     ))}
                   </div>
+                  {!user && (
+                    <div className="flex items-center justify-center gap-2">
+                      <Link
+                        href="/login"
+                        className={cn(
+                          buttonVariants({
+                            variant: "outline",
+                            effect: "shineHover",
+                            size: "sm",
+                          }),
+                          "w-full",
+                        )}
+                      >
+                        Log In
+                      </Link>
+                      <Link
+                        href="/register"
+                        className={cn(
+                          buttonVariants({
+                            effect: "shineHover",
+                            size: "sm",
+                          }),
+                          "w-full",
+                        )}
+                      >
+                        Register
+                      </Link>
+                    </div>
+                  )}
                 </SheetContent>
               </Sheet>
             </div>
