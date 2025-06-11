@@ -20,10 +20,10 @@ export default function TermsAndConditions() {
           <div className="space-y-8">
             <div>
               <p className="leading-relaxed text-gray-700">
-                Welcome to <strong>BharatshaktiTenders.com</strong> ("Website").
-                These Terms and Conditions ("Terms") govern your use of our
-                services, website, and any information provided by or through
-                Bharatshakti Tenders.
+                Welcome to <strong>BharatshaktiTenders.com</strong>{" "}
+                (&quot;Website&quot;). These Terms and Conditions
+                (&quot;Terms&quot;) govern your use of our services, website,
+                and any information provided by or through Bharatshakti Tenders.
               </p>
               <p className="mt-4 leading-relaxed text-gray-700">
                 By accessing or using the website, you agree to be bound by

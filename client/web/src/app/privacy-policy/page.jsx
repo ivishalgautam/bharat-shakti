@@ -183,7 +183,7 @@ export default function PrivacyPolicy() {
                   Usage Data is collected automatically when using the Service.
                 </p>
                 <p className="mb-4 leading-relaxed text-gray-700">
-                  Usage Data may include information such as Your Device's
+                  Usage Data may include information such as Your Device&apos;s
                   Internet Protocol address (e.g. IP address), browser type,
                   browser version, the pages of our Service that You visit, the
                   time and date of Your visit, the time spent on those pages,
@@ -246,11 +246,11 @@ export default function PrivacyPolicy() {
                 </div>
 
                 <p className="mb-6 leading-relaxed text-gray-700">
-                  Cookies can be "Persistent" or "Session" Cookies. Persistent
-                  Cookies remain on Your personal computer or mobile device when
-                  You go offline, while Session Cookies are deleted as soon as
-                  You close Your web browser. You can learn more about cookies
-                  on{" "}
+                  Cookies can be &quot;Persistent&quot; or &quot;Session&quot;
+                  Cookies. Persistent Cookies remain on Your personal computer
+                  or mobile device when You go offline, while Session Cookies
+                  are deleted as soon as You close Your web browser. You can
+                  learn more about cookies on{" "}
                   <a
                     href="https://www.termsfeed.com/blog/cookies/#What_Are_Cookies"
                     target="_blank"
@@ -465,10 +465,10 @@ export default function PrivacyPolicy() {
             <div className="rounded-lg border border-purple-200 bg-purple-50 p-6">
               <p className="mb-4 leading-relaxed text-gray-700">
                 Your information, including Personal Data, is processed at the
-                Company's operating offices and in any other places where the
-                parties involved in the processing are located. It means that
-                this information may be transferred to — and maintained on —
-                computers located outside of Your state, province, country or
+                Company&apos;s operating offices and in any other places where
+                the parties involved in the processing are located. It means
+                that this information may be transferred to — and maintained on
+                — computers located outside of Your state, province, country or
                 other governmental jurisdiction where the data protection laws
                 may differ than those from Your jurisdiction.
               </p>
@@ -591,7 +591,7 @@ export default function PrivacyPolicy() {
 
           <section className="mb-12">
             <h2 className="mb-6 border-b-2 border-blue-200 pb-3 text-3xl font-bold text-gray-900">
-              Children's Privacy
+              Children&apos;s Privacy
             </h2>
             <div className="rounded-lg border border-orange-200 bg-orange-50 p-6">
               <p className="mb-4 leading-relaxed text-gray-700">
@@ -607,8 +607,8 @@ export default function PrivacyPolicy() {
               <p className="leading-relaxed text-gray-700">
                 If We need to rely on consent as a legal basis for processing
                 Your information and Your country requires consent from a
-                parent, We may require Your parent's consent before We collect
-                and use that information.
+                parent, We may require Your parent&apos;s consent before We
+                collect and use that information.
               </p>
             </div>
           </section>
@@ -621,8 +621,8 @@ export default function PrivacyPolicy() {
               <p className="mb-4 leading-relaxed text-gray-700">
                 Our Service may contain links to other websites that are not
                 operated by Us. If You click on a third party link, You will be
-                directed to that third party's site. We strongly advise You to
-                review the Privacy Policy of every site You visit.
+                directed to that third party&apos;s site. We strongly advise You
+                to review the Privacy Policy of every site You visit.
               </p>
               <p className="leading-relaxed text-gray-700">
                 We have no control over and assume no responsibility for the
@@ -645,7 +645,7 @@ export default function PrivacyPolicy() {
               <p className="mb-4 leading-relaxed text-gray-700">
                 We will let You know via email and/or a prominent notice on Our
                 Service, prior to the change becoming effective and update the
-                "Last updated" date at the top of this Privacy Policy.
+                &quot;Last updated&quot; date at the top of this Privacy Policy.
               </p>
               <p className="leading-relaxed text-gray-700">
                 You are advised to review this Privacy Policy periodically for

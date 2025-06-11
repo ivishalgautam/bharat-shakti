@@ -154,7 +154,7 @@ export default function ReturnRefundPolicy() {
                   <CheckCircle className="mt-0.5 h-5 w-5 text-green-600" />
                   <span className="text-green-800">
                     Service not delivered due to an internal issue on our end
-                    (not related to user's device or internet connectivity)
+                    (not related to user&apos;s device or internet connectivity)
                   </span>
                 </div>
               </div>
