@@ -21,7 +21,7 @@ export const columns = (openModal, setId) => [
     header: "BID NO.",
   },
   {
-    accessorKey: "tender_amount",
+    accessorKey: "tender_value",
     header: ({ column }) => {
       return <Button variant="ghost">TENDER AMT.</Button>;
     },
