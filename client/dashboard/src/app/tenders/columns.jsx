@@ -26,7 +26,7 @@ export const columns = (openModal, setId) => [
       return <Button variant="ghost">TENDER AMT.</Button>;
     },
     cell: ({ row }) => {
-      const amount = row.getValue("tender_amount");
+      const amount = row.getValue("tender_value");
       return <Badge> {rupee.format(amount)}</Badge>;
     },
   },
