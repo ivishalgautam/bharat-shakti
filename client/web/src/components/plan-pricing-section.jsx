@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, CreditCard, User, Mail, Lock } from "lucide-react";
+import { Check } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,137 +13,80 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Separator } from "@/components/ui/separator";
-import { Step as StepperStep } from "./stepper";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import plans from "@/services/plan-pricing";
 import ErrorMessage from "./ui/error";
 import Spinner from "./spinner";
-import { Controller, useForm } from "react-hook-form";
-import Image from "next/image";
-import subscriptions from "@/services/subscription";
 import { toast } from "@/hooks/use-toast";
+import payments from "@/services/payment";
+import { useAuth } from "@/providers/auth-provider";
 
-// Stepper component for multi-step forms
-function Stepper({ currentStep, steps }) {
-  return (
-    <div className="mb-8 flex w-full items-center justify-center">
-      {steps.map((step, index) => (
-        <StepperStep
-          key={index}
-          index={index}
-          currentStep={currentStep}
-          label={step}
-          isLastStep={index === steps.length - 1}
-        />
-      ))}
-    </div>
-  );
-}
-
-function Step({ index, currentStep, label, isLastStep }) {
-  const isCompleted = currentStep > index;
-  const isActive = currentStep === index;
-
-  return (
-    <div className="flex items-center">
-      <div className="flex flex-col items-center">
-        <div
-          className={`flex h-8 w-8 items-center justify-center rounded-full ${
-            isCompleted
-              ? "bg-primary text-primary-foreground"
-              : isActive
-                ? "border-2 border-primary text-primary"
-                : "border-2 border-muted-foreground text-muted-foreground"
-          }`}
-        >
-          {isCompleted ? <Check className="h-4 w-4" /> : index + 1}
-        </div>
-        <span
-          className={`mt-1 text-xs ${
-            isActive
-              ? "font-medium text-primary"
-              : isCompleted
-                ? "text-primary"
-                : "text-muted-foreground"
-          }`}
-        >
-          {label}
-        </span>
-      </div>
-      {!isLastStep && (
-        <div
-          className={`h-0.5 w-12 sm:w-24 ${isCompleted ? "bg-primary" : "bg-muted-foreground/30"}`}
-        />
-      )}
-    </div>
-  );
-}
+// Razorpay script loader utility
+export const loadScript = (src) =>
+  new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.onload = () => {
+      console.log("razorpay loaded successfully");
+      resolve(true);
+    };
+    script.onerror = () => {
+      console.log("error in loading razorpay");
+      resolve(false);
+    };
+    document.body.appendChild(script);
+  });
 
 export default function PricingSection() {
   const [duration, setDuration] = useState("3");
+  const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
-  const {
-    register,
-    watch,
-    formState: { errors },
-    handleSubmit,
-    control,
-    setValue,
-  } = useForm({
-    defaultValues: {
-      plan_id: "",
-      name: "",
-      email: "",
-      card_number: "",
-      expiry_date: "",
-      cvv: "",
-      payment_method: "card",
-    },
-  });
-
-  const paymentMethod = watch("payment_method");
-
-  const steps = ["Payment Method", "Confirmation"];
+  const { user } = useAuth();
 
   const { data, isLoading, isError, error } = useQuery({
     queryFn: () => plans.get(),
     queryKey: ["plans"],
   });
 
-  const subscribeMutation = useMutation({
-    mutationFn: subscriptions.create,
-    onSuccess: () => {
-      handleNextStep();
-      toast({
-        title: "Success",
-        description:
-          error?.response?.data?.message ??
-          error?.message ??
-          "Something went wrong!",
-      });
+  const createOrderMutation = useMutation({
+    mutationFn: (planData) => payments.create(planData),
+    onSuccess: ({ order }) => {
+      handleRazorpayPayment(order);
     },
     onError: (error) => {
+      setIsProcessingPayment(false);
+      setSelectedPlan(null);
       toast({
         variant: "destructive",
         title: "Error",
         description:
           error?.response?.data?.message ??
           error?.message ??
-          "Something went wrong!",
+          "Failed to create payment order. Please try again.",
+      });
+    },
+  });
+
+  const veirfyOrderMutation = useMutation({
+    mutationFn: (planData) => payments.verify(planData),
+    onSuccess: (data) => {
+      setIsProcessingPayment(false);
+      toast({
+        title: "Payment Successful!",
+        description: `Successfully subscribed to ${selectedPlan?.name} plan. You will receive a confirmation email shortly.`,
+      });
+      setSelectedPlan(null);
+    },
+    onError: (error) => {
+      setIsProcessingPayment(false);
+      setSelectedPlan(null);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description:
+          error?.response?.data?.message ??
+          error?.message ??
+          "Failed to veirfy payment order. Please try again.",
       });
     },
   });
@@ -167,217 +110,95 @@ export default function PricingSection() {
     return priceNum / (1 - discountNum / 100);
   };
 
-  const handlePlanSelect = (plan) => {
-    setSelectedPlan(plan);
-    setIsDialogOpen(true);
-    setCurrentStep(0);
-  };
+  // Handle plan selection and payment initiation
+  const handlePlanSelect = async (plan) => {
+    try {
+      setSelectedPlan(plan);
+      setIsProcessingPayment(true);
 
-  const handleNextStep = () => {
-    if (currentStep < steps.length - 1) {
-      setCurrentStep((prev) => prev + 1);
+      // Load Razorpay script if not already loaded
+      if (!window.Razorpay) {
+        const scriptLoaded = await loadScript(
+          "https://checkout.razorpay.com/v1/checkout.js",
+        );
+        if (!scriptLoaded) {
+          setIsProcessingPayment(false);
+          setSelectedPlan(null);
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: "Failed to load payment gateway. Please try again.",
+          });
+          return;
+        }
+      }
+
+      // Create payment order
+      createOrderMutation.mutate({
+        plan_id: plan.id,
+      });
+    } catch (error) {
+      console.error("Error initiating payment:", error);
+      setIsProcessingPayment(false);
+      setSelectedPlan(null);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to initialize payment. Please try again.",
+      });
     }
   };
 
-  const handlePrevStep = () => {
-    if (currentStep > 0) {
-      setCurrentStep((prev) => prev - 1);
-    }
-  };
+  const handleRazorpayPayment = async (orderData) => {
+    try {
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: orderData.amount,
+        currency: orderData.currency || "INR",
+        name: "Bharat Shakti Tenders",
+        description: `${selectedPlan?.name} Plan - ${selectedPlan?.duration_in_months} Month(s)`,
+        order_id: orderData.id,
+        handler: function (razorpayResponse) {
+          // handlePaymentSuccess(response);
+          veirfyOrderMutation.mutate({
+            razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+            razorpay_order_id: razorpayResponse.razorpay_order_id,
+            razorpay_signature: razorpayResponse.razorpay_signature,
+          });
+        },
+        prefill: {
+          name: `${user?.first_name} ${user?.last_name}` || "",
+          email: user?.user_email || "",
+          contact: user?.mobile_number || "",
+        },
+        theme: {
+          color: "#008080",
+        },
+        modal: {
+          ondismiss: function () {
+            setIsProcessingPayment(false);
+            setSelectedPlan(null);
+            toast({
+              variant: "destructive",
+              title: "Payment Cancelled",
+              description:
+                "Payment was cancelled. Please try again if you want to subscribe.",
+            });
+          },
+        },
+      };
 
-  const onSubmit = (data) => {
-    subscribeMutation.mutate(data);
-  };
-
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 0:
-        return (
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <Controller
-              name="payment_method"
-              control={control}
-              render={({ field }) => (
-                <RadioGroup
-                  defaultValue="card"
-                  className="mb-6 grid grid-cols-3 gap-4"
-                  onValueChange={field.onChange}
-                >
-                  <div>
-                    <RadioGroupItem
-                      value="card"
-                      id="card-payment"
-                      className="peer sr-only"
-                    />
-                    <Label
-                      htmlFor="card-payment"
-                      className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                    >
-                      <CreditCard className="mb-3 h-6 w-6" />
-                      Card
-                    </Label>
-                  </div>
-                  <div>
-                    <RadioGroupItem
-                      value="upi"
-                      id="upi-payment"
-                      className="peer sr-only"
-                    />
-                    <Label
-                      htmlFor="upi-payment"
-                      className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                    >
-                      <Image
-                        src={"/icons/upi.svg"}
-                        width={50}
-                        height={50}
-                        alt="upi"
-                        className="mb-3 h-6 w-6"
-                      />
-                      UPI
-                    </Label>
-                  </div>
-                  <div>
-                    <RadioGroupItem
-                      value="netbanking"
-                      id="netbanking-payment"
-                      className="peer sr-only"
-                    />
-                    <Label
-                      htmlFor="netbanking-payment"
-                      className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
-                    >
-                      <svg
-                        className="mb-3 h-6 w-6"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M3 8V19H21V8"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M2 5H22V8H2V5Z"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M12 12H18V16H12V12Z"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      Net Banking
-                    </Label>
-                  </div>
-                </RadioGroup>
-              )}
-            />
-
-            {paymentMethod === "card" && (
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="card_number">Card Number</Label>
-                  <div className="relative">
-                    <CreditCard className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      id="card_number"
-                      {...register("card_number")}
-                      placeholder="1234 5678 9012 3456"
-                      className="pl-10"
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="expiry_date">Expiry Date</Label>
-                    <Input
-                      id="expiry_date"
-                      {...register("expiry_date")}
-                      placeholder="MM/YY"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="cvv">CVV</Label>
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                      <Input
-                        id="cvv"
-                        name="cvv"
-                        placeholder="123"
-                        className="pl-10"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <DialogFooter className="flex flex-col gap-2 sm:flex-row sm:gap-0">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handlePrevStep}
-                className="w-full sm:w-auto"
-              >
-                Back
-              </Button>
-              <Button type="submit" className="w-full sm:w-auto">
-                Complete Purchase
-              </Button>
-            </DialogFooter>
-          </form>
-        );
-      case 1:
-        return (
-          <div className="space-y-6 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-              <Check className="h-8 w-8 text-green-600" />
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-xl font-semibold">Payment Successful!</h3>
-              <p className="text-muted-foreground">
-                Thank you for your purchase. You will receive a confirmation
-                email shortly.
-              </p>
-            </div>
-            <div className="rounded-lg bg-muted p-4">
-              <div className="mb-2 flex justify-between">
-                <span className="text-muted-foreground">Plan:</span>
-                <span className="font-medium">
-                  {selectedPlan?.name} ({selectedPlan?.duration_in_months}{" "}
-                  {selectedPlan?.duration_in_months === 1 ? "Month" : "Months"})
-                </span>
-              </div>
-              <div className="mb-2 flex justify-between">
-                <span className="text-muted-foreground">Amount:</span>
-                <span className="font-medium">
-                  ₹{Number.parseFloat(selectedPlan?.price).toLocaleString()}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Payment Method:</span>
-                <span className="font-medium capitalize">{paymentMethod}</span>
-              </div>
-            </div>
-            <DialogFooter>
-              <Button className="w-full">Done</Button>
-            </DialogFooter>
-          </div>
-        );
-      default:
-        return null;
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      console.error("Razorpay payment error:", error);
+      setIsProcessingPayment(false);
+      setSelectedPlan(null);
+      toast({
+        variant: "destructive",
+        title: "Payment Error",
+        description: "Failed to process payment. Please try again.",
+      });
     }
   };
 
@@ -470,12 +291,17 @@ export default function PricingSection() {
                   <CardFooter>
                     <Button
                       className="w-full"
-                      onClick={() => {
-                        handlePlanSelect(plan);
-                        setValue("plan_id", plan.id);
-                      }}
+                      onClick={() => handlePlanSelect(plan)}
+                      disabled={isProcessingPayment}
                     >
-                      {"Get Started"}
+                      {isProcessingPayment && selectedPlan?.id === plan.id ? (
+                        <>
+                          <Spinner className="mr-2 h-4 w-4" />
+                          Processing...
+                        </>
+                      ) : (
+                        "Subscribe Now"
+                      )}
                     </Button>
                   </CardFooter>
                 </Card>
@@ -484,29 +310,6 @@ export default function PricingSection() {
           </Tabs>
         </div>
       </div>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Complete Your Purchase</DialogTitle>
-            <DialogDescription>
-              {selectedPlan && (
-                <div className="mt-2">
-                  <span className="font-medium">{selectedPlan.name} Plan</span>{" "}
-                  - ₹{Number.parseFloat(selectedPlan.price).toLocaleString()}{" "}
-                  for {selectedPlan.duration_in_months}{" "}
-                  {selectedPlan.duration_in_months === 1 ? "month" : "months"}
-                </div>
-              )}
-            </DialogDescription>
-          </DialogHeader>
-
-          <Stepper currentStep={currentStep} steps={steps} />
-          <Separator className="my-4" />
-
-          {renderStepContent()}
-        </DialogContent>
-      </Dialog>
     </section>
   );
 }
