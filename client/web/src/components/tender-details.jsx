@@ -1154,12 +1154,13 @@ function LoginButton({
     (hasStandardAccess ||
       (tab !== "document" && (hasFreeAccess || hasViewedTender)));
 
-  if (shouldHideButton) {
+  const isUnsubscribed = user && user.plan_tier === "unsubscribed";
+  if (shouldHideButton && !isUnsubscribed) {
     return null;
   }
 
   // Determine if the CTA is login or subscribe
-  const isFreeUser = user?.plan_tier === "free";
+  const isFreeUser = user?.plan_tier === "free" || isUnsubscribed;
   const isGuest = !user;
 
   return (

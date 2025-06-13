@@ -15,6 +15,7 @@ const TIER = {
   FREE: "free",
   STANDARD: "standard",
   PREMIUM: "premium",
+  UNSUBSCRIBED: "unsubscribed",
 };
 
 export const allRoutes = [
@@ -26,7 +27,7 @@ export const allRoutes = [
     label: "Profile",
     link: "/dashboard",
     roles: [ROLES.USER],
-    tier: [TIER.FREE, TIER.STANDARD, TIER.PREMIUM],
+    tier: [TIER.FREE, TIER.UNSUBSCRIBED, TIER.STANDARD, TIER.PREMIUM],
     icon: User,
   },
   {
@@ -61,7 +62,7 @@ export const allRoutes = [
     label: "Plans",
     link: "/dashboard/plans",
     roles: [ROLES.USER],
-    tier: [TIER.STANDARD, TIER.PREMIUM, TIER.FREE],
+    tier: [TIER.STANDARD, TIER.PREMIUM, TIER.FREE, TIER.UNSUBSCRIBED],
     icon: IndianRupee,
   },
 ];

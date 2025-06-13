@@ -133,7 +133,7 @@ export default function TenderCardPremium({
           </div>
         </div>
 
-        <div className="mb-6 flex flex-col items-start gap-4 border-y py-3">
+        <div className="mb-6 flex flex-col items-start gap-2 border-y py-3">
           <div className="flex items-center justify-start">
             <IndianRupee className="mr-1 h-4 w-4 text-muted-foreground" />
             <span className="mr-1 text-xs font-medium">Tender Value:</span>

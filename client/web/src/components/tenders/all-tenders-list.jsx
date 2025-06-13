@@ -118,19 +118,16 @@ export default function AllTendersListing() {
 
 function LoaderCard() {
   return (
-    <Card>
-      <CardHeader>
+    <Card className="overflow-hidden">
+      <CardHeader className="h-20 bg-gray-200">
         <div className="flex items-start justify-between">
-          <div>
-            <Skeleton className="h-6 w-48 bg-primary/20" />
-            <Skeleton className="mt-1 h-4 w-24" />
-          </div>
-          <Skeleton className="h-6 w-24" />
+          <Skeleton className="mt-1 h-6 w-44" />
+          <Skeleton className="h-6 w-20" />
         </div>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {Array(6)
+        <div className="grid grid-cols-1 gap-4 p-6 px-2 md:grid-cols-2">
+          {Array(4)
             .fill(null)
             .map((_, index) => (
               <div key={index}>
@@ -139,8 +136,13 @@ function LoaderCard() {
               </div>
             ))}
         </div>
+        <div className="mt-10 space-y-2">
+          <Skeleton className="mb-1 h-4 w-44" />
+          <Skeleton className="h-4 w-44" />
+        </div>
       </CardContent>
-      <CardFooter className="flex justify-end">
+      <CardFooter className="flex justify-end gap-4">
+        <Skeleton className="h-10 w-28" />
         <Skeleton className="h-10 w-28" />
       </CardFooter>
     </Card>

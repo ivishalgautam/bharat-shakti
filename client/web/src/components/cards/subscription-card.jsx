@@ -8,8 +8,13 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, Crown, CreditCard } from "lucide-react";
+import { differenceInDays, parseISO } from "date-fns";
 
 export default function SubscriptionCard({ subscription }) {
+  const daysRemaining = differenceInDays(
+    parseISO(subscription.end_date),
+    new Date(),
+  );
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -29,7 +34,9 @@ export default function SubscriptionCard({ subscription }) {
             </CardTitle>
           </div>
           <Badge
-            variant={subscription.status === "active" ? "default" : "secondary"}
+            variant={
+              subscription.status === "active" ? "default" : "destructive"
+            }
           >
             {subscription.status}
           </Badge>
@@ -54,6 +61,11 @@ export default function SubscriptionCard({ subscription }) {
               <p className="text-muted-foreground">
                 {formatDate(subscription.end_date)}
               </p>
+              <p className="text-xs text-red-500">
+                {daysRemaining > 0
+                  ? `Ending in ${daysRemaining} day${daysRemaining > 1 ? "s" : ""}`
+                  : "Expired"}
+              </p>
             </div>
           </div>
         </div>
@@ -70,7 +82,7 @@ export default function SubscriptionCard({ subscription }) {
           </ul>
         </div>
 
-        <div className="space-y-2 pt-4">
+        {/* <div className="space-y-2 pt-4">
           <Button className="w-full">
             <CreditCard className="mr-2 h-4 w-4" />
             Manage Billing
@@ -78,7 +90,7 @@ export default function SubscriptionCard({ subscription }) {
           <Button variant="outline" className="w-full">
             Upgrade Plan
           </Button>
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   );
