@@ -21,6 +21,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import ErrorMessage from "@/components/ui/error";
 
 export default function UserListing() {
   const [isModal, setIsModal] = useState(false);
@@ -47,8 +48,7 @@ export default function UserListing() {
   }, [searchParamsStr, router]);
 
   if (isLoading) return <DataTableSkeleton columnCount={6} rowCount={10} />;
-
-  if (isError) return error?.message ?? "error";
+  if (isError) return <ErrorMessage error={error?.message ?? "error"} />;
 
   return (
     <div className="w-full rounded-lg border-input">
