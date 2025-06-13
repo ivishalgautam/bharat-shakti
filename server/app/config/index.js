@@ -21,6 +21,10 @@ const config = {
   smtp_port: parseInt(process.env.SMTP_PORT) || 465,
   smtp_host: process.env.SMTP_SERVER || "smtp.gmail.com",
   smtp_password: process.env.SMTP_PASSWORD,
+
+  // razorpay
+  razorpay_key_id: process.env.RAZORPAY_KEY_ID,
+  razorpay_key_secret: process.env.RAZORPAY_KEY_SECRET,
 };
 
 export default config;

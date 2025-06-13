@@ -62,6 +62,7 @@ const constants = {
     PREFERENCE_TABLE: "preferences",
     USER_SESSION_TABLE: "user_sessions",
     FAQ_TABLE: "faqs",
+    RAZORPAY_PAYMENT_TABLE: "razorpay_payments",
   },
   bcrypt: {
     SALT_ROUNDS: 10,

@@ -17,6 +17,7 @@ import categoryRoutes from "../../api/category/routes.js";
 import subCategoryRoutes from "../../api/sub-category/routes.js";
 import preferenceRoutes from "../../api/preference/routes.js";
 import faqRoutes from "../../api/faq/routes.js";
+import paymentRoutes from "../../api/payment/routes.js";
 
 export default async function routes(fastify, options) {
   fastify.addHook("onRequest", jwtVerify.verifyToken);
@@ -41,4 +42,5 @@ export default async function routes(fastify, options) {
   fastify.register(subCategoryRoutes, { prefix: "sub-categories" });
   fastify.register(preferenceRoutes, { prefix: "preferences" });
   fastify.register(faqRoutes, { prefix: "faqs" });
+  fastify.register(paymentRoutes, { prefix: "payments" });
 }

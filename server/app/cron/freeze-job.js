@@ -10,13 +10,10 @@ export default {
     try {
       const subscriptions =
         await table.SubscriptionModel.getActiveSubscriptions();
-      console.log({ subscriptions });
       const promises = subscriptions.map(async (sub) => {
         const expiryDate = moment(sub.end_date);
         const currDate = moment();
-        console.log({ currDate, expiryDate });
         const isSubscriptionExpired = currDate.isAfter(expiryDate);
-        console.log({ isSubscriptionExpired });
         // return;
         if (isSubscriptionExpired) {
           if (sub.plan_tier === "free") {

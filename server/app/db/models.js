@@ -18,6 +18,7 @@ import subCategoryModel from "./models/sub-category.model.js";
 import preferenceModel from "./models/preference.model.js";
 import sessionsModel from "./models/session.model.js";
 import faqModel from "./models/faq.model.js";
+import razorpayPaymentModel from "./models/razorpay-payment.model.js";
 
 export default {
   UserModel: userModel,
@@ -40,4 +41,5 @@ export default {
   PreferenceModel: preferenceModel,
   SessionModel: sessionsModel,
   FAQModel: faqModel,
+  RazorpayPaymentModel: razorpayPaymentModel,
 };
