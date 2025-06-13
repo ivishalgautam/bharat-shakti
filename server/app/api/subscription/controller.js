@@ -19,15 +19,19 @@ const create = async (req, res) => {
       req.user_data.id
     );
 
-    if (record)
+    if (record && record.plan_tier !== "free") {
       return res
         .code(409)
         .send({ status: false, message: "You already have an active plan." });
+    }
 
+    if (record && record.plan_tier === "free") {
+      await table.SubscriptionModel.deleteById(0, record.id, { transaction });
+    }
     req.body.plan_tier = planRecord.plan_tier;
     req.body.plan_id = planRecord.id;
     req.body.start_date = moment();
-    req.body.end_date = moment().add("months", planRecord.duration_in_months);
+    req.body.end_date = moment().add(planRecord.duration_in_months, "months");
     req.body.duration_in_months = planRecord.duration_in_months;
     // req.body.payment_reference = planRecord.payment_reference;
 

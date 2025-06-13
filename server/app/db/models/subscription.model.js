@@ -73,7 +73,7 @@ const init = async (sequelize) => {
 const create = async (req, { transaction }) => {
   return await SubscriptionModel.create(
     {
-      user_id: req.user_data.id,
+      user_id: req.user_data?.id,
       plan_id: req.body.plan_id,
       plan_tier: req.body.plan_tier,
       start_date: req.body.start_date,
@@ -93,16 +93,28 @@ const update = async (req, id, { transaction }) => {
 };
 
 const get = async (req) => {
+  const { role, id } = req.user_data;
+
+  let whereQuery = "";
+  const queryParams = {};
+  if (role === "user") {
+    whereQuery = `WHERE usr.id = :user_id`;
+    queryParams.user_id = id;
+  }
+
   let query = `
   SELECT
       sub.*,
       pln.features
     FROM ${constants.models.SUBSCRIPTION_TABLE} sub
     LEFT JOIN ${constants.models.PLAN_TABLE} pln ON sub.plan_id = pln.id
+    LEFT JOIN ${constants.models.USER_TABLE} usr ON usr.id = sub.user_id
+    ${whereQuery}
   `;
 
   return await SubscriptionModel.sequelize.query(query, {
     type: QueryTypes.SELECT,
+    replacements: queryParams,
     raw: true,
   });
 };
@@ -113,6 +125,7 @@ const getAll = async () => {
       "id",
       "start_date",
       "end_date",
+      "plan_tier",
       "duration_in_months",
       "status",
     ],
@@ -127,6 +140,7 @@ const getActiveSubscriptions = async () => {
       "id",
       "start_date",
       "end_date",
+      "plan_tier",
       "duration_in_months",
       "status",
     ],
@@ -136,7 +150,7 @@ const getActiveSubscriptions = async () => {
 
 const deleteById = async (req, id, { transaction }) => {
   return await SubscriptionModel.destroy({
-    where: { id: req.params.id || id },
+    where: { id: req.params?.id || id },
     transaction,
   });
 };

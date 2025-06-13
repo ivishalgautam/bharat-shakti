@@ -23,6 +23,7 @@ const init = async (sequelize) => {
           key: "id",
           deferrable: Deferrable.INITIALLY_IMMEDIATE,
         },
+        onDelete: "CASCADE",
       },
     },
     {

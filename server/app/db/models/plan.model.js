@@ -165,6 +165,13 @@ const getById = async (req, id) => {
   });
 };
 
+const getByFreePlan = async () => {
+  return await PlanModel.findOne({
+    where: { plan_tier: "free" },
+    raw: true,
+  });
+};
+
 const deleteById = async (req, id, { transaction }) => {
   return await PlanModel.destroy({
     where: { id: req.params.id || id },
@@ -179,4 +186,5 @@ export default {
   getById: getById,
   deleteById: deleteById,
   updateById: updateById,
+  getByFreePlan: getByFreePlan,
 };

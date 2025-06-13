@@ -7,6 +7,7 @@ import authToken from "../../helpers/auth.js";
 import { userSchema } from "../../utils/schema/user.schema.js";
 import { sequelize } from "../../db/postgres.js";
 import constants from "../../lib/constants/index.js";
+import moment from "moment";
 
 const verifyUserCredentials = async (req, res) => {
   const { username, password, provider, provider_account_id, email } = req.body;
@@ -18,7 +19,7 @@ const verifyUserCredentials = async (req, res) => {
   try {
     if (username && password) {
       userData = await table.UserModel.getByUsername(req);
-      console.log({ userData });
+      // console.log({ userData });
       if (!userData) {
         return res
           .code(404)
@@ -33,7 +34,6 @@ const verifyUserCredentials = async (req, res) => {
       }
 
       const passwordIsValid = await hash.verify(password, userData.password);
-
       if (!passwordIsValid) {
         return res.code(401).send({
           message: "Invalid Credentials.",
@@ -42,10 +42,31 @@ const verifyUserCredentials = async (req, res) => {
     } else if (provider && provider_account_id && email) {
       userData = await table.UserModel.getByEmailId(req);
       if (!userData) {
-        userData = await table.UserModel.create(req);
+        userData = await table.UserModel.create(req, { transaction });
+        const freePlan = await table.PlanModel.getByFreePlan();
+        const currDate = moment();
+        const startDate = currDate.toISOString();
+        const endDate = currDate.add(7, "days");
+        await table.SubscriptionModel.create(
+          {
+            user_data: { id: userData.id },
+            body: {
+              plan_id: freePlan.id,
+              plan_tier: freePlan.plan_tier,
+              start_date: startDate,
+              end_date: endDate,
+              duration_in_months: 0,
+            },
+          },
+          { transaction }
+        );
       } else {
         if (!userData.provider) {
-          await userData.update({ body: { provider, provider_account_id } });
+          await table.UserModel.update(
+            { body: { provider, provider_account_id } },
+            userData.id,
+            { transaction }
+          );
         }
       }
     } else {
@@ -66,13 +87,12 @@ const verifyUserCredentials = async (req, res) => {
     const session = await table.SessionModel.create(userData.id, {
       transaction,
     });
-    console.log({ allowedSessions, sessions, session });
+    // console.log({ allowedSessions, sessions, session });
 
     const userPayload = {
       ...userData,
       session_id: session.id,
     };
-    console.log({ userPayload });
     const [jwtToken, expiresIn] = authToken.generateAccessToken(userPayload);
     const [refreshToken, refreshExpireTime] =
       authToken.generateRefreshToken(userPayload);
@@ -93,10 +113,11 @@ const verifyUserCredentials = async (req, res) => {
 };
 
 const createNewUser = async (req, res) => {
+  const transaction = await sequelize.transaction();
+
   let userData;
   try {
     const validateData = userSchema.parse(req.body);
-
     userData = await table.UserModel.getByUsername(req);
     if (userData) {
       return res
@@ -104,12 +125,33 @@ const createNewUser = async (req, res) => {
         .send({ message: "User with this username already exists." });
     }
 
-    await table.UserModel.create(req);
+    userData = await table.UserModel.create(req, { transaction });
 
-    return res.send({
-      message: "User created successfully.",
-    });
+    console.log({ userData });
+    const freePlan = await table.PlanModel.getByFreePlan();
+    const currDate = moment();
+    const startDate = currDate.toISOString();
+    const endDate = currDate.add(7, "days");
+    await table.SubscriptionModel.create(
+      {
+        user_data: {
+          id: userData.id,
+        },
+        body: {
+          plan_id: freePlan.id,
+          plan_tier: freePlan.plan_tier,
+          start_date: startDate,
+          end_date: endDate,
+          duration_in_months: 0,
+        },
+      },
+      { transaction }
+    );
+
+    await transaction.commit();
+    res.send({ message: "User created successfully." });
   } catch (error) {
+    await transaction.rollback();
     console.log(error);
     return res.send(error);
   }

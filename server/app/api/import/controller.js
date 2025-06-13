@@ -15,7 +15,7 @@ const __dirname = path.dirname(__filename);
 const pump = util.promisify(pipeline);
 
 const importExcelData = async (req, res) => {
-  const { type } = req.query; // or use req.params if routing like `/import/:type`
+  const { type } = req.query;
 
   const parts = req.parts();
   for await (const part of parts) {

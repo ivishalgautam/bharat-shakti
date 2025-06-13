@@ -25,10 +25,16 @@ const init = async (sequelize) => {
       email: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: {
+          msg: "Email address already in use.",
+        },
       },
       mobile_number: {
         type: DataTypes.STRING,
         allowNull: true,
+        unique: {
+          msg: "Mobile number already in use.",
+        },
       },
       first_name: {
         type: DataTypes.STRING,
@@ -61,7 +67,6 @@ const init = async (sequelize) => {
       image_url: {
         type: DataTypes.STRING,
       },
-
       provider: {
         type: DataTypes.STRING,
         defaultValue: "credentials",
@@ -87,22 +92,25 @@ const init = async (sequelize) => {
   await UserModel.sync({ alter: true });
 };
 
-const create = async (req) => {
+const create = async (req, { transaction }) => {
   const hash_password = req.body.password
     ? hash.encrypt(req.body.password)
     : "";
-  const data = await UserModel.create({
-    username: req.body.username,
-    password: hash_password,
-    first_name: req.body?.first_name,
-    last_name: req.body?.last_name,
-    email: req.body?.email,
-    mobile_number: req.body?.mobile_number,
-    role: req.body?.role,
-    image_url: req?.body?.image_url,
-    provider: req?.body?.provider,
-    provider_account_id: req?.body?.provider_account_id,
-  });
+  const data = await UserModel.create(
+    {
+      username: req.body.username,
+      password: hash_password,
+      first_name: req.body?.first_name,
+      last_name: req.body?.last_name,
+      email: req.body?.email,
+      mobile_number: req.body?.mobile_number,
+      role: req.body?.role,
+      image_url: req?.body?.image_url,
+      provider: req?.body?.provider,
+      provider_account_id: req?.body?.provider_account_id,
+    },
+    { transaction }
+  );
 
   return data.dataValues;
 };
@@ -171,7 +179,7 @@ const getById = async (req, user_id) => {
   let query = `
   SELECT
       usr.id, usr.username, usr.first_name, usr.last_name, usr.blocked, usr.role, usr.mobile_number, usr.is_verified, usr.image_url,
-      COALESCE(sbs.plan_tier, 'free') as plan_tier
+      COALESCE(sbs.plan_tier, 'unsubscribed') as plan_tier
     FROM ${constants.models.USER_TABLE} usr
     LEFT JOIN ${constants.models.SUBSCRIPTION_TABLE} sbs ON sbs.user_id = usr.id AND sbs.status = 'active'
     WHERE usr.id = :user_id
@@ -192,7 +200,7 @@ const getByUsername = async (req, record = undefined) => {
   SELECT
       usr.id, usr.username, usr.email, usr.first_name, usr.last_name, usr.password, 
       usr.blocked, usr.role, usr.mobile_number, usr.is_verified, usr.image_url, usr.provider,
-      COALESCE(sbs.plan_tier, 'free') as plan_tier
+      COALESCE(sbs.plan_tier, 'unsubscribed') as plan_tier
     FROM ${constants.models.USER_TABLE} usr
     LEFT JOIN ${constants.models.SUBSCRIPTION_TABLE} sbs ON sbs.user_id = usr.id AND sbs.status = 'active'
     WHERE usr.username = :username
@@ -208,7 +216,7 @@ const getByUsername = async (req, record = undefined) => {
   });
 };
 
-const update = async (req) => {
+const update = async (req, id, { transaction }) => {
   return await UserModel.update(
     {
       email: req.body?.email,
@@ -222,7 +230,7 @@ const update = async (req) => {
     },
     {
       where: {
-        id: req.params.id,
+        id: req.params?.id || id,
       },
       returning: [
         "id",
@@ -237,6 +245,7 @@ const update = async (req) => {
         "image_url",
       ],
       plain: true,
+      transaction,
     }
   );
 };

@@ -10,19 +10,29 @@ export default {
     try {
       const subscriptions =
         await table.SubscriptionModel.getActiveSubscriptions();
+      console.log({ subscriptions });
       const promises = subscriptions.map(async (sub) => {
         const expiryDate = moment(sub.end_date);
         const currDate = moment();
-        const isSubscriptionExpired = currDate.isAfter(expiryDate, "day");
+        console.log({ currDate, expiryDate });
+        const isSubscriptionExpired = currDate.isAfter(expiryDate);
+        console.log({ isSubscriptionExpired });
+        // return;
         if (isSubscriptionExpired) {
-          await table.SubscriptionModel.update(
-            {
-              body: { status: "expired" },
-              params: { id: sub.id },
-            },
-            0,
-            { transaction }
-          );
+          if (sub.plan_tier === "free") {
+            await table.SubscriptionModel.deleteById(0, sub.id, {
+              transaction,
+            });
+          } else {
+            await table.SubscriptionModel.update(
+              {
+                body: { status: "expired" },
+                params: { id: sub.id },
+              },
+              0,
+              { transaction }
+            );
+          }
         }
       });
 

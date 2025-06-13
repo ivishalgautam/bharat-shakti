@@ -1,6 +1,7 @@
 "use strict";
 
 import table from "../../db/models.js";
+import { sequelize } from "../../db/postgres.js";
 import hash from "../../lib/encryption/index.js";
 
 const create = async (req, res) => {
@@ -14,7 +15,7 @@ const create = async (req, res) => {
       });
     }
 
-    const user = await table.UserModel.create(req);
+    const user = await table.UserModel.create(req, { transaction });
 
     res.send(user);
   } catch (error) {
@@ -24,13 +25,14 @@ const create = async (req, res) => {
 };
 
 const update = async (req, res) => {
+  const transaction = await sequelize.transaction();
   try {
     const record = await table.UserModel.getById(req);
     if (!record) {
       return res.code(404).send({ message: "User not exists" });
     }
 
-    return res.send(await table.UserModel.update(req));
+    return res.send(await table.UserModel.update(req, 0, { transaction }));
   } catch (error) {
     console.error(error);
     return res.send(error);
