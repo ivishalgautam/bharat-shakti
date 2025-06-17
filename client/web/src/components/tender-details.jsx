@@ -261,7 +261,7 @@ export default function TenderDetails({ data }) {
                       Bid End Date
                     </p>
                     <p className={cn("text-xl font-semibold")}>
-                      {formatDate(tenderData.bid_end_date_time)}
+                      {formatDate(tenderData.dated)}
                     </p>
                   </div>
                 </CardContent>
@@ -384,11 +384,11 @@ export default function TenderDetails({ data }) {
                         </div>
                         <div className="flex flex-col gap-1 rounded-lg bg-primary/5 p-3">
                           <p className="text-sm font-medium text-primary">
-                            Dated
+                            Bid Start Date & Time
                           </p>
                           <p className={cn("font-medium")}>
-                            {tenderData.dated
-                              ? formatDate(tenderData.dated)
+                            {tenderData.bid_start_date_time
+                              ? `${formatDate(tenderData.bid_start_date_time)} at ${formatTime(tenderData.bid_start_date_time)}`
                               : "N/a"}
                           </p>
                         </div>
@@ -397,8 +397,8 @@ export default function TenderDetails({ data }) {
                             Bid End Date & Time
                           </p>
                           <p className={cn("font-medium")}>
-                            {tenderData.bid_end_date_time
-                              ? `${formatDate(tenderData.bid_end_date_time)} at ${formatTime(tenderData.bid_end_date_time)}`
+                            {tenderData.dated
+                              ? formatDate(tenderData.dated)
                               : "N/a"}
                           </p>
                         </div>
@@ -582,32 +582,33 @@ export default function TenderDetails({ data }) {
                           hasViewedTender,
                         }}
                       />
-                      <div className="flex items-start gap-3">
-                        <div className="rounded-full bg-emerald-100 p-2">
-                          <Calendar className="h-5 w-5 text-emerald-600" />
-                        </div>
-                        <div>
-                          <p className="font-medium text-emerald-700">
-                            Tender Date
-                          </p>
-                          <p className={cn("text-sm text-emerald-600", {})}>
-                            {tenderData.dated
-                              ? formatDate(tenderData.dated)
-                              : "N/a"}
-                          </p>
-                        </div>
-                      </div>
+
                       <div className="flex items-start gap-3">
                         <div className="rounded-full bg-teal-100 p-2">
                           <Clock className="h-5 w-5 text-teal-600" />
                         </div>
                         <div>
                           <p className="font-medium text-teal-700">
-                            Bid End Date & Time
+                            Bid Start Date & Time
                           </p>
                           <p className={cn("text-sm text-teal-600", {})}>
-                            {tenderData.bid_end_date_time
-                              ? `${formatDate(tenderData.bid_end_date_time)} at ${formatTime(tenderData.bid_end_date_time)}`
+                            {tenderData.bid_start_date_time
+                              ? `${formatDate(tenderData.bid_start_date_time)} at ${formatTime(tenderData.bid_start_date_time)}`
+                              : "N/a"}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <div className="rounded-full bg-emerald-100 p-2">
+                          <Calendar className="h-5 w-5 text-emerald-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-emerald-700">
+                            Bid End Date & Time
+                          </p>
+                          <p className={cn("text-sm text-emerald-600", {})}>
+                            {tenderData.dated
+                              ? formatDate(tenderData.dated)
                               : "N/a"}
                           </p>
                         </div>

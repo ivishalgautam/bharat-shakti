@@ -10,7 +10,7 @@ export async function POST(request) {
   const cookieStore = await cookies();
   try {
     // login request to the original backend
-    const res = await fetch(API_URL + endpoints.auth.login, {
+    const res = await fetch(API_URL + endpoints.auth.loginVerify, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: data.body,

@@ -60,7 +60,6 @@ export function UserContactsList({ onDelete }) {
   const deleteMutation = useMutation({
     mutationFn: () => userKeyContact.deleteById(id),
     onSuccess: () => {
-      console.log("object");
       toast({ title: "Success", description: "Contact deleted successfully." });
       setIsUpdateDialogOpen(false);
       queryClient.invalidateQueries(["user-key-contacts"]);

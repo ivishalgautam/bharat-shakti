@@ -1,7 +1,6 @@
 "use client";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -12,44 +11,26 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import { Checkbox } from "../ui/checkbox";
 import auth from "@/services/auth";
-import { isValidPhoneNumber } from "react-phone-number-input";
 import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
-import { RiFacebookFill, RiGoogleFill, RiTwitterXFill } from "@remixicon/react";
+import { RiGoogleFill } from "@remixicon/react";
 import { Separator } from "../ui/separator";
 import { signIn } from "next-auth/react";
-
-// Define the validation schema using Zod
-const userFormSchema = z
-  .object({
-    username: z
-      .string()
-      .min(3, "Username must be at least 3 characters")
-      .max(50),
-    email: z.string().email("Please enter a valid email address"),
-    mobile_number: z
-      .string({ required_error: "Mobile number is required." })
-      .min(1, { message: "Mobile number is required." }),
-    first_name: z.string().optional(),
-    last_name: z.string().optional(),
-    password: z.string().min(8, "Password must be at least 8 characters"),
-    terms: z.literal(true, {
-      errorMap: () => ({ message: "You must accept the terms and conditions" }),
-    }),
-  })
-  .refine((data) => isValidPhoneNumber(data.mobile_number), {
-    path: ["mobile_number"],
-    message: "Invalid phone number",
-  });
+import { useState, useEffect } from "react";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
+import { otpSchema, userFormSchema } from "@/utils/schema/register";
 
 export default function Register() {
+  const [step, setStep] = useState("register"); // "register" or "otp"
+  const [resendTimer, setResendTimer] = useState(0);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-    setValue,
     watch,
     control,
+    getValues,
   } = useForm({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -63,24 +44,70 @@ export default function Register() {
       terms: false,
     },
   });
+  const {
+    handleSubmit: handleOtpSubmit,
+    formState: { errors: otpErrors },
+    setValue: setOtpFormValue,
+    control: otpFormControl,
+    getValues: getOtpFormValues,
+  } = useForm({
+    resolver: zodResolver(otpSchema),
+    defaultValues: { otp: "", request_id: "" },
+  });
   const router = useRouter();
+
+  // Timer effect for resend OTP
+  useEffect(() => {
+    let interval;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [resendTimer]);
+
   const registerMutation = useMutation({
-    mutationFn: auth.register,
+    mutationFn: auth.registerRequest,
+    onSuccess: ({ data }) => {
+      setOtpFormValue("request_id", data.request_id);
+      toast({
+        title: "OTP Sent Successful",
+        description:
+          "Please verify your account with the OTP sent to your mobile number.",
+      });
+      setStep("otp");
+      setResendTimer(10);
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Registration Failed",
+        description:
+          error?.response?.data?.message ??
+          error?.message ??
+          "Something went wrong!",
+      });
+    },
+  });
+
+  const verifyOtpMutation = useMutation({
+    mutationFn: auth.registerVerify,
     onSuccess: (data) => {
       toast({
-        title: "Success.",
-        description: "You have successfully registered with us.",
+        title: "Verification Successful",
+        description: "Your account has been verified successfully.",
       });
       router.push("/login");
     },
     onError: (error) => {
       toast({
         variant: "destructive",
-        title: "Error.",
+        title: "Verification Failed",
         description:
-          error?.response.data?.message ??
+          error?.response?.data?.message ??
           error?.message ??
-          "Something went wrong!",
+          "Invalid OTP. Please try again.",
       });
     },
   });
@@ -88,6 +115,116 @@ export default function Register() {
   const onSubmit = (data) => {
     registerMutation.mutate(data);
   };
+
+  const onOtpSubmit = (data) => {
+    const payload = {
+      ...getValues(),
+      otp: data.otp,
+      request_id: getOtpFormValues().request_id,
+    };
+    console.log({ payload });
+    verifyOtpMutation.mutate(payload);
+  };
+
+  const handleResendOtp = () => {
+    if (resendTimer === 0) {
+      registerMutation.mutate({ ...getValues() });
+    }
+  };
+
+  const handleBackToRegister = () => {
+    setStep("register");
+  };
+
+  if (step === "otp") {
+    return (
+      <form onSubmit={handleOtpSubmit(onOtpSubmit)}>
+        <div className="mx-auto w-full max-w-md space-y-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-extrabold text-gray-900">
+              Verify Your Account
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              {"We've sent a 6-digit OTP to your mobile number"}
+            </p>
+            <p className="mt-1 text-sm font-medium text-gray-900">
+              {watch("mobile_number")}
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <Label className="block text-center">Enter OTP</Label>
+              <Controller
+                name="otp"
+                control={otpFormControl}
+                render={({ field }) => (
+                  <div className="flex items-center justify-center">
+                    <InputOTP maxLength={6} {...field}>
+                      <InputOTPGroup>
+                        <InputOTPSlot index={0} className="size-12" />
+                        <InputOTPSlot index={1} className="size-12" />
+                        <InputOTPSlot index={2} className="size-12" />
+                        <InputOTPSlot index={3} className="size-12" />
+                        <InputOTPSlot index={4} className="size-12" />
+                        <InputOTPSlot index={5} className="size-12" />
+                      </InputOTPGroup>
+                    </InputOTP>
+                  </div>
+                )}
+              />
+              {otpErrors.otp && (
+                <p className="text-center text-sm text-red-500">
+                  {otpErrors.otp.message}
+                </p>
+              )}
+            </div>
+
+            <Button className="w-full" disabled={verifyOtpMutation.isPending}>
+              {verifyOtpMutation.isPending && (
+                <LoaderCircle className="mr-2 size-4 animate-spin" />
+              )}
+              Verify OTP
+            </Button>
+
+            <div className="space-y-2 text-center">
+              <p className="text-sm text-gray-600">
+                {"Didn't receive the OTP?"}
+              </p>
+              <Button
+                type="button"
+                variant="link"
+                onClick={handleResendOtp}
+                disabled={resendTimer > 0 || registerMutation.isPending}
+                className="h-auto p-0 text-primary"
+              >
+                {registerMutation.isPending ? (
+                  <>
+                    <LoaderCircle className="mr-2 size-4 animate-spin" />
+                    Resending...
+                  </>
+                ) : resendTimer > 0 ? (
+                  `Resend OTP in ${resendTimer}s`
+                ) : (
+                  "Resend OTP"
+                )}
+              </Button>
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleBackToRegister}
+              className="w-full"
+            >
+              Back to Registration
+            </Button>
+          </div>
+        </div>
+      </form>
+    );
+  }
+
   return (
     <div className="mx-auto w-full space-y-8">
       <div>
@@ -245,7 +382,7 @@ export default function Register() {
           disabled={registerMutation.isPending}
         >
           {registerMutation.isPending && (
-            <LoaderCircle className="size-10 animate-spin" />
+            <LoaderCircle className="mr-2 size-4 animate-spin" />
           )}
           Register
         </Button>

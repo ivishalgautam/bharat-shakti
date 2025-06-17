@@ -1,5 +1,5 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { Input } from "../ui/input";
@@ -21,6 +21,7 @@ export default function LoginForm({ redirectLink = "" }) {
     register,
   } = useForm();
   const router = useRouter();
+  const pathname = usePathname();
   const loginMutation = useMutation({
     mutationFn: auth.login,
     onSuccess: ({ data }) => {
@@ -108,37 +109,45 @@ export default function LoginForm({ redirectLink = "" }) {
             )}
           </div>
         </div>
-        {/* 
-              {isLogin && (
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Input
-                      id="remember-me"
-                      name="rememberMe"
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      {...register("rememberMe")}
-                    />
-                    <Label
-                      htmlFor="remember-me"
-                      className="ml-2 block text-sm text-gray-900"
-                    >
-                      Remember me
-                    </Label>
-                  </div>
 
-                  <div className="text-sm">
-                    <Link
-                      href="/forgot-password"
-                      className="font-medium text-blue-600 hover:text-blue-500"
-                    >
-                      Forgot your password?
-                    </Link>
-                  </div>
-                </div>
-              )} */}
+        {/* {isLogin && (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Input
+                id="remember-me"
+                name="rememberMe"
+                type="checkbox"
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                {...register("rememberMe")}
+              />
+              <Label
+                htmlFor="remember-me"
+                className="ml-2 block text-sm text-gray-900"
+              >
+                Remember me
+              </Label>
+            </div>
 
-        <div>
+            <div className="text-sm">
+              <Link
+                href="/forgot-password"
+                className="font-medium text-blue-600 hover:text-blue-500"
+              >
+                Forgot your password?
+              </Link>
+            </div>
+          </div>
+        )} */}
+
+        <div className="flex items-center justify-center gap-2">
+          <Button
+            type="button"
+            className="w-full"
+            variant="outline"
+            onClick={() => router.push("/login-with-otp")}
+          >
+            Login with OTP
+          </Button>
           <Button
             disabled={loginMutation.isPending}
             type="submit"

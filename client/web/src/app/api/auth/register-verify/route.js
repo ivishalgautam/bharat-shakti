@@ -11,7 +11,7 @@ export async function POST(request) {
   try {
     // login request to the original backend
     const res = await axios.post(
-      API_URL + endpoints.auth.signup,
+      API_URL + endpoints.auth.regsiterVerify,
       JSON.parse(data.body),
     );
     const json = res.data;

@@ -1,4 +1,3 @@
-import config from "@/config";
 import http from "@/utils/http";
 
 const { endpoints } = require("@/utils/endpoints");

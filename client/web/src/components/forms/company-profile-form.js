@@ -54,7 +54,6 @@ export function CompanyProfileForm({}) {
     watch,
     reset,
   } = useForm({});
-  console.log(watch());
   const {
     data: profileData,
     isLoading,
@@ -139,7 +138,6 @@ export function CompanyProfileForm({}) {
                 name="company_type"
                 control={control}
                 render={({ field }) => {
-                  console.log(field.value);
                   return (
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger>

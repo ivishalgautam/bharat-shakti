@@ -94,7 +94,7 @@ export default function AllTendersListing() {
         </Card>
       ) : (
         <div className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] lg:grid-cols-[repeat(auto-fill,minmax(400px,1fr))]">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(400px,1fr))]">
             {data?.tenders.map((tender, ind) => (
               <React.Fragment key={tender.id}>
                 <TenderCardPremium

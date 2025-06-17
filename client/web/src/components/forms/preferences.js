@@ -40,7 +40,6 @@ export default function PreferencesForm({
   selectedAmountMin,
   selectedAmountMax,
 }) {
-  console.log({ selectedCategories });
   const {
     register,
     handleSubmit,
@@ -106,7 +105,6 @@ export default function PreferencesForm({
 
   useEffect(() => {
     if (data) {
-      console.log({ data });
       setValue("name", data.name);
       setValue(
         "category_ids",

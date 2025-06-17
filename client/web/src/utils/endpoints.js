@@ -2,7 +2,10 @@ export const endpoints = {
   profile: "/users/me",
   auth: {
     login: "/auth/login",
-    signup: "/auth/signup",
+    loginRequest: "/auth/login-request",
+    loginVerify: "/auth/login-verify",
+    regsiterRequest: "/auth/register-request",
+    regsiterVerify: "/auth/register-verify",
     refresh: "/auth/refresh",
     username: "/auth/username",
   },

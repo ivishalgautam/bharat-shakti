@@ -12,7 +12,11 @@ export default function Layout({ children }) {
 
   const getContent = () => {
     // Array of all the paths that don't need the layout
-    if (["/login", "/register", "/unauthorized"].includes(pathname)) {
+    if (
+      ["/login", "/register", "/unauthorized", "/login-with-otp"].includes(
+        pathname,
+      )
+    ) {
       return children;
     }
 

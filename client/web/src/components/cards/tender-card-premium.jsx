@@ -1,28 +1,28 @@
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import {
   Heart,
   Calendar,
   Briefcase,
-  Building2,
-  MapPin,
   IndianRupee,
   Eye,
   ListCollapse,
+  Loader2,
 } from "lucide-react";
 import { format } from "date-fns";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { rupee } from "@/lib/Intl";
 import { getRemainingDays } from "@/lib/get-remaining-days";
 import { useMutation } from "@tanstack/react-query";
 import viewTenders from "@/services/view-tender";
+import tenderService from "@/services/tender";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { useRouter } from "next/navigation";
 
 export default function TenderCardPremium({
   tender,
@@ -30,6 +30,7 @@ export default function TenderCardPremium({
   unfollowMutation,
   user,
 }) {
+  const router = useRouter();
   const isUrgent = getRemainingDays(tender.bid_end_date_time) < 3;
   const isClosed = getRemainingDays(tender.bid_end_date_time) <= 0;
 
@@ -39,6 +40,40 @@ export default function TenderCardPremium({
       console.log("View Error", error);
     },
   });
+
+  const viewCountMutation = useMutation({
+    mutationFn: () => tenderService.addView(tender.id),
+    onError: (error) => {
+      console.log("View Error", error);
+    },
+  });
+
+  const handleClick = () => {
+    const navigate = () => router.push(`/tenders/${tender.slug}`);
+    // return navigate();
+
+    if (user) {
+      viewMutation.mutate(
+        { tender_id: tender.id },
+        {
+          onSuccess: () => {
+            viewCountMutation.mutate(undefined, {
+              onSettled: navigate,
+            });
+          },
+          onError: () => {
+            viewCountMutation.mutate(undefined, {
+              onSettled: navigate,
+            });
+          },
+        },
+      );
+    } else {
+      viewCountMutation.mutate(undefined, {
+        onSettled: navigate,
+      });
+    }
+  };
 
   return (
     <div className="overflow-hidden rounded-lg border border-primary/30 bg-card text-card-foreground">
@@ -170,15 +205,18 @@ export default function TenderCardPremium({
             />
             {tender.is_followed ? "Followed" : "Follow"}
           </Button>
-          <Link
-            href={`/tenders/${tender.slug}`}
-            className={cn(buttonVariants(), "w-full sm:w-auto")}
-            onClick={() =>
-              user && viewMutation.mutate({ tender_id: tender.id })
-            }
+          <Button
+            // href={`/tenders/${tender.slug}`}
+            className={"w-full transition-transform sm:w-auto"}
+            onClick={handleClick}
+            disabled={viewMutation.isPending}
           >
-            View Details
-          </Link>
+            {viewMutation.isPending ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "View Details"
+            )}
+          </Button>
         </div>
       </div>
     </div>

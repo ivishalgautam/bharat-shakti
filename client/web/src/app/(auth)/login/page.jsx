@@ -5,6 +5,7 @@ import React from "react";
 export default function LoginPage() {
   const headerList = headers();
   const referer = headerList.get("referer");
+  const redirectLink = referer.includes("/register") ? "/" : referer;
 
-  return <LoginForm redirectLink={referer} />;
+  return <LoginForm redirectLink={redirectLink} />;
 }

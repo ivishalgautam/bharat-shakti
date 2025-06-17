@@ -34,12 +34,17 @@ const favourite = async (searchParams = "") => {
   return data;
 };
 
+const addView = async (id) => {
+  return await http().post(`${endpoints.tenders.getAll}/add-view/${id}`);
+};
+
 const tender = {
   getById: getById,
   get: get,
   favourite: favourite,
   getBySlug: getBySlug,
   getBySimilarTenders: getBySimilarTenders,
+  addView: addView,
 };
 
 export default tender;

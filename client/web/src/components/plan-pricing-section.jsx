@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, LoaderCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,11 +27,11 @@ export const loadScript = (src) =>
     const script = document.createElement("script");
     script.src = src;
     script.onload = () => {
-      console.log("razorpay loaded successfully");
+      // console.log("razorpay loaded successfully");
       resolve(true);
     };
     script.onerror = () => {
-      console.log("error in loading razorpay");
+      // console.log("error in loading razorpay");
       resolve(false);
     };
     document.body.appendChild(script);
@@ -296,7 +296,7 @@ export default function PricingSection() {
                     >
                       {isProcessingPayment && selectedPlan?.id === plan.id ? (
                         <>
-                          <Spinner className="mr-2 h-4 w-4" />
+                          <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
                           Processing...
                         </>
                       ) : (

@@ -9,6 +9,7 @@ export default function RoleContext({ children }) {
   const params = useParams();
   const router = useRouter();
   const { user, isUserLoading } = useContext(AuthContext);
+
   useEffect(() => {
     if (isUserLoading) return;
     let currRoute = pathname.replace(params.id, ":id");

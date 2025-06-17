@@ -1,23 +1,23 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Search, ArrowRight, Building2, MapPin, Handshake } from "lucide-react";
+import { useMemo } from "react";
+import { Search, Building2, Handshake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { TenderSearchResults } from "@/components/tender-search-results";
 import useGetAuthorities from "@/hooks/use-get-authorities";
 import { useFormattedOptions } from "@/hooks/use-formatted-options";
 import useGetStates from "@/hooks/use-get-states";
 import { parseAsString, useQueryState } from "nuqs";
 import { FilterBox } from "./tenders/filter-box";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export function Hero() {
-  const [isSearching, setIsSearching] = useState(false);
-  const [showResults, setShowResults] = useState(false);
   const { data: authoritiesData } = useGetAuthorities();
   const formattedAuthorities = useFormattedOptions(authoritiesData);
   const { data: statesData } = useGetStates();
   const formattedStates = useFormattedOptions(statesData);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [searchTerm, setSearchTerm] = useQueryState(
     "q",
@@ -37,11 +37,8 @@ export function Hero() {
   }, [searchTerm, authorities, states]);
 
   const handleSearch = () => {
-    // Simulate API call
     if (isFilterActive) {
-      setIsSearching(true);
-      setIsSearching(false);
-      setShowResults(true);
+      router.push(`/tenders?${searchParams.toString()}`);
     }
   };
 
@@ -104,13 +101,8 @@ export function Hero() {
                     </div>
                   </div>
 
-                  <Button
-                    className="w-full"
-                    onClick={handleSearch}
-                    disabled={isSearching}
-                  >
-                    {isSearching ? "Searching..." : "Search Tenders"}
-                    {!isSearching && <ArrowRight className="ml-2 h-4 w-4" />}
+                  <Button className="w-full" onClick={handleSearch}>
+                    Search Tenders
                   </Button>
                 </div>
               </div>
@@ -140,10 +132,6 @@ export function Hero() {
           </div>
         </div>
       </div>
-
-      {showResults && (
-        <TenderSearchResults onClose={() => setShowResults(false)} />
-      )}
     </div>
   );
 }
