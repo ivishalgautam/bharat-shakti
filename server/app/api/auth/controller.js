@@ -65,6 +65,10 @@ const verifyUserCredentials = async (req, res) => {
           },
           { transaction }
         );
+        await Brevo.sendWelcomeEmail(
+          userData.email,
+          `${userData.first_name ?? ""} ${userData.last_name ?? ""}`
+        );
       } else {
         if (!userData.provider) {
           await table.UserModel.update(
