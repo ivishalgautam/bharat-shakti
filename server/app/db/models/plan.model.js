@@ -102,7 +102,7 @@ const updateById = async (req, id, { transaction }) => {
 };
 
 const get = async (req) => {
-  let whereConditions = [];
+  let whereConditions = ["pln.is_active IS true"];
   const queryParams = {};
   let q = req.query.q;
   if (q) {

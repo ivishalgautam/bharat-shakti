@@ -4,7 +4,7 @@ import table from "../db/models.js";
 import { sequelize } from "../db/postgres.js";
 
 export default {
-  cronTime: "*/10 * * * * *",
+  cronTime: "* * * * *",
   onTick: async (server) => {
     const transaction = await sequelize.transaction();
     try {

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tender Closing Reminder</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f5f5f5;
+      line-height: 1.6;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .header {
+      background: linear-gradient(135deg, #003366 0%, #008080 100%);
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 600;
+    }
+    .header .tagline {
+      margin: 5px 0 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    .content {
+      padding: 40px 30px;
+    }
+    .greeting {
+      font-size: 18px;
+      color: #003366;
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+    .alert-section {
+      background-color: #fff3cd;
+      border-left: 4px solid #008080;
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .alert-text {
+      color: #856404;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 0;
+    }
+    .tender-details {
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      padding: 25px;
+      margin: 25px 0;
+      border: 1px solid #e9ecef;
+    }
+    .detail-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 15px;
+      font-size: 15px;
+    }
+    .detail-item:last-child {
+      margin-bottom: 0;
+    }
+    .detail-icon {
+      font-size: 18px;
+      margin-right: 12px;
+      width: 20px;
+      flex-shrink: 0;
+    }
+    .detail-label {
+      font-weight: 600;
+      color: #003366;
+      margin-right: 8px;
+      min-width: 100px;
+    }
+    .detail-value {
+      color: #333;
+      flex: 1;
+    }
+    .cta-section {
+      text-align: center;
+      margin: 20px 0 0 0;
+    }
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #008080 0%, #006666 100%);
+      color: #ffffff !important;
+      text-decoration: none;
+      padding: 15px 35px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0, 128, 128, 0.3);
+      transition: all 0.3s ease;
+    }
+    .cta-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 128, 128, 0.4);
+    }
+    .reminder-text {
+      color: #666;
+      font-size: 15px;
+      margin: 25px 0;
+      text-align: center;
+      font-style: italic;
+    }
+    .footer {
+      background-color: #003366;
+      color: white;
+      padding: 30px 20px;
+      text-align: center;
+    }
+    .footer-content {
+      margin-bottom: 15px;
+    }
+    .contact-info {
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .website {
+      color: #008080;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .website:hover {
+      text-decoration: underline;
+    }
+    .footer-note {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 15px;
+    }
+    @media only screen and (max-width: 600px) {
+      .email-container {
+        width: 100% !important;
+      }
+      .content {
+        padding: 25px 20px;
+      }
+      .tender-details {
+        padding: 20px;
+      }
+      .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .detail-label {
+        margin-bottom: 5px;
+        min-width: auto;
+      }
+      .cta-button {
+        padding: 12px 25px;
+        font-size: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <!-- Header -->
+    <div class="header">
+      <h1>BharatShaktiTenders</h1>
+      <p class="tagline">Your Gateway to Government Opportunities</p>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="greeting">
+        Dear <%= fullname %>,
+      </div>
+
+      <div class="alert-section">
+        <p class="alert-text">⏰ Quick Reminder: Your favourite tenders are closing soon!</p>
+      </div>
+
+      <% tenders.forEach(function(tender) { %>
+        <div class="tender-details">
+          <div class="detail-item">
+            <span class="detail-icon">🔔</span>
+            <span class="detail-label">Tender Title:</span>
+            <span class="detail-value"><%= tender.name %></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-icon">📅</span>
+            <span class="detail-label">Closing Date:</span>
+            <span class="detail-value"><%= tender.closingDate %></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-icon">🏛️</span>
+            <span class="detail-label">Organization:</span>
+            <span class="detail-value"><%= tender.organization %></span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-icon">📍</span>
+            <span class="detail-label">Location:</span>
+            <span class="detail-value"><%= tender.location %></span>
+          </div>
+          <div class="cta-section">
+            <a href="<%= tender.url %>" class="cta-button">👉 View Tender Details</a>
+          </div>
+        </div>
+      <% }); %>
+
+      <p class="reminder-text">
+        Don't miss these opportunities to participate in projects that match your interests.
+      </p>
+
+      <p style="color: #666; font-size: 14px; text-align: center;">
+        If you need any assistance, feel free to reach out to us at
+        <a href="mailto:contact@bharatshaktitenders.com" style="color: #008080; text-decoration: none;">
+          contact@bharatshaktitenders.com
+        </a>
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-content">
+        <p style="margin: 0 0 10px 0; font-size: 16px; font-weight: 600;">
+          Warm regards,<br>
+          Team BharatShaktiTenders
+        </p>
+        <div class="contact-info">
+          <a href="https://bharatshaktitenders.com" class="website">
+            www.bharatshaktitenders.com
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,4 +1,5 @@
 "use strict";
+import moment from "moment";
 import constants from "../../lib/constants/index.js";
 import sequelizeFwk, { Deferrable, Op, QueryTypes } from "sequelize";
 const { DataTypes } = sequelizeFwk;
@@ -210,6 +211,37 @@ const deleteByTenderId = async (req, id, { transaction }) => {
   });
 };
 
+const getExpiringTendersWithUsers = async () => {
+  const now = moment();
+  const fiveDaysLaterAt5PM = moment()
+    .add(5, "days")
+    .set({ hour: 17, minute: 0, second: 0, millisecond: 0 });
+
+  const query = `
+    SELECT
+      tdr.id as tender_id, tdr.bid_number, tdr.dated, 
+      tdr.organisation, tdr.office, tdr.slug,
+      usr.id AS user_id,
+      usr.email AS user_email,
+      CONCAT(usr.first_name, ' ', usr.last_name) AS fullname,
+      wl.id AS wishlist_id
+    FROM ${constants.models.WISHLIST_TABLE} wl
+    LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON tdr.id = wl.tender_id
+    LEFT JOIN ${constants.models.USER_TABLE} usr ON usr.id = wl.user_id
+    WHERE tdr.dated BETWEEN :now AND :fiveDaysLater
+    ORDER BY tdr.dated ASC
+  `;
+
+  return await WishlistModel.sequelize.query(query, {
+    replacements: {
+      now: now.toISOString(),
+      fiveDaysLater: fiveDaysLaterAt5PM.toISOString(),
+    },
+    type: QueryTypes.SELECT,
+    raw: true,
+  });
+};
+
 export default {
   init: init,
   create: create,
@@ -217,4 +249,5 @@ export default {
   getByUserAndTenderId: getByUserAndTenderId,
   deleteByTenderId: deleteByTenderId,
   isTenderFollowed: isTenderFollowed,
+  getExpiringTendersWithUsers: getExpiringTendersWithUsers,
 };

@@ -13,12 +13,13 @@ const create = async (req, res) => {
       return res.code(status.CREATED);
 
     const record = await table.ViewedTenderModel.getByUserAndTenderId(req);
-    if (record) return res.code(status.CREATED);
-
+    if (record) {
+      console.log({ record });
+      return res.code(status.CREATED).send({ status: true });
+    }
     await table.ViewedTenderModel.create(req, { transaction });
     await transaction.commit();
-
-    res.code(status.CREATED);
+    res.code(status.CREATED).send({ status: true });
   } catch (error) {
     await transaction.rollback();
     throw error;

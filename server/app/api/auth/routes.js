@@ -7,7 +7,10 @@ export default async function routes(fastify, options) {
     request.body && console.log("body", request.body);
   });
   fastify.post("/login", {}, controller.verifyUserCredentials);
-  fastify.post("/signup", {}, controller.createNewUser);
+  fastify.post("/login-request", {}, controller.loginRequest);
+  fastify.post("/login-verify", {}, controller.loginVerify);
+  fastify.post("/register-request", {}, controller.registerRequest);
+  fastify.post("/register-verify", {}, controller.registerVerify);
   fastify.post("/refresh", {}, controller.verifyRefreshToken);
   fastify.post("/username", {}, userController.checkUsername);
   fastify.post("/:token", {}, userController.resetPassword);

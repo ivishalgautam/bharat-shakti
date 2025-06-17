@@ -86,9 +86,9 @@ const create = async (req, { transaction }) => {
 };
 
 const update = async (req, id, { transaction }) => {
-  return await SubscriptionModel.create(
+  return await SubscriptionModel.update(
     { status: req.body.status },
-    { where: { id: id }, transaction }
+    { where: { id: req?.params?.id || id }, transaction }
   );
 };
 

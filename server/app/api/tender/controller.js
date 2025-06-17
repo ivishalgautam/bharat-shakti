@@ -53,6 +53,7 @@ const update = async (req, res) => {
         ...(req.body?.buyer_specification_document ?? []),
         ...updatedDocs,
       ];
+
       documentsToDelete.push(...getItemsToDelete(existingDocs, updatedDocs));
     }
 
@@ -211,25 +212,30 @@ const getTendersByUserPreferences = async (req, res) => {
 };
 
 const getBySlug = async (req, res) => {
-  const transaction = await sequelize.transaction();
-
   try {
     const record = await table.TenderModel.getBySlug(req);
     if (!record)
       return res
         .code(status.NOT_FOUND)
         .send({ status: false, message: "Tender not found!" });
-
-    const view_count = Number(record.view_count) + 1;
-    await table.TenderModel.update({ body: { view_count } }, record.id, {
-      transaction,
-    });
-
-    await transaction.commit();
-    res.code(status.ACCEPTED).send({ status: true, data: record });
+    res.code(status.OK).send({ status: true, data: record });
   } catch (error) {
-    await transaction.rollback();
     throw error;
+  }
+};
+
+const addView = async (req, res) => {
+  const transaction = await sequelize.transaction();
+  try {
+    const record = await table.TenderModel.getById(req);
+    if (!record) {
+      return res.code(404).send({ status: false });
+    }
+    await table.TenderModel.incrementViewCount(record.id);
+
+    res.send({ status: true });
+  } catch (err) {
+    throw err;
   }
 };
 
@@ -455,4 +461,5 @@ export default {
   getBySlug: getBySlug,
   getSimilarTenders: getSimilarTenders,
   importTenders: importTenders,
+  addView: addView,
 };

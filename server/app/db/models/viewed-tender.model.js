@@ -187,6 +187,7 @@ const getByUserAndTenderId = async (req) => {
       user_id: req.user_data.id,
       tender_id: req?.params?.id || req.body.tender_id,
     },
+    raw: true,
   });
 };
 

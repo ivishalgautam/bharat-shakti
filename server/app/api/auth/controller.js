@@ -4,10 +4,15 @@ import hash from "../../lib/encryption/index.js";
 
 import table from "../../db/models.js";
 import authToken from "../../helpers/auth.js";
-import { userSchema } from "../../utils/schema/user.schema.js";
+import {
+  registerVerifySchema,
+  userSchema,
+} from "../../utils/schema/user.schema.js";
 import { sequelize } from "../../db/postgres.js";
 import constants from "../../lib/constants/index.js";
 import moment from "moment";
+import { otpGenerator } from "../../utils/otp-generator.js";
+import { Brevo } from "../../services/mailer.js";
 
 const verifyUserCredentials = async (req, res) => {
   const { username, password, provider, provider_account_id, email } = req.body;
@@ -87,12 +92,12 @@ const verifyUserCredentials = async (req, res) => {
     const session = await table.SessionModel.create(userData.id, {
       transaction,
     });
-    // console.log({ allowedSessions, sessions, session });
 
     const userPayload = {
       ...userData,
       session_id: session.id,
     };
+
     const [jwtToken, expiresIn] = authToken.generateAccessToken(userPayload);
     const [refreshToken, refreshExpireTime] =
       authToken.generateRefreshToken(userPayload);
@@ -108,26 +113,136 @@ const verifyUserCredentials = async (req, res) => {
   } catch (error) {
     await transaction.rollback();
     console.log(error);
-    return res.code(500).send({ message: "Internal Server Error", error });
+    throw error;
   }
 };
 
-const createNewUser = async (req, res) => {
+const loginRequest = async (req, res) => {
+  try {
+    const userData = await table.UserModel.getByMobileNumber(req);
+    if (!userData) {
+      return res
+        .code(409)
+        .send({ message: "User with this number not exists." });
+    }
+
+    const otp = otpGenerator();
+    const otpRecord = await table.OTPModel.create({
+      mobile_number: req.body.mobile_number,
+      otp,
+      type: "login",
+      user_id: userData.id,
+    });
+
+    res.send({ status: true, message: "OTP Sent.", request_id: otpRecord.id });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+const loginVerify = async (req, res) => {
   const transaction = await sequelize.transaction();
 
-  let userData;
+  try {
+    const otp = req.body.otp;
+    const requestId = req.body.request_id;
+    const otpRecord = await table.OTPModel.getById(requestId);
+    if (!otpRecord)
+      return res
+        .code(404)
+        .send({ status: false, message: "Request not found!" });
+
+    if (otpRecord.otp != otp) {
+      return res
+        .code(400)
+        .send({ status: false, message: "Incorrect OTP Code!" });
+    }
+
+    const userData = await table.UserModel.getById(0, otpRecord.user_id);
+    const planTier = await table.SubscriptionModel.getLastActivePlanByUserId(
+      userData.id
+    );
+    const allowedSessions =
+      constants.plan_limits[planTier?.plan_tier ?? "free"];
+    const sessions = await table.SessionModel.getByUserId(userData.id);
+    if (sessions.length >= allowedSessions) {
+      const toRemove = sessions[0].id;
+      await table.SessionModel.deleteById(toRemove, { transaction });
+    }
+
+    const session = await table.SessionModel.create(userData.id, {
+      transaction,
+    });
+
+    const userPayload = {
+      ...userData,
+      session_id: session.id,
+    };
+
+    const [jwtToken, expiresIn] = authToken.generateAccessToken(userPayload);
+    const [refreshToken, refreshExpireTime] =
+      authToken.generateRefreshToken(userPayload);
+
+    await transaction.commit();
+    return res.send({
+      token: jwtToken,
+      expire_time: Date.now() + expiresIn,
+      refresh_token: refreshToken,
+      refresh_expire_time: Date.now() + refreshExpireTime,
+      user_data: userData,
+    });
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
+};
+
+const registerRequest = async (req, res) => {
+  const transaction = await sequelize.transaction();
+
   try {
     const validateData = userSchema.parse(req.body);
-    userData = await table.UserModel.getByUsername(req);
+    const userData = await table.UserModel.getByUsername(req);
     if (userData) {
       return res
         .code(409)
         .send({ message: "User with this username already exists." });
     }
 
-    userData = await table.UserModel.create(req, { transaction });
+    const otp = otpGenerator();
+    const otpRecord = await table.OTPModel.create({
+      mobile_number: validateData.mobile_number,
+      otp,
+      type: "register",
+    });
 
-    console.log({ userData });
+    res.send({ status: true, message: "OTP Sent.", request_id: otpRecord.id });
+  } catch (error) {
+    await transaction.rollback();
+    throw error;
+  }
+};
+
+const registerVerify = async (req, res) => {
+  const transaction = await sequelize.transaction();
+
+  try {
+    const validateData = registerVerifySchema.parse(req.body);
+    const otp = req.body.otp;
+    const requestId = req.body.request_id;
+    const otpRecord = await table.OTPModel.getById(requestId);
+    if (!otpRecord)
+      return res
+        .code(404)
+        .send({ status: false, message: "Request not found!" });
+    if (otpRecord.otp != otp) {
+      return res
+        .code(400)
+        .send({ status: false, message: "Incorrect OTP Code!" });
+    }
+
+    const userData = await table.UserModel.create(req, { transaction });
     const freePlan = await table.PlanModel.getByFreePlan();
     const currDate = moment();
     const startDate = currDate.toISOString();
@@ -149,11 +264,14 @@ const createNewUser = async (req, res) => {
     );
 
     await transaction.commit();
+    await Brevo.sendWelcomeEmail(
+      userData.email,
+      `${userData.first_name ?? ""} ${userData.last_name ?? ""}`
+    );
     res.send({ message: "User created successfully." });
   } catch (error) {
     await transaction.rollback();
-    console.log(error);
-    return res.send(error);
+    throw error;
   }
 };
 
@@ -162,7 +280,10 @@ const verifyRefreshToken = async (req, res) => {
 };
 
 export default {
-  verifyUserCredentials,
-  createNewUser,
-  verifyRefreshToken,
+  verifyUserCredentials: verifyUserCredentials,
+  registerRequest: registerRequest,
+  registerVerify: registerVerify,
+  verifyRefreshToken: verifyRefreshToken,
+  loginRequest: loginRequest,
+  loginVerify: loginVerify,
 };

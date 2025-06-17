@@ -3,6 +3,19 @@ import server from "./server.js";
 import fastify from "fastify";
 
 const app = fastify({ logger: true });
+// const app = fastify({
+//   logger: {
+//     level: "info",
+//     transport: {
+//       target: "@mgcrea/pino-pretty-compact",
+//       options: {
+//         translateTime: "HH:MM:ss Z",
+//         ignore: "pid,hostname",
+//         colorize: true,
+//       },
+//     },
+//   },
+// });
 
 try {
   server(app);
@@ -17,7 +30,7 @@ try {
 const start = async () => {
   try {
     // await server(app);
-    await app.listen({ port: config.port }, () => {
+    app.listen({ port: config.port }, () => {
       app.cron.startAllJobs();
     });
   } catch (e) {

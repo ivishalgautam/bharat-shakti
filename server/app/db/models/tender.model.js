@@ -204,7 +204,19 @@ const bulkCreate = async (data) => {
   return await TenderModel.bulkCreate(data);
 };
 
-const update = async (req, id, { transaction }) => {
+const update = async (req, id, { transaction = null }) => {
+  const updateOptions = {
+    where: {
+      id: req?.params?.id || id,
+    },
+    returning: true,
+    raw: true,
+    plain: true,
+  };
+  if (transaction) {
+    updateOptions.transaction = transaction;
+  }
+
   const [rowCount, rows] = await TenderModel.update(
     {
       slug: req.body.slug,
@@ -259,18 +271,18 @@ const update = async (req, id, { transaction }) => {
       meta_description: req.body.meta_description,
       meta_keywords: req.body.meta_keywords,
     },
-    {
-      where: {
-        id: req?.params?.id || id,
-      },
-      returning: true,
-      raw: true,
-      plain: true,
-      transaction,
-    }
+    updateOptions
   );
 
   return rows;
+};
+
+const incrementViewCount = async (id, transaction) => {
+  return await TenderModel.increment("view_count", {
+    by: 1,
+    where: { id },
+    ...(transaction && { transaction }),
+  });
 };
 
 const get = async (req) => {
@@ -378,6 +390,7 @@ const get = async (req) => {
   const featured = req.query.featured;
   if (featured) {
     whereConditions.push(`tdr.is_featured = true`);
+    
   }
 
   const page = req.query.page ? Number(req.query.page) : 1;
@@ -942,4 +955,5 @@ export default {
   count: count,
   getSimilarTenders: getSimilarTenders,
   getTendersByUserPreferences: getTendersByUserPreferences,
+  incrementViewCount: incrementViewCount,
 };

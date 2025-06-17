@@ -308,6 +308,15 @@ const getByEmailId = async (req) => {
   });
 };
 
+const getByMobileNumber = async (req) => {
+  return await UserModel.findOne({
+    where: {
+      mobile_number: req.body.mobile_number,
+    },
+    raw: true,
+  });
+};
+
 const getByResetToken = async (req) => {
   return await UserModel.findOne({
     where: {
@@ -327,16 +336,17 @@ const getByUserIds = async (user_ids) => {
 };
 
 export default {
-  init,
-  create,
-  get,
-  getById,
-  getByUsername,
-  update,
-  updatePassword,
-  deleteById,
-  countUser,
-  getByEmailId,
-  getByResetToken,
-  getByUserIds,
+  init: init,
+  create: create,
+  get: get,
+  getById: getById,
+  getByUsername: getByUsername,
+  update: update,
+  updatePassword: updatePassword,
+  deleteById: deleteById,
+  countUser: countUser,
+  getByEmailId: getByEmailId,
+  getByResetToken: getByResetToken,
+  getByUserIds: getByUserIds,
+  getByMobileNumber: getByMobileNumber,
 };

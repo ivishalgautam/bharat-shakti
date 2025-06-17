@@ -19,6 +19,7 @@ import preferenceModel from "./models/preference.model.js";
 import sessionsModel from "./models/session.model.js";
 import faqModel from "./models/faq.model.js";
 import razorpayPaymentModel from "./models/razorpay-payment.model.js";
+import otpModel from "./models/otp.model.js";
 
 export default {
   UserModel: userModel,
@@ -42,4 +43,5 @@ export default {
   SessionModel: sessionsModel,
   FAQModel: faqModel,
   RazorpayPaymentModel: razorpayPaymentModel,
+  OTPModel: otpModel,
 };

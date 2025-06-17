@@ -18,6 +18,8 @@ import publicRoutes from "./app/routes/v1/public.js";
 import uploadFileRoutes from "./app/api/upload_files/routes.js";
 import { ErrorHandler } from "./app/utils/error-handler.js";
 import freezeJob from "./app/cron/freeze-job.js";
+import { Brevo } from "./app/services/mailer.js";
+import closingTenderReminder from "./app/cron/closing-tender-reminder.js";
 
 export default async function server(app) {
   app.setErrorHandler(ErrorHandler);
@@ -62,6 +64,14 @@ export default async function server(app) {
   app.register(authRoutes, { prefix: "v1/auth" });
   app.register(uploadFileRoutes, { prefix: "v1/upload" });
   app.register(fastifyCron, {
-    jobs: [freezeJob],
+    jobs: [freezeJob, closingTenderReminder],
+  });
+
+  app.post("/mail", {}, async (req, res) => {
+    const data = await Brevo.sendTenderReminderEmail({
+      fullname: "vishal gautam",
+      userEmail: "vishal.gautam.5812@gmail.com",
+    });
+    console.log({ data });
   });
 }

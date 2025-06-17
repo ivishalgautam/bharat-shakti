@@ -6,7 +6,9 @@ process.env.NODE_ENV = process.env.NODE_ENV || "development";
 process.env.PORT = process.env.PORT2 || 6001;
 
 const config = {
+  node_env: process.env.NODE_ENV,
   port: parseInt(process.env.PORT2, 10),
+
   // postgres creds
   pg_database_name: process.env.BHARAT_SHAKTI_PG_DATABASE_NAME,
   pg_username: process.env.PG_USERNAME,
@@ -25,6 +27,11 @@ const config = {
   // razorpay
   razorpay_key_id: process.env.RAZORPAY_KEY_ID,
   razorpay_key_secret: process.env.RAZORPAY_KEY_SECRET,
+
+  // smartping
+  smartping_username: process.env.SMARTPING_USERNAME,
+  smartping_password: process.env.SMARTPING_PASSWORD,
+  smartping_content_id: process.env.SMARTPING_CONTENT_ID,
 };
 
 export default config;

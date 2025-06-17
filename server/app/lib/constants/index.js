@@ -63,6 +63,7 @@ const constants = {
     USER_SESSION_TABLE: "user_sessions",
     FAQ_TABLE: "faqs",
     RAZORPAY_PAYMENT_TABLE: "razorpay_payments",
+    OTP_TABLE: "otps",
   },
   bcrypt: {
     SALT_ROUNDS: 10,
@@ -72,6 +73,7 @@ const constants = {
     REFRESH_TOKEN_EXPIRES_IN: 1000 * 60 * 60 * 24 * 1, // 1 day
   },
   plan_limits: {
+    unsubscribed: 1,
     free: 1,
     standard: 1,
     premium: 3,

@@ -42,4 +42,5 @@ export async function tenderPublicRoutes(fastify, opts) {
   fastify.get("/", {}, controller.get);
   fastify.get("/get-by-slug/:slug", {}, controller.getBySlug);
   fastify.post("/import", {}, controller.importTenders);
+  fastify.post("/add-view/:id", {}, controller.addView);
 }
