@@ -224,7 +224,8 @@ export default function TendersFilters() {
               </div>
             </div>
 
-            {(!user || ["premium", "standard"].includes(user.plan_tier)) && (
+            {(!user ||
+              ["premium", "free", "standard"].includes(user.plan_tier)) && (
               <div className="col-span-full flex items-center justify-start gap-2">
                 <SavedPreferences
                   {...{
@@ -265,7 +266,8 @@ export default function TendersFilters() {
             )}
 
             {/* categories */}
-            {(!user || ["premium", "standard"].includes(user.plan_tier)) && (
+            {(!user ||
+              ["premium", "free", "standard"].includes(user.plan_tier)) && (
               <div className="space-y-2">
                 <div>
                   <FilterBox
@@ -280,7 +282,7 @@ export default function TendersFilters() {
             )}
 
             {/* sub categories */}
-            {(!user || ["premium"].includes(user.plan_tier)) && (
+            {(!user || ["premium", "free"].includes(user.plan_tier)) && (
               <div className="space-y-2">
                 <div>
                   <FilterBox
@@ -295,7 +297,8 @@ export default function TendersFilters() {
             )}
 
             {/* authorities */}
-            {(!user || ["premium", "standard"].includes(user.plan_tier)) && (
+            {(!user ||
+              ["premium", "free", "standard"].includes(user.plan_tier)) && (
               <div className="space-y-2">
                 <div>
                   <FilterBox
@@ -310,7 +313,8 @@ export default function TendersFilters() {
             )}
 
             {/* sectors */}
-            {(!user || ["premium", "standard"].includes(user.plan_tier)) && (
+            {(!user ||
+              ["premium", "free", "standard"].includes(user.plan_tier)) && (
               <div className="space-y-2">
                 <div>
                   <FilterBox
@@ -325,7 +329,8 @@ export default function TendersFilters() {
             )}
 
             {/* industries */}
-            {(!user || ["premium", "standard"].includes(user.plan_tier)) && (
+            {(!user ||
+              ["premium", "free", "standard"].includes(user.plan_tier)) && (
               <div className="space-y-2">
                 <div>
                   <FilterBox
@@ -340,7 +345,8 @@ export default function TendersFilters() {
             )}
 
             {/* states */}
-            {(!user || ["premium", "standard"].includes(user.plan_tier)) && (
+            {(!user ||
+              ["premium", "free", "standard"].includes(user.plan_tier)) && (
               <div className="space-y-2">
                 <div>
                   <FilterBox
@@ -355,7 +361,7 @@ export default function TendersFilters() {
             )}
 
             {/* cities */}
-            {(!user || ["premium"].includes(user.plan_tier)) && (
+            {(!user || ["premium", "free"].includes(user.plan_tier)) && (
               <div className="space-y-2">
                 <div>
                   <FilterBox
@@ -370,7 +376,7 @@ export default function TendersFilters() {
             )}
 
             {/* tender range */}
-            {(!user || ["premium"].includes(user.plan_tier)) && (
+            {(!user || ["premium", "free"].includes(user.plan_tier)) && (
               <div className="col-span-full flex flex-wrap items-center justify-start gap-2">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">
