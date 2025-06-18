@@ -2,7 +2,6 @@
 import "dotenv/config";
 
 // Set the NODE_ENV to 'development' by default
-process.env.NODE_ENV = process.env.NODE_ENV || "development";
 process.env.PORT = process.env.PORT2 || 6001;
 
 const config = {
