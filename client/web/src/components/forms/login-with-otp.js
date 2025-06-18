@@ -26,6 +26,7 @@ export default function LoginWithOtp() {
     watch,
     control,
     getValues,
+    setValue,
   } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -42,7 +43,6 @@ export default function LoginWithOtp() {
     resolver: zodResolver(otpSchema),
     defaultValues: { otp: "", request_id: "" },
   });
-  console.log({ errors, otpErrors });
   const router = useRouter();
 
   // Timer effect for resend OTP
@@ -124,6 +124,7 @@ export default function LoginWithOtp() {
   };
 
   const handleBackToRegister = () => {
+    setValue("mobile_number", "");
     setStep("login");
   };
 
