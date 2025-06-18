@@ -65,13 +65,15 @@ const create = async ({ mobile_number, otp, type, user_id = null }) => {
   return data.dataValues;
 };
 
-const update = async ({ mobile_number, otp }) => {
+const update = async (req, id) => {
   return await OTPModel.update(
-    { otp: otp, expires_at: moment().add(5, "minutes") },
     {
-      where: {
-        mobile_number: mobile_number,
-      },
+      otp: req.body.otp,
+      verified: req.body.verified,
+      expires_at: moment().add(5, "minutes"),
+    },
+    {
+      where: { id: id },
       returning: true,
       raw: true,
     }

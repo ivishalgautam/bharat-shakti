@@ -163,7 +163,7 @@ const loginVerify = async (req, res) => {
         .code(400)
         .send({ status: false, message: "Incorrect OTP Code!" });
     }
-
+    await table.OTPModel.update({ body: { verified: true } }, otpRecord.id);
     const userData = await table.UserModel.getById(0, otpRecord.user_id);
     const planTier = await table.SubscriptionModel.getLastActivePlanByUserId(
       userData.id
@@ -247,6 +247,7 @@ const registerVerify = async (req, res) => {
         .send({ status: false, message: "Incorrect OTP Code!" });
     }
 
+    await table.OTPModel.update({ body: { verified: true } }, otpRecord.id);
     const userData = await table.UserModel.create(req, { transaction });
     const freePlan = await table.PlanModel.getByFreePlan();
     const currDate = moment();
