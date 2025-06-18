@@ -158,6 +158,10 @@ const loginVerify = async (req, res) => {
         .code(404)
         .send({ status: false, message: "Request not found!" });
 
+    if (moment().isAfter(otpRecord.expires_at)) {
+      return res.code(400).send({ status: false, message: "OTP Expired!" });
+    }
+
     if (otpRecord.otp != otp) {
       return res
         .code(400)
@@ -241,6 +245,11 @@ const registerVerify = async (req, res) => {
       return res
         .code(404)
         .send({ status: false, message: "Request not found!" });
+
+    if (moment().isAfter(otpRecord.expires_at)) {
+      return res.code(400).send({ status: false, message: "OTP Expired!" });
+    }
+
     if (otpRecord.otp != otp) {
       return res
         .code(400)

@@ -27,10 +27,6 @@ const create = async (req, res) => {
         .send({ status: false, message: "You already have an active plan." });
     }
 
-    if (record && record.plan_tier === "free") {
-      await table.SubscriptionModel.deleteById(0, record.id, { transaction });
-    }
-
     const options = {
       amount: parseInt(planRecord.price) * 100,
       currency: "INR",
@@ -75,10 +71,14 @@ const verify = async (req, res) => {
 
     const generatedSignature = hmac.digest("hex");
 
-    console.log({ generatedSignature, razorpay_signature });
-
     if (generatedSignature === razorpay_signature) {
-      // !update payment status
+      const record = await table.SubscriptionModel.getLastActivePlanByUserId(
+        req.user_data.id
+      );
+
+      if (record && record.plan_tier === "free") {
+        await table.SubscriptionModel.deleteById(0, record.id, { transaction });
+      }
 
       const paymentRecord =
         await table.RazorpayPaymentModel.getByOrderId(razorpay_order_id);
@@ -86,7 +86,11 @@ const verify = async (req, res) => {
         return res
           .code(status.NOT_FOUND)
           .send({ status: false, message: "Payment record not found!" });
-
+      await table.RazorpayPaymentModel.update(
+        { body: { status: "paid" } },
+        paymentRecord.razorpay_order_id,
+        { transaction }
+      );
       const planRecord = await table.PlanModel.getById(
         0,
         paymentRecord.plan_id
@@ -108,7 +112,17 @@ const verify = async (req, res) => {
         .code(status.OK)
         .send({ status: true, message: "Payment verified" });
     } else {
-      // !update payment status
+      const paymentRecord =
+        await table.RazorpayPaymentModel.getByOrderId(razorpay_order_id);
+      if (!paymentRecord)
+        return res
+          .code(status.NOT_FOUND)
+          .send({ status: false, message: "Payment record not found!" });
+      await table.RazorpayPaymentModel.update(
+        { body: { status: "failed" } },
+        paymentRecord.razorpay_order_id,
+        { transaction }
+      );
       return res
         .code(status.BAD_REQUEST)
         .send({ status: false, message: "Payment not verified" });
