@@ -14,5 +14,6 @@ export const fakeTenderData = {
 export const companyDetails = {
   contact: "+91 96997 97900",
   mail: "contact@bharatshaktitenders.com",
-  address: "No.18741, Gedam Layout, Ground Floor, Hingna,  Nagpur 441110",
+  address:
+    "Prabhag No. 1, Flat No. 18741 Ground Floor, Gedam Layout Hingna, Nagpur District Maharashtra – 441110",
 };
