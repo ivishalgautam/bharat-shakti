@@ -13,6 +13,7 @@ import constants from "../../lib/constants/index.js";
 import moment from "moment";
 import { otpGenerator } from "../../utils/otp-generator.js";
 import { Brevo } from "../../services/mailer.js";
+import { sendOtp } from "../../services/otp-sender.js";
 
 const verifyUserCredentials = async (req, res) => {
   const { username, password, provider, provider_account_id, email } = req.body;
@@ -137,7 +138,7 @@ const loginRequest = async (req, res) => {
       type: "login",
       user_id: userData.id,
     });
-
+    await sendOtp({ phone: req.body.mobile_number, otp });
     res.send({ status: true, message: "OTP Sent.", request_id: otpRecord.id });
   } catch (error) {
     console.log(error);

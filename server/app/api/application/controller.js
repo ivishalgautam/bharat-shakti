@@ -2,6 +2,7 @@
 import table from "../../db/models.js";
 import { sequelize } from "../../db/postgres.js";
 import constants from "../../lib/constants/index.js";
+import { Brevo } from "../../services/mailer.js";
 
 const { message, status } = constants.http;
 
@@ -76,7 +77,23 @@ const update = async (req, res) => {
     if (!record)
       return res.code(409).send({ status: false, message: "Not found!" });
 
-    await table.ApplicationModel.update(req, 0, { transaction });
+    const updated = await table.ApplicationModel.update(req, 0, {
+      transaction,
+    });
+
+    if (record.status !== updated.status) {
+      const user = await table.UserModel.getById(0, updated.user_id);
+      const tender = await table.TenderModel.getById(0, updated.tender_id);
+      console.log({ user, tender });
+      await Brevo.sendApplicationStatusUpdateEmail({
+        application_id: updated.application_id,
+        bid_number: tender.bid_number,
+        email: user.email,
+        fullname: `${user.first_name} ${user.last_name}`,
+        status: updated.status,
+      });
+    }
+
     await transaction.commit();
     res.code(status.CREATED);
   } catch (error) {

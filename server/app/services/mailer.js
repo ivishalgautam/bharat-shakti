@@ -33,7 +33,7 @@ async function sendSimpleEmail() {
     return info;
   } catch (error) {
     console.error("Error sending email:", error);
-    throw error;
+    // throw error;
   }
 }
 
@@ -66,7 +66,7 @@ async function sendEmailWithAttachment() {
     return info;
   } catch (error) {
     console.error("Error sending email with attachment:", error);
-    throw error;
+    // throw error;
   }
 }
 
@@ -127,7 +127,7 @@ async function sendWelcomeEmail(userEmail, fullname) {
     return info;
   } catch (error) {
     console.error("Error sending welcome email:", error);
-    throw error;
+    // throw error;
   }
 }
 
@@ -151,13 +151,49 @@ async function sendTenderReminderEmail({ userEmail, fullname, tenders = [] }) {
     };
 
     const info = await transporter.sendMail(mailOptions);
-    console.log("Tender expire mail sent successfully!");
+    console.log("Tender reminder mail sent successfully!");
     return info;
   } catch (error) {
     console.error("Error sending welcome email:", error);
-    throw error;
+    // throw error;
   }
 }
+
+const sendApplicationStatusUpdateEmail = async ({
+  email,
+  fullname,
+  application_id,
+  bid_number,
+  status,
+}) => {
+  try {
+    const templatePath = path.join(
+      process.cwd(),
+      "views",
+      "application-status-update.ejs"
+    );
+    const templateContent = fs.readFileSync(templatePath, "utf-8");
+
+    const html = ejs.render(templateContent, {
+      fullname,
+      application_id,
+      bid_number,
+      status,
+    });
+    const mailOptions = {
+      from: `"Bharat Shakti Tenders" <no-reply@bharatshaktitenders.com>`,
+      to: email,
+      subject: "Your Application Status Has Been Updated",
+      html,
+    };
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Application status change mail sent successfully!");
+    return info;
+  } catch (error) {
+    console.error("Error sending welcome email:", error);
+    // throw error;
+  }
+};
 
 // Export functions for use in other modules
 export const Brevo = {
@@ -167,6 +203,7 @@ export const Brevo = {
   sendBulkEmails: sendBulkEmails,
   sendWelcomeEmail: sendWelcomeEmail,
   sendTenderReminderEmail: sendTenderReminderEmail,
+  sendApplicationStatusUpdateEmail: sendApplicationStatusUpdateEmail,
 };
 
 // Uncomment to run examples

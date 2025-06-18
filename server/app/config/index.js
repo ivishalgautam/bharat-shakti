@@ -32,6 +32,7 @@ const config = {
   smartping_username: process.env.SMARTPING_USERNAME,
   smartping_password: process.env.SMARTPING_PASSWORD,
   smartping_content_id: process.env.SMARTPING_CONTENT_ID,
+  smartping_principal_entity_id: process.env.SMARTPING_PRINCIPAL_ENTITY_ID,
 };
 
 export default config;
