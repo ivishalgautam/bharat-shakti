@@ -22,6 +22,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Badge } from "./ui/badge";
 
 export default function UserDropdown({ user }) {
   const router = useRouter();
@@ -52,29 +53,16 @@ export default function UserDropdown({ user }) {
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="max-w-64 dark:border-none" align="end">
-        <DropdownMenuLabel className="flex min-w-0 flex-col">
-          <span className="truncate text-sm font-medium capitalize text-foreground">
-            {user.first_name} {user.last_name}
-          </span>
-          <span className="truncate text-xs font-normal text-muted-foreground">
-            {user.email}
-          </span>
-        </DropdownMenuLabel>
-
-        <DropdownMenuSeparator className="dark:bg-white/8" />
-
         {/* Subscription Status */}
         <div className="px-2 py-1.5">
           {hasActiveSubscription ? (
             <div className="flex items-center gap-2 rounded-md bg-green-50 px-2 py-1.5 dark:bg-green-950/20">
               {getPlanIcon(planName)}
-              <div className="flex flex-col">
+              <div className="flex w-full items-center justify-between">
                 <span className="text-xs font-medium capitalize text-green-700 dark:text-green-400">
                   {planName} Plan
                 </span>
-                <span className="text-xs text-green-600 dark:text-green-500">
-                  Active
-                </span>
+                <Badge className="text-[10px]">Active</Badge>
               </div>
             </div>
           ) : (
@@ -88,6 +76,17 @@ export default function UserDropdown({ user }) {
             </Button>
           )}
         </div>
+
+        <DropdownMenuSeparator className="dark:bg-white/8" />
+
+        <DropdownMenuLabel className="flex min-w-0 flex-col">
+          <span className="truncate text-sm font-medium capitalize text-foreground">
+            {user.first_name} {user.last_name}
+          </span>
+          <span className="truncate text-xs font-normal text-muted-foreground">
+            {user.email}
+          </span>
+        </DropdownMenuLabel>
 
         <DropdownMenuSeparator className="dark:bg-white/8" />
 
