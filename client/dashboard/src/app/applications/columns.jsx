@@ -36,6 +36,12 @@ export const columns = (
     header: "Application ID",
   },
   {
+    accessorKey: "bid_number",
+    header: ({ column }) => {
+      return <Button variant="ghost">Bid Number</Button>;
+    },
+  },
+  {
     accessorKey: "fullname",
     header: "FULLNAME",
     cell: ({ row }) => {
@@ -53,12 +59,6 @@ export const columns = (
           <Badge variant={"outline"}>@{username}</Badge>
         </div>
       );
-    },
-  },
-  {
-    accessorKey: "tender_name",
-    header: ({ column }) => {
-      return <Button variant="ghost">TENDER</Button>;
     },
   },
   {
