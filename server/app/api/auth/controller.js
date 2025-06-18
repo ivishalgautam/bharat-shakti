@@ -221,7 +221,7 @@ const registerRequest = async (req, res) => {
       otp,
       type: "register",
     });
-
+    await sendOtp({ phone: validateData.mobile_number, otp });
     res.send({ status: true, message: "OTP Sent.", request_id: otpRecord.id });
   } catch (error) {
     await transaction.rollback();
