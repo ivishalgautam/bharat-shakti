@@ -113,37 +113,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium">Resources</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="#" className="text-slate-400 hover:text-white">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-slate-400 hover:text-white">
-                  Guides
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-slate-400 hover:text-white">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-slate-400 hover:text-white">
-                  Webinars
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-slate-400 hover:text-white">
-                  Success Stories
-                </Link>
-              </li>
-            </ul>
-          </div>
-
           {/* policies */}
           <div className="space-y-4">
             <h3 className="text-lg font-medium">Policies</h3>
