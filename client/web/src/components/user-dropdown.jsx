@@ -112,7 +112,7 @@ export default function UserDropdown({ user }) {
           {hasActiveSubscription && (
             <>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push("/billing")}>
+              <DropdownMenuItem onClick={() => router.push("/pricing")}>
                 <CreditCard
                   size={16}
                   className="opacity-60"
