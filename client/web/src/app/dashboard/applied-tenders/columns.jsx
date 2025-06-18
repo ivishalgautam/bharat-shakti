@@ -9,9 +9,9 @@ export const columns = (setUserId, openModal) => [
     header: "Application ID",
   },
   {
-    accessorKey: "tender_name",
+    accessorKey: "bid_number",
     header: ({ column }) => {
-      return <Button variant="ghost">TENDER</Button>;
+      return <Button variant="ghost">Bid Number</Button>;
     },
   },
   {
