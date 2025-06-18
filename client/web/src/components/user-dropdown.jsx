@@ -62,7 +62,9 @@ export default function UserDropdown({ user }) {
                 <span className="text-xs font-medium capitalize text-green-700 dark:text-green-400">
                   {planName} Plan
                 </span>
-                <Badge className="text-[10px]">Active</Badge>
+                <Badge className="bg-green-500 text-[10px] hover:bg-green-500/90">
+                  Active
+                </Badge>
               </div>
             </div>
           ) : (
