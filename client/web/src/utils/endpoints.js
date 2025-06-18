@@ -25,6 +25,7 @@ export const endpoints = {
   userKeyContacts: { getAll: "/user-key-contacts" },
   viewTenders: { getAll: "/view-tenders" },
   applications: { getAll: "/applications" },
+  inquiries: { getAll: "/inquiries" },
   preferences: { getAll: "/preferences" },
   plans: { getAll: "/plans" },
   subscriptions: { getAll: "/subscriptions" },

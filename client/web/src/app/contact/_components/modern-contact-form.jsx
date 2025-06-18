@@ -17,6 +17,9 @@ import {
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { useMutation } from "@tanstack/react-query";
+import { endpoints } from "@/utils/endpoints";
+import axios from "axios";
+import config from "@/config";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -58,14 +61,14 @@ export default function ModernContactForm() {
   } = form;
 
   const createMutation = useMutation({
-    mutationFn: async () => {
-      return await new Promise((resolve) => {
-        setTimeout(() => {
-          resolve("Form submit");
-        }, 2000);
-      });
+    mutationFn: async (formData) => {
+      const { data } = await axios.post(
+        config.api_base + endpoints.inquiries.getAll,
+        formData,
+      );
+      return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       setIsSubmitted(true);
       reset();
     },
