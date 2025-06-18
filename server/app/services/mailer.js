@@ -190,12 +190,37 @@ const sendApplicationStatusUpdateEmail = async ({
     console.log("Application status change mail sent successfully!");
     return info;
   } catch (error) {
-    console.error("Error sending welcome email:", error);
-    // throw error;
+    console.error("Error sending application status change email:", error);
   }
 };
 
-// Export functions for use in other modules
+const sendInquiryEmail = async (toEmail, data) => {
+  try {
+    const templatePath = path.join(process.cwd(), "views", "inquiry.ejs");
+    const templateContent = fs.readFileSync(templatePath, "utf-8");
+
+    const html = ejs.render(templateContent, {
+      name: data.name,
+      email: data.email,
+      company: data.company,
+      phone: data.phone,
+      inquiry_type: data.inquiry_type,
+      message: data.message,
+    });
+    const mailOptions = {
+      from: `"Bharat Shakti Tenders" <no-reply@bharatshaktitenders.com>`,
+      to: toEmail,
+      subject: `New Inquiry Received from ${data.name}`,
+      html,
+    };
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Inquiry mail sent successfully!");
+    return info;
+  } catch (error) {
+    console.error("Error sending inquiry mail:", error);
+  }
+};
+
 export const Brevo = {
   transporter: transporter,
   sendSimpleEmail: sendSimpleEmail,
@@ -204,7 +229,5 @@ export const Brevo = {
   sendWelcomeEmail: sendWelcomeEmail,
   sendTenderReminderEmail: sendTenderReminderEmail,
   sendApplicationStatusUpdateEmail: sendApplicationStatusUpdateEmail,
+  sendInquiryEmail: sendInquiryEmail,
 };
-
-// Uncomment to run examples
-// main().catch(console.error);

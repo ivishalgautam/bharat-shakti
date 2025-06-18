@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Inquiry Received</title>
+    <style>
+      body,
+      table,
+      td,
+      p,
+      a {
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        padding: 40px 30px;
+      }
+      .header {
+        background: linear-gradient(135deg, #003366 0%, #004080 100%);
+        color: #ffffff;
+        padding: 20px;
+        text-align: center;
+        border-radius: 8px 8px 0 0;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+      .section-title {
+        color: #2d3748;
+        font-size: 20px;
+        font-weight: 600;
+        margin-top: 20px;
+        margin-bottom: 10px;
+      }
+      .info-row {
+        margin-bottom: 12px;
+      }
+      .label {
+        font-weight: 600;
+        color: #4a5568;
+        display: inline-block;
+        width: 120px;
+      }
+      .value {
+        color: #2d3748;
+      }
+      .message-box {
+        background-color: #f7fafc;
+        padding: 15px;
+        border-left: 4px solid #008080;
+        border-radius: 4px;
+        margin-top: 15px;
+        color: #4a5568;
+        white-space: pre-wrap;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 40px;
+        font-size: 14px;
+        color: #888;
+      }
+      @media only screen and (max-width: 600px) {
+        .email-container {
+          padding: 30px 20px !important;
+        }
+        .label {
+          width: 100%;
+          display: block;
+          margin-bottom: 5px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <h1>New Inquiry Received</h1>
+      </div>
+
+      <div class="section-title">Contact Details:</div>
+
+      <div class="info-row">
+        <span class="label">Name:</span>
+        <span class="value"><%= name %></span>
+      </div>
+
+      <div class="info-row">
+        <span class="label">Email:</span>
+        <span class="value"><%= email %></span>
+      </div>
+
+      <div class="info-row">
+        <span class="label">Phone:</span>
+        <span class="value"><%= phone %></span>
+      </div>
+
+      <div class="info-row">
+        <span class="label">Company:</span>
+        <span class="value"><%= company %></span>
+      </div>
+
+      <div class="info-row">
+        <span class="label">Inquiry Type:</span>
+        <span class="value"><%= inquiry_type %></span>
+      </div>
+
+      <div class="section-title">Message:</div>
+      <div class="message-box"><%= message %></div>
+
+      <div class="footer">
+        © <%= new Date().getFullYear() %> BharatShakti Tenders ·
+        <a
+          href="https://bharatshaktitenders.com"
+          style="color: #008080; text-decoration: none"
+          >Visit Website</a
+        >
+      </div>
+    </div>
+  </body>
+</html>

@@ -9,6 +9,7 @@ import { categoryPublicRoutes } from "../../api/category/routes.js";
 import { subCategoryPublicRoutes } from "../../api/sub-category/routes.js";
 import { faqPublicRoutes } from "../../api/faq/routes.js";
 import { importPublicRoutes } from "../../api/import/routes.js";
+import { inquiriesPublicRoutes } from "../../api/inquiry/routes.js";
 
 export default async function routes(fastify, options) {
   fastify.addHook("preHandler", async (request, reply) => {
@@ -26,4 +27,5 @@ export default async function routes(fastify, options) {
   fastify.register(subCategoryPublicRoutes, { prefix: "sub-categories" });
   fastify.register(faqPublicRoutes, { prefix: "faqs" });
   fastify.register(importPublicRoutes, { prefix: "import" });
+  fastify.register(inquiriesPublicRoutes, { prefix: "inquiries" });
 }
