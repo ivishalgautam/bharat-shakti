@@ -4,22 +4,19 @@ import Link from "next/link";
 export default function Logo() {
   return (
     <Link href="/" className="flex items-center gap-2">
-      <div className="relative w-[130px] md:w-[180px]">
+      <figure className="flex aspect-video w-[130px] items-center md:w-[180px]">
         <Image
-          src="/logo.png"
-          width={180}
-          height={101}
+          src={"/logo.png"}
+          width={500}
+          height={500}
           alt="Bharat Shakti"
-          className="rounded object-contain"
+          className="rounded object-contain object-center"
+          quality={80}
           priority
-          sizes="(max-width: 768px) 130px, 180px"
-          style={{
-            width: "100%",
-            height: "auto",
-            maxWidth: "100%",
-          }}
+          placeholder="blur"
+          blurDataURL="data:image/webp;base64,UklGRioFAABXRUJQVlA4WAoAAAAgAAAAigIAFQEASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZWUDggPAMAAFA0AJ0BKosCFgE+7Xa4VqmnJSOgCAEwHYlpbuFpgGxk+7QAd+Mi1j0ACewD32ych77ZOQ99snIfAfpdsU373GcUFF6ygjQvaGGYA+IDjzH7tPcub3ifw9UCdMMXnU3i8zNivC60BOJFhzwzYNXGrhqEcuYmmyYEbQPGqixmoCt9WEcFsd4SrBED5oLZ7xKXexTdyKL/zHD3aJFu1HAvl4uhFHafQzUFpHBKQPsFCJzM3KeLoS2Zv093eIdC0MI4YXLwg36h4r0EcezQ24fEx5/lxVA/SuUJIL1whluDZwlLHhErrEnxt/qwFrvnupojntY6n2BYGhEXdWI9d5ckV956oyIVlP3MnP+6AMXAUfEmUXqe9rP4wrXZb72XDdxUynZlQEdXVR4llGJfUsD2AZbcLbYCrbkLXlkKoQDAAOoiDlGnnRs9G+pWQ/SKJlGJiIr7z1Re7uTkPfbJyHydEo5QjqqB87vZjk3i5OimQ99snIfGVdcWjcaeXJyHvtk5D32ych77bNDiRnlyciIHk5D32ych77ZOQ99soGXi5OcRFych77ZOQ99smIAA/vkZrFGg/VV051FRo8oRR0Isgt1dykKv3DqmJsRRVJ8Vs/32Xal9LoFhsWK30nZBKiL212exiCN0AYg3/mCghZuGIofcm21E0CRh0zlO/UrFTQvgi05FAYAABqUaaPynpoIiu+SCuU5LqpiKABOlSOMiek01S7KCibs+ngOVd3lCe4AEqfoBIiNkpjnrEZ5AGhElawSY2WCEbdEx8UHw0hXiQN+SdVWCf58tpuxTOzfx0eJAZ+jTZqqRgJjaDTCnovSlHjccfu61coRTAfD+7Qxlx79uNQscXrXjXAX0l0DX4x7FZCASFZQA6KH4OJsGsNnNsJICxAU44IiXvMXoL7gwj8lrZFa5kgDtDWdLxgM1iOIkpjObOAFlfi+HY1KXHSanRjwDXxdutRg8UQwEQdbO5V9CxRAQGiezzmmV+EcAAF4pvG94XCi2HLRRGItljOOBWIJWyIINk4pr8pWAAAYBHRaZ29p6HphEM8yMLimYJHp+0AAAnoP/17EUVk/oECAAAfk45jr431AAAAAAAA=="
         />
-      </div>
+      </figure>
     </Link>
   );
 }
