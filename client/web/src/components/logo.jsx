@@ -4,11 +4,11 @@ import Link from "next/link";
 export default function Logo() {
   return (
     <Link href="/">
-      <figure className="flex w-[150px] items-center">
+      <figure>
         <Image
           src={"/logo.png"}
-          width={300}
-          height={300}
+          width={200}
+          height={200}
           alt="Bharat Shakti"
           className="rounded object-contain object-center"
           quality={80}

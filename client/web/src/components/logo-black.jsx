@@ -3,12 +3,12 @@ import Link from "next/link";
 
 export default function LogoBlack() {
   return (
-    <Link href="/" className="flex items-center gap-2">
-      <figure className="flex aspect-video w-[150px] items-center md:w-[180px]">
+    <Link href="/">
+      <figure className="">
         <Image
           src={"/logo-black.png"}
-          width={500}
-          height={500}
+          width={200}
+          height={200}
           alt="Bharat Shakti"
           className="rounded object-contain object-center"
           quality={100}

@@ -17,7 +17,7 @@ export default function Footer() {
     <footer className="border-t bg-slate-900 text-slate-200">
       <div className="container px-4 py-12 md:px-6 md:py-16 lg:py-20">
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          <div className="space-y-4">
+          <div className="min-h-[120px]">
             <LogoWhite />
             <p className="text-sm text-slate-400">
               Your trusted partner for finding and winning tender opportunities
@@ -26,21 +26,21 @@ export default function Footer() {
             <div className="flex space-x-4">
               <Link href="#" className="text-slate-400 hover:text-white">
                 <span className="sr-only">Facebook</span>
-                <RiFacebookBoxFill size={25} />
+                <RiFacebookBoxFill className="size-6" />
               </Link>
               <Link href="#" className="text-slate-400 hover:text-white">
                 <span className="sr-only">Twitter</span>
-                <RiTwitterXLine size={25} />
+                <RiTwitterXLine className="size-6" />
               </Link>
               <Link href="#" className="text-slate-400 hover:text-white">
                 <span className="sr-only">LinkedIn</span>
-                <RiLinkedinBoxFill size={25} />
+                <RiLinkedinBoxFill className="size-6" />
               </Link>
             </div>
           </div>
 
           {/* quick links */}
-          <div className="space-y-4">
+          <div className="min-h-[120px] space-y-4">
             <h3 className="text-lg font-medium">Quick Links</h3>
             <ul className="space-y-2 text-sm">
               {navItems.map((nav, ind) => (
@@ -57,7 +57,7 @@ export default function Footer() {
           </div>
 
           {/* policies */}
-          <div className="space-y-4">
+          <div className="min-h-[120px] space-y-4">
             <h3 className="text-lg font-medium">Policies</h3>
             <ul className="space-y-2 text-sm">
               <li>
@@ -88,7 +88,7 @@ export default function Footer() {
           </div>
 
           {/* address */}
-          <div className="space-y-4">
+          <div className="min-h-[120px] space-y-4">
             <h3 className="text-lg font-medium">Contact</h3>
             <ul className="space-y-4 text-sm">
               <li className="flex items-start justify-start gap-1">

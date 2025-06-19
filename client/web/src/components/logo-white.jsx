@@ -1,17 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 
-export default function LogoWhite() {
+export default function Logo() {
   return (
-    <Link href="/" className="flex items-center gap-2">
-      <figure className="flex aspect-video w-[150px] items-center md:w-[180px]">
+    <Link href="/">
+      <figure>
         <Image
           src={"/logo-white.png"}
-          width={500}
-          height={500}
+          width={200}
+          height={200}
           alt="Bharat Shakti"
           className="rounded object-contain object-center"
-          quality={100}
+          quality={80}
+          priority
+          placeholder="blur"
+          blurDataURL="data:image/webp;base64,UklGRr4DAABXRUJQVlA4WAoAAAAgAAAAigIAFQEASUNDUMgBAAAAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADZWUDgg0AEAAHArAJ0BKosCFgE/cbjZZbSurCcgCAKQLglpbuF3YRFHQACewD32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZOQ99snIe+2TkPfbJyHvtk5D32ych77ZR6KBZLteLk5D32ych77ZOQ+hfS7Xi5OQ99snIe+2TkPfbJziIuTkPfbJyHvtk5D32ych77cy/T2ych77ZOQ99snIe+2TkPoX0u14uTkPfbJyHvtk5D32yc4iLk5D32ych77ZOQ99snIe+3Mv09snIe+2TkPfbJyHvtk5D6F9LteLk5D32ych77ZOQ99snOIi5OQ99snIe+2TkPfbJyHvtzL9PbJyHvtk5D32ych77ZOQ+hfS7Xi5OQ99snIe+2TkPfbJziIuTkPfbJyHvtk5D32ych77cy/T2ych77ZOQ99snIe+2TkPoX0u14uTkPfbJyHvtk5D32yc4iLk5D32ych77ZOQ99snIesAAP7/M8ABAdOJ6cT04nppXebTVtNW01bTVtNW01bLwl4AAAAAAhQJZgSzAlmBLKuABbAC2AFsALWEAAABj2YEswJZgSzAh4WwAtgBbAC2AAIAAAEKBLMCWYEswJZVwALYAWwAtgBawgAAAAAA"
         />
       </figure>
     </Link>
