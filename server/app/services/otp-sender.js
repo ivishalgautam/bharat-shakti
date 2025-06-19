@@ -2,6 +2,8 @@ import axios from "axios";
 import config from "../config/index.js";
 
 export async function sendOtp({ phone, otp }) {
+  if (config.node_env === "development") return true;
+
   let axiosConfig = {
     method: "get",
     maxBodyLength: Infinity,
@@ -9,12 +11,11 @@ export async function sendOtp({ phone, otp }) {
     headers: {},
   };
 
-  axios
-    .request(axiosConfig)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  try {
+    const { data } = await axios.request(axiosConfig);
+    console.log("OTP sent response: ", data);
+    return data;
+  } catch (error) {
+    console.log("Error sending OTP: ", error);
+  }
 }

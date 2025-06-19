@@ -216,6 +216,21 @@ const getByUsername = async (req, record = undefined) => {
   });
 };
 
+const isUsernameExist = async (username) => {
+  const user = await UserModel.findOne({ where: { username } });
+  return !!user;
+};
+
+const isMobileNumberExist = async (mobile_number) => {
+  const user = await UserModel.findOne({ where: { mobile_number } });
+  return !!user;
+};
+
+const isEmailExist = async (email) => {
+  const user = await UserModel.findOne({ where: { email } });
+  return !!user;
+};
+
 const update = async (req, id, { transaction }) => {
   return await UserModel.update(
     {
@@ -349,4 +364,7 @@ export default {
   getByResetToken: getByResetToken,
   getByUserIds: getByUserIds,
   getByMobileNumber: getByMobileNumber,
+  isMobileNumberExist: isMobileNumberExist,
+  isEmailExist: isEmailExist,
+  isUsernameExist: isUsernameExist,
 };

@@ -105,8 +105,9 @@ const verify = async (req, res) => {
       req.body.start_date = moment();
       req.body.end_date = moment().add(planRecord.duration_in_months, "months");
       req.body.duration_in_months = planRecord.duration_in_months;
-      await table.SubscriptionModel.create(req, { transaction });
+      req.body.payment_reference = razorpay_payment_id;
 
+      await table.SubscriptionModel.create(req, { transaction });
       await transaction.commit();
       return res
         .code(status.OK)
@@ -133,7 +134,23 @@ const verify = async (req, res) => {
   }
 };
 
+const refund = async (req, res) => {
+  try {
+    const options = {
+      payment_id: req.body.paymentId,
+      amount: req.body.amount,
+    };
+    const razorpayResponse = await razorpay.refunds(options);
+    //we can store detail in db and send the response
+    res.code(200).send({ status: true, message: "Successfully refunded" });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 export default {
   create: create,
   verify: verify,
+  refund: refund,
 };

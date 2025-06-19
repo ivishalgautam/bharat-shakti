@@ -69,13 +69,14 @@ const update = async (req, res) => {
 
     req.body.slug = slugify(req.body.bid_number, { lower: true });
     await table.TenderModel.update(req, 0, { transaction });
-    // await table.TenderModel.updateVector(record.id, { transaction });
     if (documentsToDelete.length) {
       await cleanupFiles(documentsToDelete);
     }
 
     await transaction.commit();
-    res.code(status.ACCEPTED).send({ message: "Tender Updated successfully." });
+    res
+      .code(status.ACCEPTED)
+      .send({ status: true, message: "Tender Updated successfully." });
   } catch (error) {
     await transaction.rollback();
     throw error;

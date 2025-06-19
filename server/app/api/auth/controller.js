@@ -14,6 +14,7 @@ import moment from "moment";
 import { otpGenerator } from "../../utils/otp-generator.js";
 import { Brevo } from "../../services/mailer.js";
 import { sendOtp } from "../../services/otp-sender.js";
+import waffly from "../../services/waffly.js";
 
 const verifyUserCredentials = async (req, res) => {
   const { username, password, provider, provider_account_id, email } = req.body;
@@ -212,11 +213,30 @@ const registerRequest = async (req, res) => {
 
   try {
     const validateData = userSchema.parse(req.body);
-    const userData = await table.UserModel.getByUsername(req);
-    if (userData) {
+
+    const isUsernameExist = await table.UserModel.isUsernameExist(
+      validateData.username
+    );
+    if (isUsernameExist) {
       return res
         .code(409)
         .send({ message: "User with this username already exists." });
+    }
+
+    const isMobileNumberExist = await table.UserModel.isMobileNumberExist(
+      validateData.mobile_number
+    );
+    if (isMobileNumberExist) {
+      return res
+        .code(409)
+        .send({ message: "User with this mobile number already exists." });
+    }
+
+    const isEmailExist = await table.UserModel.isEmailExist(validateData.email);
+    if (isEmailExist) {
+      return res
+        .code(409)
+        .send({ message: "User with this email already exists." });
     }
 
     const otp = otpGenerator();
@@ -283,6 +303,9 @@ const registerVerify = async (req, res) => {
       userData.email,
       `${userData.first_name ?? ""} ${userData.last_name ?? ""}`
     );
+    await waffly.sendWelcomeWhatsapp({
+      phone: userData.mobile_number,
+    });
     res.send({ message: "User created successfully." });
   } catch (error) {
     await transaction.rollback();

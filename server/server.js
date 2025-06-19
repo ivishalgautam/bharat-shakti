@@ -1,25 +1,25 @@
-import fastifyMultipart from "@fastify/multipart";
-import fastifyStatic from "@fastify/static";
-import fastifyHelmet from "@fastify/helmet";
-import fastifyRateLimit from "@fastify/rate-limit";
 import cookie from "@fastify/cookie";
-import formbody from "@fastify/formbody";
-import { fileURLToPath } from "url";
 import cors from "@fastify/cors";
-import { dirname } from "path";
-import path from "path";
+import formbody from "@fastify/formbody";
+import fastifyHelmet from "@fastify/helmet";
+import fastifyMultipart from "@fastify/multipart";
+import fastifyRateLimit from "@fastify/rate-limit";
+import fastifyStatic from "@fastify/static";
 import fastifyCron from "fastify-cron";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 
 // import internal modules
 import authRoutes from "./app/api/auth/routes.js";
+import uploadFileRoutes from "./app/api/upload_files/routes.js";
+import closingTenderReminder from "./app/cron/closing-tender-reminder.js";
+import freezeJob from "./app/cron/freeze-job.js";
 import pg_database from "./app/db/postgres.js";
+import constants from "./app/lib/constants/index.js";
 import routes from "./app/routes/v1/index.js";
 import publicRoutes from "./app/routes/v1/public.js";
-import uploadFileRoutes from "./app/api/upload_files/routes.js";
+import waffly from "./app/services/waffly.js";
 import { ErrorHandler } from "./app/utils/error-handler.js";
-import freezeJob from "./app/cron/freeze-job.js";
-import { Brevo } from "./app/services/mailer.js";
-import closingTenderReminder from "./app/cron/closing-tender-reminder.js";
 
 export default async function server(app) {
   app.setErrorHandler(ErrorHandler);
@@ -40,14 +40,7 @@ export default async function server(app) {
   });
   app.register(formbody);
   app.register(cors, {
-    origin: [
-      "http://localhost:3000",
-      "http://localhost:4000",
-      "https://bs.bwdemo.in",
-      "https://bsdashboard.bwdemo.in",
-      "https://bsapi.bwdemo.in",
-      "https://bharatshaktitenders.com",
-    ],
+    origin: constants.allowedOrigins,
     credentials: true,
   });
 
@@ -67,11 +60,7 @@ export default async function server(app) {
     jobs: [freezeJob, closingTenderReminder],
   });
 
-  app.post("/mail", {}, async (req, res) => {
-    const data = await Brevo.sendTenderReminderEmail({
-      fullname: "vishal gautam",
-      userEmail: "vishal.gautam.5812@gmail.com",
-    });
-    console.log({ data });
+  app.post("/testing", {}, async (req, res) => {
+    return await waffly.sendWelcomeWhatsapp({ phone: req.body.phone });
   });
 }

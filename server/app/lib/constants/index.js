@@ -78,6 +78,13 @@ const constants = {
     standard: 1,
     premium: 3,
   },
+  allowedOrigins: [
+    "http://localhost:3000",
+    "http://localhost:4000",
+    "https://bsdashboard.bwdemo.in",
+    "https://bsapi.bwdemo.in",
+    "https://bharatshaktitenders.com",
+  ],
 };
 
 export default constants;
