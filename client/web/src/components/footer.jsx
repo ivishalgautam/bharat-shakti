@@ -92,15 +92,15 @@ export default function Footer() {
             <h3 className="text-lg font-medium">Contact</h3>
             <ul className="space-y-4 text-sm">
               <li className="flex items-start justify-start gap-1">
-                <Phone className="shrink-0" size={20} />
+                <Phone className="size-5 shrink-0" />
                 <span className="text-slate-400">{companyDetails.contact}</span>
               </li>
               <li className="flex items-start justify-start gap-1">
-                <Mail className="shrink-0" size={20} />
+                <Mail className="size-5 shrink-0" />
                 <span className="text-slate-400">{companyDetails.mail}</span>
               </li>
               <li className="flex items-start justify-start gap-1">
-                <MapPin className="shrink-0" size={20} />
+                <MapPin className="size-5 shrink-0" />
                 <span className="text-slate-400">{companyDetails.address}</span>
               </li>
             </ul>
