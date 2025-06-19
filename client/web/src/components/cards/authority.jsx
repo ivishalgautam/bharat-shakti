@@ -9,7 +9,7 @@ export default function AuthorityCard({ authority }) {
   return (
     <Link
       href={`/tenders?authorities=${authority.id}`}
-      className="space-y-2 rounded-lg border bg-card p-4 shadow-sm transition-colors hover:border-primary hover:bg-primary/10"
+      className="min-h-56 space-y-2 rounded-lg border bg-card p-4 shadow-sm transition-colors hover:border-primary hover:bg-primary/10"
     >
       <figure className="aspect-square size-32 w-full">
         <Image

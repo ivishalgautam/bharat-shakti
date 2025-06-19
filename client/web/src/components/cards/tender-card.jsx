@@ -22,7 +22,7 @@ export default function TenderCard({
   unfollowMutation,
 }) {
   return (
-    <Card key={tender.id}>
+    <Card key={tender.id} className="min-h-56">
       <CardHeader>
         <div className="flex items-start justify-between">
           <div>

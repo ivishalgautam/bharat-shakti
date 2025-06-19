@@ -9,7 +9,7 @@ export default function IndustryCard({ industry }) {
   return (
     <Link
       href={`/tenders?industries=${industry.id}`}
-      className="group overflow-hidden rounded-lg border bg-white text-center shadow-sm transition-colors"
+      className="group min-h-56 overflow-hidden rounded-lg border bg-white text-center shadow-sm transition-colors"
     >
       <div className="mx-auto aspect-video">
         <Image

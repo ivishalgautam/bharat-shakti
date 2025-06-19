@@ -23,7 +23,7 @@ export default function SubscriptionCard({ subscription }) {
   };
 
   return (
-    <Card className="w-full max-w-md">
+    <Card className="min-h-56 w-full max-w-md">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">

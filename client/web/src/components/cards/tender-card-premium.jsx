@@ -76,7 +76,7 @@ export default function TenderCardPremium({
   };
 
   return (
-    <div className="overflow-hidden rounded-lg border border-primary/30 bg-card text-card-foreground">
+    <div className="min-h-56 overflow-hidden rounded-lg border border-primary/30 bg-card text-card-foreground">
       <div className="bg-primary/10 p-6">
         <div className="space-y-2 sm:flex sm:flex-row-reverse sm:items-start sm:justify-between sm:space-y-0">
           <div className="flex">

@@ -30,7 +30,9 @@ export default function Home() {
         <Services />
       </Suspense>
       <Suspense fallback={<div>Loading...</div>}>
-        <PlanPricingSection />
+        <div className="bg-white py-12 md:py-24 lg:py-32">
+          <PlanPricingSection />
+        </div>
       </Suspense>
     </div>
   );

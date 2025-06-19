@@ -4,7 +4,9 @@ import { Suspense } from "react";
 export default function PricingPage() {
   return (
     <Suspense fallback={"Loading..."}>
-      <PricingSection />
+      <div className="bg-white py-12">
+        <PricingSection />
+      </div>
     </Suspense>
   );
 }

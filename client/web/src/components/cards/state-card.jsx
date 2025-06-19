@@ -8,7 +8,7 @@ export default function StateCard({ state }) {
   return (
     <Link
       href={`/tenders?states=${state.id}`}
-      className="w-full overflow-hidden rounded-lg border bg-card text-center shadow-sm transition-colors hover:border-primary"
+      className="min-h-56 w-full overflow-hidden rounded-lg border bg-card text-center shadow-sm transition-colors hover:border-primary"
     >
       <div className="mx-auto aspect-video overflow-hidden p-2">
         <ImageWithFallback
