@@ -25,7 +25,7 @@ export default function ExploreByAuthorities() {
       <div className="container px-4 md:px-6">
         <div className="flex flex-col items-center gap-4">
           <SectionHeading heading={"Explore by Authorities"} />
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid min-h-96 grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {isLoading
               ? Array.from({ length: 12 }).map((_, i) => (
                   <Skeleton key={i} className={"h-16 w-64 bg-gray-200"} />

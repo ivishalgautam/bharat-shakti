@@ -234,7 +234,7 @@ export default function PricingSection() {
               ))}
             </TabsList>
 
-            <div className="mt-8 grid gap-6 md:grid-cols-2">
+            <div className="mt-8 grid min-h-96 gap-6 md:grid-cols-2">
               {getPlans(duration).map((plan) => (
                 <Card
                   key={plan.id}
