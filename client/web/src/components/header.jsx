@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
 import { Menu } from "lucide-react";
 import Link from "next/link";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "./logo";
 import { Button, buttonVariants } from "./ui/button";
 import {
@@ -58,9 +58,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white py-2">
       <div className="container flex h-20 items-center justify-between px-4 md:px-6">
-        <Suspense>
-          <Logo />
-        </Suspense>
+        <Logo />
         <nav className="hidden gap-6 lg:flex">
           {navItems.map((item) => (
             <Link
