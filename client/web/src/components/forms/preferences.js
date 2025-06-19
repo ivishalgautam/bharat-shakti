@@ -1,26 +1,24 @@
 import { useFormattedOptions } from "@/hooks/use-formatted-options";
 import useGetAuthorities from "@/hooks/use-get-authorities";
-import useGetCities, { useGetCitiesByStateIds } from "@/hooks/use-get-cities";
+import useGetCategories from "@/hooks/use-get-categories";
+import { useGetCitiesByStateIds } from "@/hooks/use-get-cities";
 import useGetIndustries from "@/hooks/use-get-industries";
 import useGetSectors from "@/hooks/use-get-sectors";
 import useGetStates from "@/hooks/use-get-states";
-import useGetSubcategories, {
-  useGetSubcategoriesByCategory,
-} from "@/hooks/use-get-subcategories";
+import { useGetSubcategoriesByCategory } from "@/hooks/use-get-subcategories";
+import { toast } from "@/hooks/use-toast";
+import preference from "@/services/preference";
 import { preferenceSchema } from "@/utils/schema/preference";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { Label } from "../ui/label";
-import MySelect from "../my-select";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import preference from "@/services/preference";
-import { Button } from "../ui/button";
-import { toast } from "@/hooks/use-toast";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import MySelect from "../my-select";
 import Spinner from "../spinner";
+import { Button } from "../ui/button";
 import ErrorMessage from "../ui/error";
-import useGetCategories from "@/hooks/use-get-categories";
 import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 export default function PreferencesForm({
   id,

@@ -1,22 +1,22 @@
 "use client";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Home, ArrowLeft } from "lucide-react";
+import { ArrowLeft, Home } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function NotFound() {
   const router = useRouter();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen px-4 text-center">
-      <div className="space-y-6 max-w-md">
+    <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
+      <div className="max-w-md space-y-6">
         <h1 className="text-6xl font-bold">404</h1>
         <h2 className="text-2xl font-semibold">Page Not Found</h2>
         <p className="text-muted-foreground">
           {"The page you are looking for doesn't exist or has been moved."}
         </p>
 
-        <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+        <div className="flex flex-col justify-center gap-4 pt-6 sm:flex-row">
           <Button asChild>
             <Link href="/">
               <Home className="mr-2 h-4 w-4" />

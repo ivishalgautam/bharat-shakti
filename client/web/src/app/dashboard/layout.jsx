@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { allRoutes } from "@/data/routes";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
-import { BookHeart, Eye, FileUser, Menu, User } from "lucide-react";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";

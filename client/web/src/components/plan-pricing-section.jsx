@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { Check, LoaderCircle } from "lucide-react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,13 +13,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import plans from "@/services/plan-pricing";
-import ErrorMessage from "./ui/error";
-import Spinner from "./spinner";
 import { toast } from "@/hooks/use-toast";
-import payments from "@/services/payment";
 import { useAuth } from "@/providers/auth-provider";
+import payments from "@/services/payment";
+import plans from "@/services/plan-pricing";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import Spinner from "./spinner";
+import ErrorMessage from "./ui/error";
 
 // Razorpay script loader utility
 export const loadScript = (src) =>

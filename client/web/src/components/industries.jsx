@@ -1,11 +1,9 @@
 "use client";
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
 import industries from "@/services/industries";
-import ErrorMessage from "./ui/error";
-import Section from "./layout/section";
-import { Skeleton } from "./ui/skeleton";
+import { useQuery } from "@tanstack/react-query";
 import IndustryCard from "./cards/keyword";
+import ErrorMessage from "./ui/error";
+import { Skeleton } from "./ui/skeleton";
 
 export default function Industries() {
   const { data, isLoading, isError, error } = useQuery({

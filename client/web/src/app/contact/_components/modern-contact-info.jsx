@@ -1,5 +1,5 @@
 import { companyDetails } from "@/data/constants";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
 
 export default function ModernContactInfo() {
   return (

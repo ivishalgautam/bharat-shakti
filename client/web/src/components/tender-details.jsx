@@ -1,25 +1,25 @@
 "use client";
 
-import { useContext, useState } from "react";
 import {
-  Calendar,
-  Clock,
-  Download,
-  FileText,
-  MapPin,
+  ArrowUpRight,
   Award,
   Briefcase,
   Building,
-  FileCheck,
-  TrendingUp,
-  Truck,
+  Calendar,
+  Clock,
   Clock3,
-  IndianRupee,
+  Download,
+  FileCheck,
+  FileText,
   Heart,
+  IndianRupee,
   Lock,
   LogIn,
-  ArrowUpRight,
+  MapPin,
+  TrendingUp,
+  Truck,
 } from "lucide-react";
+import { useContext, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -32,22 +32,22 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
 import config from "@/config";
-import { rupee } from "@/lib/Intl";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import wishlists from "@/services/wishlist";
-import { toast } from "@/hooks/use-toast";
-import http from "@/utils/http";
-import { endpoints } from "@/utils/endpoints";
-import { Skeleton } from "./ui/skeleton";
-import { AuthContext, useAuth } from "@/providers/auth-provider";
-import application from "@/services/application";
 import { fakeTenderData } from "@/data/constants";
-import Spinner from "./spinner";
-import Link from "next/link";
-import { H3, Small } from "./ui/typography";
+import { toast } from "@/hooks/use-toast";
+import { rupee } from "@/lib/Intl";
+import { cn } from "@/lib/utils";
+import { AuthContext } from "@/providers/auth-provider";
+import application from "@/services/application";
 import viewTenders from "@/services/view-tender";
+import wishlists from "@/services/wishlist";
+import { endpoints } from "@/utils/endpoints";
+import http from "@/utils/http";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
+import Spinner from "./spinner";
+import { Skeleton } from "./ui/skeleton";
+import { H3, Small } from "./ui/typography";
 
 export default function TenderDetails({ data }) {
   const [activeTab, setActiveTab] = useState("overview");

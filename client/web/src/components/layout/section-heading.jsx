@@ -1,6 +1,5 @@
-import React from "react";
-import { Muted } from "../ui/typography";
 import { cn } from "@/lib/utils";
+import { Muted } from "../ui/typography";
 
 export default function SectionHeading({
   heading = "",

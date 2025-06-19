@@ -1,7 +1,5 @@
-import { ArrowRight } from "lucide-react";
 import Section from "./layout/section";
 import SectionHeading from "./layout/section-heading";
-import { Button } from "./ui/button";
 
 const features = [
   {

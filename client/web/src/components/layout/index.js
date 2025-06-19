@@ -1,11 +1,11 @@
 "use client";
 import AuthProvider from "@/providers/auth-provider";
 import QueryProvider from "@/providers/query-client-provider";
-import { usePathname } from "next/navigation";
-import Header from "../header";
-import Footer from "../footer";
-import { NuqsAdapter } from "nuqs/adapters/next";
 import RoleContext from "@/providers/role-context";
+import { usePathname } from "next/navigation";
+import { NuqsAdapter } from "nuqs/adapters/next";
+import Footer from "../footer";
+import Header from "../header";
 
 export default function Layout({ children }) {
   const pathname = usePathname();

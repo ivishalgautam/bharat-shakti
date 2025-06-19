@@ -1,11 +1,8 @@
-import config from "@/config";
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
-import { Muted } from "../ui/typography";
-import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 import ImageWithFallback from "../image-with-fallback";
+import { Button } from "../ui/button";
+import { Muted } from "../ui/typography";
 
 export default function StateCard({ state }) {
   return (

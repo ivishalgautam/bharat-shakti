@@ -1,7 +1,6 @@
 "use client";
-import moment from "moment";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import moment from "moment";
 
 export const columns = (setUserId, openModal) => [
   {

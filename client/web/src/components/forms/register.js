@@ -1,24 +1,24 @@
 "use client";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
-import PhoneSelect from "../ui/phone-input";
-import { useMutation } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
-import { Checkbox } from "../ui/checkbox";
+import { cn } from "@/lib/utils";
 import auth from "@/services/auth";
-import { useRouter } from "next/navigation";
-import { LoaderCircle } from "lucide-react";
-import { RiGoogleFill } from "@remixicon/react";
-import { Separator } from "../ui/separator";
-import { signIn } from "next-auth/react";
-import { useState, useEffect } from "react";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 import { otpSchema, userFormSchema } from "@/utils/schema/register";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { RiGoogleFill } from "@remixicon/react";
+import { useMutation } from "@tanstack/react-query";
+import { LoaderCircle } from "lucide-react";
+import { signIn } from "next-auth/react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { Checkbox } from "../ui/checkbox";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
+import PhoneSelect from "../ui/phone-input";
+import { Separator } from "../ui/separator";
 
 export default function Register() {
   const [step, setStep] = useState("register"); // "register" or "otp"
@@ -31,6 +31,7 @@ export default function Register() {
     watch,
     control,
     getValues,
+    setValue,
   } = useForm({
     resolver: zodResolver(userFormSchema),
     defaultValues: {
@@ -133,6 +134,7 @@ export default function Register() {
   };
 
   const handleBackToRegister = () => {
+    setValue("mobile_number", "");
     setStep("register");
   };
 

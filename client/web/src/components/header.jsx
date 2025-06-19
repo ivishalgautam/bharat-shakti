@@ -1,13 +1,12 @@
 "use client";
-import { Menu, Rocket } from "lucide-react";
-import Link from "next/link";
-import { Button, buttonVariants } from "./ui/button";
-import Logo from "./logo";
-import UserDropdown from "./user-dropdown";
 import { useLocalStorage } from "@/hooks/use-local-storage";
-import { Skeleton } from "./ui/skeleton";
+import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
+import { Menu } from "lucide-react";
+import Link from "next/link";
 import { Suspense, useEffect, useState } from "react";
+import Logo from "./logo";
+import { Button, buttonVariants } from "./ui/button";
 import {
   Sheet,
   SheetContent,
@@ -16,7 +15,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
-import { cn } from "@/lib/utils";
+import { Skeleton } from "./ui/skeleton";
+import UserDropdown from "./user-dropdown";
 
 export const navItems = [
   {

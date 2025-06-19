@@ -5,7 +5,6 @@ import ErrorMessage from "@/components/ui/error";
 import { P } from "@/components/ui/typography";
 import subscriptions from "@/services/subscription";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
 
 export default function PlansPage() {
   const { data, isLoading, isError, error } = useQuery({

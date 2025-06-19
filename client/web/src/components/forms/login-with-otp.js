@@ -1,19 +1,19 @@
 "use client";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import PhoneSelect from "../ui/phone-input";
-import { useMutation } from "@tanstack/react-query";
+import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import auth from "@/services/auth";
-import { useRouter } from "next/navigation";
-import { LoaderCircle } from "lucide-react";
-import { useState, useEffect } from "react";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
-import { otpSchema } from "@/utils/schema/register";
 import { loginSchema } from "@/utils/schema/login";
+import { otpSchema } from "@/utils/schema/register";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { LoaderCircle } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
+import PhoneSelect from "../ui/phone-input";
 
 export default function LoginWithOtp() {
   const [step, setStep] = useState("login");

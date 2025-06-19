@@ -9,9 +9,9 @@ import { toast } from "@/hooks/use-toast";
 import preference from "@/services/preference";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Edit, X } from "lucide-react";
-import React, { useState } from "react";
-import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
+import { useState } from "react";
 import { Label } from "./ui/label";
+import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 
 export default function Preferences({
   setId,

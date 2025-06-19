@@ -1,15 +1,9 @@
 "use client";
-import React from "react";
-import { Button } from "./ui/button";
-import { ArrowRight, MapPin } from "lucide-react";
+import states from "@/services/state";
 import { ErrorMessage } from "@hookform/error-message";
 import { useQuery } from "@tanstack/react-query";
-import states from "@/services/state";
-import { Skeleton } from "./ui/skeleton";
-import Section from "./layout/section";
 import StateCard from "./cards/state-card";
-import SectionHeading from "./layout/section-heading";
-import { useRouter } from "next/navigation";
+import { Skeleton } from "./ui/skeleton";
 
 export default function States() {
   const { data, isLoading, isError, error } = useQuery({

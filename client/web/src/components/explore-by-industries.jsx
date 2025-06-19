@@ -1,15 +1,14 @@
 "use client";
-import { ArrowRight, Tag } from "lucide-react";
-import React from "react";
-import { Button } from "./ui/button";
+import industries from "@/services/industries";
 import { useQuery } from "@tanstack/react-query";
+import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import IndustryCard from "./cards/keyword";
+import Section from "./layout/section";
+import SectionHeading from "./layout/section-heading";
+import { Button } from "./ui/button";
 import ErrorMessage from "./ui/error";
 import { Skeleton } from "./ui/skeleton";
-import Section from "./layout/section";
-import industries from "@/services/industries";
-import IndustryCard from "./cards/keyword";
-import SectionHeading from "./layout/section-heading";
-import { useRouter } from "next/navigation";
 
 export default function ExploreByIndustries() {
   const { data, isLoading, isError, error } = useQuery({

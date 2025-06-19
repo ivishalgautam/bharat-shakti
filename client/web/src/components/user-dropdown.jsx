@@ -14,11 +14,11 @@ import {
 import { handleLogout } from "@/providers/auth-provider";
 
 import {
+  CreditCard,
+  Crown,
   FileSliders,
   LayoutDashboard,
   LogOutIcon,
-  Crown,
-  CreditCard,
   Zap,
 } from "lucide-react";
 import { useRouter } from "next/navigation";

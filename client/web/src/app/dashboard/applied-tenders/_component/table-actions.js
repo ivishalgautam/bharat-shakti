@@ -1,7 +1,7 @@
 "use client";
+import { DataTableResetFilter } from "@/components/ui/table/data-table-reset-filter";
 import { DataTableSearch } from "@/components/ui/table/data-table-search";
 import { useTableFilters } from "./use-table-filters";
-import { DataTableResetFilter } from "@/components/ui/table/data-table-reset-filter";
 
 export default function TableActions() {
   const {

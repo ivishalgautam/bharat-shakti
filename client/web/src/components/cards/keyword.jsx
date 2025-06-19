@@ -1,10 +1,9 @@
 import config from "@/config";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
-import { Muted } from "../ui/typography";
 import { Button } from "../ui/button";
-import { ArrowRight } from "lucide-react";
+import { Muted } from "../ui/typography";
 
 export default function IndustryCard({ industry }) {
   return (

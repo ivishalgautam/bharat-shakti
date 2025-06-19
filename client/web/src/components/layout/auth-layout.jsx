@@ -1,7 +1,7 @@
 // pages/auth.js
 "use client";
-import Image from "next/image";
 import Logo from "@/components/logo";
+import Image from "next/image";
 
 export default function AuthLayout({ children }) {
   return (

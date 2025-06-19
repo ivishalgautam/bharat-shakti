@@ -1,10 +1,10 @@
-import { Suspense } from "react";
 import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
 import { searchParamsCache, serialize } from "@/lib/searchparams";
+import { Suspense } from "react";
 // import { Heading } from "@/components/ui/heading";
 // import PageContainer from "@/components/layout/page-container";
-import TableActions from "./_component/table-actions";
 import Listing from "./_component/listing";
+import TableActions from "./_component/table-actions";
 
 export const metadata = {
   title: "Users",

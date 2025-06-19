@@ -1,7 +1,6 @@
-import React from "react";
 import { Filter } from "lucide-react";
-import { Skeleton } from "./ui/skeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Skeleton } from "./ui/skeleton";
 
 const FilterBoxSkeleton = () => {
   return (

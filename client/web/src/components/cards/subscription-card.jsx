@@ -6,9 +6,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Calendar, Crown, CreditCard } from "lucide-react";
 import { differenceInDays, parseISO } from "date-fns";
+import { Calendar, Crown } from "lucide-react";
 
 export default function SubscriptionCard({ subscription }) {
   const daysRemaining = differenceInDays(

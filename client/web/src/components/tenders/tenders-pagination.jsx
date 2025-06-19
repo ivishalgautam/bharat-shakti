@@ -1,7 +1,6 @@
-import React from "react";
-import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
+import { Button } from "../ui/button";
 
 export default function TendersPagination({ totalItems }) {
   const [currentPage, setCurrentPage] = useQueryState(

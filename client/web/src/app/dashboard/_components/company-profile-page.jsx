@@ -1,8 +1,8 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UserContactsList } from "./user-contact-list";
 import { CompanyProfileForm } from "../../../components/forms/company-profile-form";
+import { UserContactsList } from "./user-contact-list";
 
 export default function CompanyProfilePage() {
   return (

@@ -1,28 +1,28 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { rupee } from "@/lib/Intl";
+import { getRemainingDays } from "@/lib/get-remaining-days";
+import { cn } from "@/lib/utils";
+import tenderService from "@/services/tender";
+import viewTenders from "@/services/view-tender";
+import { useMutation } from "@tanstack/react-query";
+import { format } from "date-fns";
 import {
-  Heart,
-  Calendar,
   Briefcase,
-  IndianRupee,
+  Calendar,
   Eye,
+  Heart,
+  IndianRupee,
   ListCollapse,
   Loader2,
 } from "lucide-react";
-import { format } from "date-fns";
-import { cn } from "@/lib/utils";
-import { rupee } from "@/lib/Intl";
-import { getRemainingDays } from "@/lib/get-remaining-days";
-import { useMutation } from "@tanstack/react-query";
-import viewTenders from "@/services/view-tender";
-import tenderService from "@/services/tender";
+import { useRouter } from "next/navigation";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
-import { useRouter } from "next/navigation";
 
 export default function TenderCardPremium({
   tender,

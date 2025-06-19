@@ -1,9 +1,8 @@
-import { Poppins } from "next/font/google";
-import localFont from "next/font/local";
-import "./globals.css";
 import Layout from "@/components/layout";
-import { Toaster } from "@/components/ui/toaster";
 import SessionWrapper from "@/components/providers/session-provider";
+import { Toaster } from "@/components/ui/toaster";
+import { Poppins } from "next/font/google";
+import "./globals.css";
 
 const poppins = Poppins({
   subsets: ["latin"],

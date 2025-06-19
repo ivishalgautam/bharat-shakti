@@ -1,7 +1,7 @@
-import TendersFilters from "@/components/tenders/tenders-filters";
 import TendersListing from "@/components/tenders/all-tenders-list";
+import TendersFilters from "@/components/tenders/tenders-filters";
 import { searchParams, searchParamsCache, serialize } from "@/lib/searchparams";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 
 export default function KeywordPage() {
   searchParamsCache.parse(searchParams);

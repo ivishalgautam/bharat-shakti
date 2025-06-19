@@ -3,14 +3,13 @@ import TenderCardPremium from "@/components/cards/tender-card-premium";
 import TendersFiltersLayout from "@/components/layout/tenders-filters-layout";
 import Spinner from "@/components/spinner";
 import ErrorMessage from "@/components/ui/error";
-import { H2 } from "@/components/ui/typography";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/providers/auth-provider";
 import tender from "@/services/tender";
 import wishlists from "@/services/wishlist";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 
 export default function TendersByPreferences() {
   const { user } = useAuth();

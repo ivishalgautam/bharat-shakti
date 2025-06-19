@@ -1,16 +1,7 @@
-import {
-  Award,
-  Building,
-  Mail,
-  MapPin,
-  Phone,
-  Target,
-  Users,
-} from "lucide-react";
-import React from "react";
+import { companyDetails } from "@/data/constants";
+import { Award, Building, Mail, MapPin, Phone, Target } from "lucide-react";
 import SectionHeading from "./layout/section-heading";
 import { Card, CardContent } from "./ui/card";
-import { companyDetails } from "@/data/constants";
 
 export default function AboutUsMinimalist() {
   return (

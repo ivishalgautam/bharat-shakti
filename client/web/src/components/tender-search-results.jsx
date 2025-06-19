@@ -1,34 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import {
-  X,
-  Calendar,
-  Building2,
-  MapPin,
-  ArrowUpRight,
-  Filter,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Scrollbar } from "@radix-ui/react-scroll-area";
+import { X } from "lucide-react";
+import { useState } from "react";
+import TendersFiltersLayout from "./layout/tenders-filters-layout";
 import AllTendersListing from "./tenders/all-tenders-list";
 import { ScrollArea } from "./ui/scroll-area";
-import TendersFiltersLayout from "./layout/tenders-filters-layout";
-import { Scrollbar } from "@radix-ui/react-scroll-area";
 
 // Mock data for tender results
 const MOCK_TENDERS = [

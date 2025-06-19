@@ -1,7 +1,7 @@
-import React, { Suspense } from "react";
-import TendersFilters from "../tenders/tenders-filters";
 import { searchParams, searchParamsCache, serialize } from "@/lib/searchparams";
+import { Suspense } from "react";
 import FilterTendersLoadingSkeleton from "../filer-tenders-loading-skeleton";
+import TendersFilters from "../tenders/tenders-filters";
 
 export default function TendersFiltersLayout({ children }) {
   searchParamsCache.parse(searchParams);

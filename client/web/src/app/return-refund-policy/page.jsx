@@ -1,17 +1,16 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  AlertCircle,
-  CheckCircle,
-  XCircle,
-  Clock,
-} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { companyDetails } from "@/data/constants";
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  Mail,
+  MapPin,
+  Phone,
+  XCircle,
+} from "lucide-react";
 
 export default function ReturnRefundPolicy() {
   return (

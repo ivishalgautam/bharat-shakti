@@ -5,17 +5,17 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import TendersPagination from "./tenders-pagination";
-import { useSearchParams } from "next/navigation";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "@/hooks/use-toast";
+import { AuthContext } from "@/providers/auth-provider";
 import tender from "@/services/tender";
+import wishlists from "@/services/wishlist";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
+import React, { useContext } from "react";
+import TenderCardPremium from "../cards/tender-card-premium";
 import ErrorMessage from "../ui/error";
 import { Skeleton } from "../ui/skeleton";
-import wishlists from "@/services/wishlist";
-import { toast } from "@/hooks/use-toast";
-import TenderCardPremium from "../cards/tender-card-premium";
-import React, { useContext } from "react";
-import { AuthContext } from "@/providers/auth-provider";
+import TendersPagination from "./tenders-pagination";
 
 export default function AllTendersListing() {
   const searchParams = useSearchParams();

@@ -1,6 +1,6 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Target, Zap, TrendingUp, Users, Eye, Lightbulb } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Eye, Lightbulb, Target, TrendingUp, Users, Zap } from "lucide-react";
 
 export const metadata = {
   title: "About Us",

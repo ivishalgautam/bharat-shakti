@@ -1,40 +1,26 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Search, Filter, X, Bell } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import useGetAuthorities from "@/hooks/use-get-authorities";
 import { useFormattedOptions } from "@/hooks/use-formatted-options";
-import useGetStates from "@/hooks/use-get-states";
-import useGetCities, { useGetCitiesByStateIds } from "@/hooks/use-get-cities";
-import useGetSectors from "@/hooks/use-get-sectors";
-import { parseAsString, useQueryState } from "nuqs";
-import { FilterBox } from "./filter-box";
-import { DatePickerWithRange } from "./date-range-selector";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import useGetIndustries from "@/hooks/use-get-industries";
-import { useAuth } from "@/providers/auth-provider";
-import { useQuery } from "@tanstack/react-query";
-import preference from "@/services/preference";
-import useGetSubcategories, {
-  useGetSubcategoriesByCategory,
-} from "@/hooks/use-get-subcategories";
+import useGetAuthorities from "@/hooks/use-get-authorities";
 import useGetCategories from "@/hooks/use-get-categories";
-import { Small } from "../ui/typography";
-import { Skeleton } from "../ui/skeleton";
-import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import { useGetCitiesByStateIds } from "@/hooks/use-get-cities";
+import useGetIndustries from "@/hooks/use-get-industries";
+import useGetSectors from "@/hooks/use-get-sectors";
+import useGetStates from "@/hooks/use-get-states";
+import { useGetSubcategoriesByCategory } from "@/hooks/use-get-subcategories";
 import { formatNumber } from "@/lib/format-number";
+import { useAuth } from "@/providers/auth-provider";
+import preference from "@/services/preference";
+import { useQuery } from "@tanstack/react-query";
+import { Bell, Filter, Search, X } from "lucide-react";
+import { parseAsString, useQueryState } from "nuqs";
+import { useEffect, useMemo, useState } from "react";
+import Preferences from "../preferences";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -43,7 +29,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "../ui/alert-dialog";
-import Preferences from "../preferences";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Small } from "../ui/typography";
+import { DatePickerWithRange } from "./date-range-selector";
+import { FilterBox } from "./filter-box";
 
 export default function TendersFilters() {
   const { user, isUserLoading } = useAuth();

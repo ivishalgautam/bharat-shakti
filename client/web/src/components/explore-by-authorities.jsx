@@ -1,12 +1,9 @@
 "use client";
-import { ArrowRight, Building2 } from "lucide-react";
-import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import React from "react";
 import { Button } from "./ui/button";
 import { useQuery } from "@tanstack/react-query";
 import authorities from "@/services/authorities";
-import Image from "next/image";
-import config from "@/config";
 import { Skeleton } from "./ui/skeleton";
 import ErrorMessage from "./ui/error";
 import Section from "./layout/section";
