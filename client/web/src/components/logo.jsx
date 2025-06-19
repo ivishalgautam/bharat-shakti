@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function Logo() {
   return (
     <Link href="/">
-      <figure className="flex aspect-video w-[130px] items-center md:w-[150px]">
+      <figure className="flex aspect-video w-[150px] items-center">
         <Image
           src={"/logo.png"}
           width={500}
