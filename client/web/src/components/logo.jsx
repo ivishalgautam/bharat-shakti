@@ -3,8 +3,8 @@ import Link from "next/link";
 
 export default function Logo() {
   return (
-    <Link href="/" className="flex items-center gap-2">
-      <figure className="flex aspect-video w-[130px] items-center md:w-[180px]">
+    <Link href="/">
+      <figure className="flex aspect-video w-[130px] items-center md:w-[150px]">
         <Image
           src={"/logo.png"}
           width={500}
