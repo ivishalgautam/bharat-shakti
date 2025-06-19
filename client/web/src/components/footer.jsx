@@ -17,7 +17,7 @@ export default function Footer() {
     <footer className="border-t bg-slate-900 text-slate-200">
       <div className="container px-4 py-12 md:px-6 md:py-16 lg:py-20">
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          <div className="min-h-[120px]">
+          <div className="min-h-[120px] space-y-4">
             <LogoWhite />
             <p className="text-sm text-slate-400">
               Your trusted partner for finding and winning tender opportunities
