@@ -19,7 +19,7 @@ export default function States() {
           {/* <MapPin className="mr-2 h-5 w-5" /> */}
           <h2 className="text-2xl font-bold tracking-tight text-white"></h2>
         </div>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="grid min-h-96 grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {isLoading
             ? Array.from({ length: 12 }).map((_, i) => (
                 <Skeleton key={i} className={"size-44 bg-gray-200"} />
