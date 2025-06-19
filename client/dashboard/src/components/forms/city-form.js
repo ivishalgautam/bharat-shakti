@@ -1,28 +1,28 @@
 "use client";
-import { Controller, useForm, useWatch } from "react-hook-form";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
+import config from "@/config";
+import { useFormattedOptions } from "@/hooks/use-formatted-options";
 import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
-import { Checkbox } from "../ui/checkbox";
-import { Textarea } from "../ui/textarea";
-import Dropzone from "../dropzone";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { citySchema } from "@/utils/schema/city.schema";
 import {
   useCreateCity,
   useGetCity,
   useUpdateCity,
 } from "@/mutations/city-mutation";
+import { useGetStates } from "@/mutations/state-mutation";
+import { citySchema } from "@/utils/schema/city.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Image from "next/image";
-import config from "@/config";
-import Spinner from "../ui/spinner";
-import ErrorMessage from "../ui/error";
-import { useGetStates } from "@/mutations/state-mutation";
-import { useFormattedOptions } from "@/hooks/use-formatted-options";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import ReactSelect from "react-select";
+import Dropzone from "../dropzone";
+import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
+import ErrorMessage from "../ui/error";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import Spinner from "../ui/spinner";
+import { Textarea } from "../ui/textarea";
 
 export default function CityForm({ id, type = "create" }) {
   const [images, setImages] = useState([]);

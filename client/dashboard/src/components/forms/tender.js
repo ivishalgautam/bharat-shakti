@@ -1,25 +1,32 @@
 "use client";
-import { Controller, useForm } from "react-hook-form";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import config from "@/config";
+import { useFormattedOptions } from "@/hooks/use-formatted-options";
+import { useGetAuthorities } from "@/mutations/authority-mutation";
+import { useGetCategories } from "@/mutations/category-mutation";
+import { useGetCitiesByState } from "@/mutations/city-mutation";
+import { useGetIndustries } from "@/mutations/industry-mutation";
+import { useGetSectors } from "@/mutations/sector-mutation";
+import { useGetStates } from "@/mutations/state-mutation";
+import {
+  useGetSubCategoriesByCategory
+} from "@/mutations/subcategory-mutation";
+import { useCreateTender, useGetTender } from "@/mutations/tender-mutation";
+import { TenderSchema } from "@/utils/schema/tender.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TagInput } from "emblor";
+import { Link2, Trash } from "lucide-react";
+import moment from "moment";
+import { useRouter } from "next/navigation";
+import { useEffect, useId, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import Dropzone from "../dropzone";
+import MySelect from "../my-select";
+import { Checkbox } from "../ui/checkbox";
+import ErrorMessage from "../ui/error";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Checkbox } from "../ui/checkbox";
-import { Textarea } from "../ui/textarea";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { TenderSchema } from "@/utils/schema/tender.schema";
-import { useGetSectors } from "@/mutations/sector-mutation";
-import { useGetAuthorities } from "@/mutations/authority-mutation";
-import { useGetCities, useGetCitiesByState } from "@/mutations/city-mutation";
-import { useGetStates } from "@/mutations/state-mutation";
-import { useFormattedOptions } from "@/hooks/use-formatted-options";
-import MySelect from "../my-select";
-import { H4 } from "../ui/typography";
-import { Separator } from "../ui/separator";
-import Dropzone from "../dropzone";
-import { useCreateTender, useGetTender } from "@/mutations/tender-mutation";
-import { useEffect, useId, useState } from "react";
-import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -27,20 +34,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import Image from "next/image";
-import config from "@/config";
-import { Link2, Trash, View } from "lucide-react";
-import { TagInput } from "emblor";
-import { useGetIndustries } from "@/mutations/industry-mutation";
-import {
-  useGetSubCategories,
-  useGetSubCategoriesByCategory,
-} from "@/mutations/subcategory-mutation";
-import moment from "moment";
-import { useRouter } from "next/navigation";
-import { useGetCategories } from "@/mutations/category-mutation";
+import { Separator } from "../ui/separator";
 import Spinner from "../ui/spinner";
-import ErrorMessage from "../ui/error";
+import { Textarea } from "../ui/textarea";
+import { H4 } from "../ui/typography";
 
 const defaultValues = {
   // name: "",

@@ -1,8 +1,8 @@
 "use client";
 
+import { UploadCloud } from "lucide-react";
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
-import { UploadCloud } from "lucide-react";
 
 export default function Dropzone({ onDropFiles, multiple = false }) {
   const onDrop = useCallback(

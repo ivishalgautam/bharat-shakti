@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import faq from "@/services/faq";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGetFAQs = (searchParams = "page=1") => {
   return useQuery({

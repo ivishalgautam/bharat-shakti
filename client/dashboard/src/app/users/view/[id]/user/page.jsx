@@ -1,5 +1,8 @@
 "use client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CompanyProfile } from "@/app/users/_component/user-company-profile";
+import { ContactInformation } from "@/app/users/_component/user-contact-info";
+import { UserProfile } from "@/app/users/_component/user-profile";
+import PageContainer from "@/components/layout/page-container";
 import {
   Card,
   CardContent,
@@ -7,13 +10,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { UserProfile } from "@/app/users/_component/user-profile";
-import { CompanyProfile } from "@/app/users/_component/user-company-profile";
-import { ContactInformation } from "@/app/users/_component/user-contact-info";
-import PageContainer from "@/components/layout/page-container";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGetUserProfile } from "@/mutations/user-mutation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function UserViewPage({ params: { id } }) {
   const pathname = usePathname();

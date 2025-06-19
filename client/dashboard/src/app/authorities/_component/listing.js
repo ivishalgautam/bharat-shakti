@@ -8,8 +8,8 @@ import {
   useUpdateAuthority,
 } from "@/mutations/authority-mutation";
 import { useRouter, useSearchParams } from "next/navigation";
-import { columns } from "../columns";
 import { useEffect, useState } from "react";
+import { columns } from "../columns";
 import { DeleteDialog } from "./delete-dialog";
 
 export default function Listing() {

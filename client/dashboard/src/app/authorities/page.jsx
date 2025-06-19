@@ -1,14 +1,14 @@
-import { Suspense } from "react";
+import PageContainer from "@/components/layout/page-container";
+import { buttonVariants } from "@/components/ui/button";
+import { Heading } from "@/components/ui/heading";
 import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
 import { searchParamsCache, serialize } from "@/lib/searchparams";
-import { Heading } from "@/components/ui/heading";
-import PageContainer from "@/components/layout/page-container";
-import TableActions from "./_component/table-actions";
-import Listing from "./_component/listing";
-import Link from "next/link";
-import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import Link from "next/link";
+import { Suspense } from "react";
+import Listing from "./_component/listing";
+import TableActions from "./_component/table-actions";
 
 export const metadata = {
   title: "Authorities",

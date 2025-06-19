@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetUserCompanyProfile } from "@/mutations/user-mutation";
-import { Badge } from "@/components/ui/badge";
 
 export function CompanyProfile({ userId }) {
   const { data: companyProfile, isLoading } = useGetUserCompanyProfile(userId);

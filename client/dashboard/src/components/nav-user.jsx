@@ -1,15 +1,12 @@
 "use client";
 
-import { ChevronsUpDown, LogOut, UserRound } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
+  DropdownMenuContent, DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
@@ -18,6 +15,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { handleLogout } from "@/providers/auth-provider";
+import { ChevronsUpDown, LogOut, UserRound } from "lucide-react";
 
 export function NavUser({ user }) {
   const { isMobile } = useSidebar();

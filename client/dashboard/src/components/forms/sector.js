@@ -1,26 +1,25 @@
 "use client";
-import { Controller, useForm, useWatch } from "react-hook-form";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
+import config from "@/config";
 import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
-import { Checkbox } from "../ui/checkbox";
-import { Textarea } from "../ui/textarea";
-import Dropzone from "../dropzone";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { sectorSchema } from "@/utils/schema/sector.schema";
 import {
   useCreateSector,
   useGetSector,
   useUpdateSector,
 } from "@/mutations/sector-mutation";
-import { useRouter } from "next/navigation";
-import { useGetKeyword } from "@/mutations/keyword-mutation";
-import { useEffect, useState } from "react";
-import Spinner from "../ui/spinner";
-import ErrorMessage from "../ui/error";
+import { sectorSchema } from "@/utils/schema/sector.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
-import config from "@/config";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import Dropzone from "../dropzone";
+import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
+import ErrorMessage from "../ui/error";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import Spinner from "../ui/spinner";
+import { Textarea } from "../ui/textarea";
 
 export default function SectorForm({ id, type = "create" }) {
   const [images, setImages] = useState([]);

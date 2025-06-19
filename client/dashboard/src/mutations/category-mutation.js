@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import category from "@/services/category";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGetCategories = (searchParams = "page=1") => {
   return useQuery({

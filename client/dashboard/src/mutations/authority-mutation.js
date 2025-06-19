@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import authority from "@/services/authority";
 import { toast } from "@/hooks/use-toast";
+import authority from "@/services/authority";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGetAuthorities = (searchParams = "page=1") => {
   return useQuery({

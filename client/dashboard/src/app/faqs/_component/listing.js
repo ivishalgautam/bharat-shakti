@@ -2,15 +2,15 @@
 
 import { DataTable } from "@/components/ui/table/data-table";
 import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
-import { useRouter, useSearchParams } from "next/navigation";
-import { columns } from "../columns";
-import { useEffect, useState } from "react";
-import { DeleteDialog } from "./delete-dialog";
 import {
   useDeleteFAQ,
   useGetFAQs,
   useUpdateFAQ,
 } from "@/mutations/faq-mutation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { columns } from "../columns";
+import { DeleteDialog } from "./delete-dialog";
 
 export default function Listing() {
   const [id, setId] = useState(null);

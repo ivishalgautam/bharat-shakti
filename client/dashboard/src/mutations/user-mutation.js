@@ -1,7 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import state from "@/services/state";
 import { toast } from "@/hooks/use-toast";
 import user from "@/services/user";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGetUsers = (searchParams = "page=1") => {
   return useQuery({

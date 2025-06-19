@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import city from "@/services/city";
 import { toast } from "@/hooks/use-toast";
+import city from "@/services/city";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGetCities = (searchParams = "page=1") => {
   return useQuery({

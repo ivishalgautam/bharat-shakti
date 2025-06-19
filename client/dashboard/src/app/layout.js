@@ -1,8 +1,7 @@
-import "./globals.css";
 import Layout from "@/components/layout";
 import ThemeProvider from "@/providers/theme-provider";
-import { ThemeSwitcher } from "@/providers/theme-switcher";
 import { Instrument_Sans } from "next/font/google";
+import "./globals.css";
 
 const InstrumentSans = Instrument_Sans({
   weight: ["400", "500", "600", "700"],

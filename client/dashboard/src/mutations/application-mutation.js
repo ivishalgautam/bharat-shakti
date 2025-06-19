@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import application from "@/services/application";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGetApplications = (searchParams = "page=1") => {
   return useQuery({

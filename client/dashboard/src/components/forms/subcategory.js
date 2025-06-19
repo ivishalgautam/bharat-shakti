@@ -1,29 +1,28 @@
 "use client";
-import { Controller, useForm, useWatch } from "react-hook-form";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
-import { Checkbox } from "../ui/checkbox";
-import { Textarea } from "../ui/textarea";
-import Dropzone from "../dropzone";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import Spinner from "../ui/spinner";
-import ErrorMessage from "../ui/error";
-import Image from "next/image";
 import config from "@/config";
-import { useGetCategories } from "@/mutations/category-mutation";
-import ReactSelect from "react-select";
-import { subcategorySchema } from "@/utils/schema/subcategory.schema";
 import { useFormattedOptions } from "@/hooks/use-formatted-options";
+import { cn } from "@/lib/utils";
+import { useGetCategories } from "@/mutations/category-mutation";
 import {
   useCreateSubcategory,
   useGetSubcategory,
   useUpdateSubcategory,
 } from "@/mutations/subcategory-mutation";
+import { subcategorySchema } from "@/utils/schema/subcategory.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import Dropzone from "../dropzone";
 import MySelect from "../my-select";
+import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
+import ErrorMessage from "../ui/error";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import Spinner from "../ui/spinner";
+import { Textarea } from "../ui/textarea";
 
 const categoryTypes = [
   { value: "goods", label: "Goods" },

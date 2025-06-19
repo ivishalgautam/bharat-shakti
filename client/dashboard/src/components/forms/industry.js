@@ -1,25 +1,25 @@
 "use client";
-import { Controller, useForm, useWatch } from "react-hook-form";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
-import { Checkbox } from "../ui/checkbox";
-import { Textarea } from "../ui/textarea";
-import Dropzone from "../dropzone";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import Spinner from "../ui/spinner";
-import ErrorMessage from "../ui/error";
-import Image from "next/image";
-import { useEffect, useState } from "react";
 import config from "@/config";
+import { cn } from "@/lib/utils";
 import {
   useCreateIndustry,
   useGetIndustry,
   useUpdateIndustry,
 } from "@/mutations/industry-mutation";
 import { industrySchema } from "@/utils/schema/keyword.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import Dropzone from "../dropzone";
+import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
+import ErrorMessage from "../ui/error";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import Spinner from "../ui/spinner";
+import { Textarea } from "../ui/textarea";
 
 export default function IndustryForm({ id, type = "create" }) {
   const [images, setImages] = useState([]);

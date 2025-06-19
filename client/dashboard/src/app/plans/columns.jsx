@@ -1,7 +1,4 @@
 "use client";
-import { Switch } from "@/components/ui/switch";
-import { Small } from "@/components/ui/typography";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,21 +7,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Switch } from "@/components/ui/switch";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 
-import moment from "moment";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
-import TableImage from "@/components/ui/table-image";
-import { formatRupee } from "@/lib/format-rupee";
-import { ArrowUpDown, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
+import { formatRupee } from "@/lib/format-rupee";
+import { Check } from "lucide-react";
+import moment from "moment";
+import Link from "next/link";
 
 export const columns = (openModal, setId, handleUpdate) => [
   {

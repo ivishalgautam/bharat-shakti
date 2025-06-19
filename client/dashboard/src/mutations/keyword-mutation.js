@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import keyword from "@/services/keyword";
 import { toast } from "@/hooks/use-toast";
+import keyword from "@/services/keyword";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGetKeywords = (searchParams = "page=1") => {
   return useQuery({

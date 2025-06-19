@@ -1,10 +1,9 @@
 "use client";
 import {
+  QueryCache,
   QueryClient,
   QueryClientProvider,
-  QueryCache,
 } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export default function QueryProvider({ children }) {
   const queryClient = new QueryClient({

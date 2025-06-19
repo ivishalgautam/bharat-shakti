@@ -1,25 +1,25 @@
 "use client";
-import { Controller, useForm, useWatch } from "react-hook-form";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
+import config from "@/config";
 import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
-import { Checkbox } from "../ui/checkbox";
-import { Textarea } from "../ui/textarea";
-import Dropzone from "../dropzone";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { stateSchema } from "@/utils/schema/state.schema";
 import {
   useCreateState,
   useGetState,
   useUpdateState,
 } from "@/mutations/state-mutation";
+import { stateSchema } from "@/utils/schema/state.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import Spinner from "../ui/spinner";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import Dropzone from "../dropzone";
+import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
 import ErrorMessage from "../ui/error";
-import Image from "next/image";
-import config from "@/config";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import Spinner from "../ui/spinner";
+import { Textarea } from "../ui/textarea";
 
 export default function StateForm({ id, type = "create" }) {
   const [images, setImages] = useState([]);

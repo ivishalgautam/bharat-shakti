@@ -4,14 +4,13 @@ import { NavMain } from "@/components/nav-main";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
+  SidebarFooter
 } from "@/components/ui/sidebar";
 import { sidebarData } from "@/data/routes";
-import { NavUser } from "./nav-user";
 import { useAuth } from "@/providers/auth-provider";
-import { Skeleton } from "./ui/skeleton";
 import { useMemo } from "react";
+import { NavUser } from "./nav-user";
+import { Skeleton } from "./ui/skeleton";
 
 export function AppSidebar({ ...props }) {
   const { user, isUserLoading } = useAuth();

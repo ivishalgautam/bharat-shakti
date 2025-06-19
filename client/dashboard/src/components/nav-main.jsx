@@ -1,6 +1,5 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -17,13 +16,14 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { sidebarData } from "@/data/routes";
+import { cn } from "@/lib/utils";
+import { useAuth } from "@/providers/auth-provider";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 import { ScrollArea } from "./ui/scroll-area";
-import { useAuth } from "@/providers/auth-provider";
 import { Skeleton } from "./ui/skeleton";
-import { sidebarData } from "@/data/routes";
 
 export function NavMain({ items }) {
   const pathname = usePathname();

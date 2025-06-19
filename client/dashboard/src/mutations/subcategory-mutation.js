@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import subcategory from "@/services/subcategory";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGetSubCategories = (searchParams = "page=1") => {
   return useQuery({

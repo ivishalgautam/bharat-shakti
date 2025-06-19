@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import sector from "@/services/sector";
 import { toast } from "@/hooks/use-toast";
+import sector from "@/services/sector";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGetSectors = (searchParams = "page=1") => {
   return useQuery({

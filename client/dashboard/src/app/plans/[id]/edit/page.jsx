@@ -1,7 +1,6 @@
 import PlanForm from "@/components/forms/plan";
 import PageContainer from "@/components/layout/page-container";
 import { Heading } from "@/components/ui/heading";
-import React from "react";
 
 export default function PlanEditPage({ params: { id } }) {
   return (

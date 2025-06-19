@@ -1,7 +1,7 @@
 "use client";
-import { createContext, useState, useContext, useEffect } from "react";
-import { redirect, usePathname } from "next/navigation";
 import axios from "axios";
+import { usePathname } from "next/navigation";
+import { createContext, useContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext(null);
 

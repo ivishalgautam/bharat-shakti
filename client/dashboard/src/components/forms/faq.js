@@ -1,23 +1,23 @@
 "use client";
-import { useForm, useFieldArray } from "react-hook-form";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
 import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { faqSchema } from "@/utils/schema/faq.schema";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import Spinner from "../ui/spinner";
-import ErrorMessage from "../ui/error";
-import { Trash2, Plus } from "lucide-react";
 import {
   useCreateFAQ,
   useGetFAQ,
   useUpdateFAQ,
 } from "@/mutations/faq-mutation";
+import { faqSchema } from "@/utils/schema/faq.schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useFieldArray, useForm } from "react-hook-form";
+import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import ErrorMessage from "../ui/error";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import Spinner from "../ui/spinner";
+import { Textarea } from "../ui/textarea";
 
 export default function FAQForm({ id, type = "create" }) {
   const {

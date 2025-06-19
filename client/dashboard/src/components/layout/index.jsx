@@ -1,13 +1,13 @@
 "use client";
 import AuthProvider from "@/providers/auth-provider";
 import QueryProvider from "@/providers/query-client-provider";
-import { usePathname, useRouter } from "next/navigation";
-import { SidebarProvider, SidebarTrigger } from "../ui/sidebar";
-import { AppSidebar } from "../app-sidebar";
-import { Toaster } from "../ui/toaster";
 import RoleContext from "@/providers/role-context";
-import { Button } from "../ui/button";
 import { ChevronLeft } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { AppSidebar } from "../app-sidebar";
+import { Button } from "../ui/button";
+import { SidebarProvider, SidebarTrigger } from "../ui/sidebar";
+import { Toaster } from "../ui/toaster";
 
 export default function Layout({ children }) {
   const pathname = usePathname();

@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import tender from "@/services/tender";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGetTenders = (searchParams = "page=1") => {
   return useQuery({

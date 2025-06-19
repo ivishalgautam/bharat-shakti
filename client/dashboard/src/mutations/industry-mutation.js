@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@/hooks/use-toast";
 import industries from "@/services/industry";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useGetIndustries = (searchParams = "page=1") => {
   return useQuery({

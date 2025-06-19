@@ -1,16 +1,5 @@
 "use client";
 
-import { DataTable } from "@/components/ui/table/data-table";
-import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
-import {
-  useDeleteUser,
-  useGetUsers,
-  useUpdateUser,
-} from "@/mutations/user-mutation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter, useSearchParams } from "next/navigation";
-import { columns } from "../columns";
-import { useEffect, useState } from "react";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -22,6 +11,16 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import ErrorMessage from "@/components/ui/error";
+import { DataTable } from "@/components/ui/table/data-table";
+import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
+import {
+  useDeleteUser,
+  useGetUsers,
+  useUpdateUser,
+} from "@/mutations/user-mutation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { columns } from "../columns";
 
 export default function UserListing() {
   const [isModal, setIsModal] = useState(false);
