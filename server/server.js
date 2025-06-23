@@ -51,7 +51,6 @@ export default async function server(app) {
   app.register(fastifyMultipart, {
     limits: { fileSize: 5 * 1024 * 1024 * 1024 },
   });
-
   app.register(routes, { prefix: "v1" });
   app.register(publicRoutes, { prefix: "v1" });
   app.register(authRoutes, { prefix: "v1/auth" });

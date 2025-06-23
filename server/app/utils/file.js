@@ -4,7 +4,7 @@ import path from "path";
 export const saveFile = async (file) => {
   const mime = file.mimetype.split("/").pop();
 
-  const imageMime = ["jpeg", "jpg", "png", "gif"];
+  const imageMime = ["jpeg", "jpg", "png", "gif", "webp"];
   const videoMime = ["mp4", "avi", "mov"];
   const docsMime = ["pdf", "docx", "xlsx"];
 
