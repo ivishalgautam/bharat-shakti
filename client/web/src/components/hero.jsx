@@ -45,7 +45,6 @@ export function Hero() {
   return (
     <div className="relative flex min-h-[90vh] flex-col items-center justify-center bg-gradient-to-r from-slate-900 to-slate-800">
       {/* Hero Background */}
-      {/* <div className="absolute inset-0 -z-10" /> */}
       <div className="relative overflow-hidden rounded-xl">
         <div className="mx-auto max-w-7xl px-6 py-16 md:px-12 md:py-24 lg:px-16">
           <div className="grid items-center gap-8 md:grid-cols-12">
