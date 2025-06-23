@@ -81,14 +81,10 @@ const constants = {
   allowedOrigins: [
     "http://localhost:3000",
     "http://localhost:4000",
-
-    "https://bsdashboard.bwdemo.in",
-    "https://bsapi.bwdemo.in",
-
     "https://dashboard.bharatshaktitenders.com",
     "https://api.bharatshaktitenders.com",
-    "https://www.bharatshaktitenders.com",
     "https://bharatshaktitenders.com",
+    "https://www.bharatshaktitenders.com",
   ],
 };
 
