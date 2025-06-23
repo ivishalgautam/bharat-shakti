@@ -7,9 +7,14 @@ const nextConfig = {
         hostname: "localhost",
         port: "3001",
       },
+      // {
+      //   protocol: "https",
+      //   hostname: "api.bharatshaktitenders.com",
+      //   port: "",
+      // },
       {
         protocol: "https",
-        hostname: "api.bharatshaktitenders.com",
+        hostname: "**",
         port: "",
       },
     ],
