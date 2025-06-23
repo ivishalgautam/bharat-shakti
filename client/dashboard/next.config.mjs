@@ -9,7 +9,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "bsapi.bwdemo.in",
+        hostname: "api.bharatshaktitenders.com",
         port: "",
       },
     ],
