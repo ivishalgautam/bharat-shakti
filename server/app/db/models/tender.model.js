@@ -204,7 +204,7 @@ const bulkCreate = async (data) => {
   return await TenderModel.bulkCreate(data);
 };
 
-const update = async (req, id, { transaction = null }) => {
+const update = async (req, id, transaction = null) => {
   const updateOptions = {
     where: {
       id: req?.params?.id || id,

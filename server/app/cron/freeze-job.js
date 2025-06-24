@@ -6,7 +6,7 @@ import { sequelize } from "../db/postgres.js";
 export default {
   cronTime: "* * * * *",
   onTick: async (server) => {
-    const transaction = await sequelize.transaction();
+    let transaction = await sequelize.transaction();
     try {
       const subscriptions =
         await table.SubscriptionModel.getActiveSubscriptions();

@@ -63,7 +63,6 @@ const create = async (req, res) => {
 
 const verify = async (req, res) => {
   const transaction = await sequelize.transaction();
-
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
       req.body;

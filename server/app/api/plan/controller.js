@@ -8,7 +8,6 @@ const message = constants.http.message;
 
 const create = async (req, res) => {
   const transaction = await sequelize.transaction();
-
   try {
     const validateData = planSchema.parse(req.body);
 
@@ -23,7 +22,6 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   const transaction = await sequelize.transaction();
-
   try {
     const record = await table.PlanModel.getById(req);
     if (!record)

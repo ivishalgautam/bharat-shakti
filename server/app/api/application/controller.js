@@ -27,9 +27,7 @@ const create = async (req, res) => {
     await table.TenderModel.update(
       { body: { applied_count } },
       req.body.tender_id,
-      {
-        transaction,
-      }
+      transaction
     );
 
     await transaction.commit();

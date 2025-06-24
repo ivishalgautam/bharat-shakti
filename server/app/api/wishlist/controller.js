@@ -6,7 +6,6 @@ import constants from "../../lib/constants/index.js";
 const { message, status } = constants.http;
 
 const create = async (req, res) => {
-  const transaction = await sequelize.transaction();
   try {
     const tenderRecord = await table.TenderModel.getById(0, req.body.tender_id);
     if (!tenderRecord)
@@ -20,23 +19,18 @@ const create = async (req, res) => {
         .code(409)
         .send({ status: false, message: "Already followed." });
 
-    await table.WishlistModel.create(req, { transaction });
+    await table.WishlistModel.create(req);
 
     const wishlist_count = Number(tenderRecord.wishlist_count) + 1;
     await table.TenderModel.update(
       { body: { wishlist_count } },
-      req.body.tender_id,
-      {
-        transaction,
-      }
+      req.body.tender_id
     );
 
-    await transaction.commit();
     res
       .code(status.CREATED)
       .send({ status: true, message: "Followed successfully" });
   } catch (error) {
-    await transaction.rollback();
     throw error;
   }
 };

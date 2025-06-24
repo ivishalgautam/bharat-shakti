@@ -22,7 +22,6 @@ const verifyUserCredentials = async (req, res) => {
   let userData = null;
 
   const transaction = await sequelize.transaction();
-
   try {
     if (username && password) {
       userData = await table.UserModel.getByUsername(req);
@@ -149,7 +148,6 @@ const loginRequest = async (req, res) => {
 
 const loginVerify = async (req, res) => {
   const transaction = await sequelize.transaction();
-
   try {
     const otp = req.body.otp;
     const requestId = req.body.request_id;
@@ -210,7 +208,6 @@ const loginVerify = async (req, res) => {
 
 const registerRequest = async (req, res) => {
   const transaction = await sequelize.transaction();
-
   try {
     const validateData = userSchema.parse(req.body);
 
@@ -255,7 +252,6 @@ const registerRequest = async (req, res) => {
 
 const registerVerify = async (req, res) => {
   const transaction = await sequelize.transaction();
-
   try {
     const validateData = registerVerifySchema.parse(req.body);
     const otp = req.body.otp;

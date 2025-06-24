@@ -69,7 +69,7 @@ const update = async (req, res) => {
     }
 
     req.body.slug = slugify(req.body.bid_number, { lower: true });
-    await table.TenderModel.update(req, 0, { transaction });
+    await table.TenderModel.update(req, 0, transaction);
     if (documentsToDelete.length) {
       await cleanupFiles(documentsToDelete);
     }
@@ -86,7 +86,6 @@ const update = async (req, res) => {
 
 const deleteById = async (req, res) => {
   const transaction = await sequelize.transaction();
-
   try {
     const record = await table.TenderModel.getById(req);
     if (!record)
@@ -269,7 +268,6 @@ const importTenders = async (req, res) => {
       // name slug category_id
 
       const transaction = await sequelize.transaction();
-
       try {
         const promises = data.map(async (item, index) => {
           const slug = slugify(item.bid_number, { lower: true });
@@ -366,7 +364,7 @@ const importTenders = async (req, res) => {
         //         },
         //       },
         //       0,
-        //       { transaction }
+        //        transaction
         //     );
         //   }
         //   // const promises = data.map(async (item, index) => {
@@ -418,7 +416,7 @@ const importTenders = async (req, res) => {
         //   //     body: { category_id: categoryRecord.id },
         //   //   },
         //   //   0,
-        //   //   { transaction }
+        //   //    transaction
         //   // );
 
         //   // const states = await table.StateModel.get(0);
