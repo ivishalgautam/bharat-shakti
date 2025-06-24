@@ -17,6 +17,9 @@ const create = async (req, res) => {
     if (!planRecord)
       return res.code(404).send({ status: false, message: "Plan not found!" });
 
+    if (planRecord.status !== "active")
+      return res.code(404).send({ status: false, message: "Plan not found!" });
+
     const record = await table.SubscriptionModel.getLastActivePlanByUserId(
       req.user_data.id
     );

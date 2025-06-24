@@ -231,7 +231,7 @@ const addView = async (req, res) => {
     const id = req.params.id;
     const current = viewCounter.get(id) || 0;
     viewCounter.set(id, current + 1);
-    res.send({ status: true });
+    res.send({ status: true, message: "View count" });
   } catch (err) {
     throw err;
   }

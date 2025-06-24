@@ -278,10 +278,11 @@ const update = async (req, id, { transaction = null }) => {
 };
 
 const incrementViewCount = async (id, count = 1, transaction) => {
+  const options = transaction ? { transaction } : {};
   return await TenderModel.increment("view_count", {
     by: count,
     where: { id },
-    ...(transaction && { transaction }),
+    options,
   });
 };
 
