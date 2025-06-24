@@ -187,7 +187,7 @@ export default function PricingSection() {
           },
         },
       };
-
+      console.log(options);
       const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (error) {
