@@ -15,15 +15,16 @@ import { Label } from "@/components/ui/label";
 import {
   Card,
   CardContent,
-  CardDescription, CardHeader,
-  CardTitle
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 
 // Form validation schema
 const loginSchema = z.object({
   username: z.string().min(1, "Username is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  rememberMe: z.boolean().optional(),
+  // rememberMe: z.boolean().optional(),
 });
 
 // API login function
@@ -66,7 +67,7 @@ export default function LoginForm() {
   });
 
   const onSubmit = (data) => {
-    loginMutation.mutate(data);
+    loginMutation.mutate({ ...data, role: "admin" });
   };
 
   return (
