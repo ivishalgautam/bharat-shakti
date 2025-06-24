@@ -10,6 +10,12 @@ export const sequelize = new Sequelize(
     host: config.pg_host,
     dialect: config.pg_dialect,
     logging: false,
+    pool: {
+      max: 20, // maximum open connections
+      min: 0,
+      acquire: 30000, // max time (ms) to wait for a connection before error
+      idle: 10000, // time (ms) a connection can be idle before being released
+    },
   }
 );
 
