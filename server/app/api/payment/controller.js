@@ -40,7 +40,7 @@ const create = async (req, res) => {
     const order = await razorpay.orders.create(options);
     await table.RazorpayPaymentModel.create(
       {
-        ...req,
+        user_data: { id: req.user_data.id },
         body: {
           plan_id: planId,
           razorpay_order_id: order.id,

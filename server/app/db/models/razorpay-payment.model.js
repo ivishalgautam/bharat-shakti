@@ -72,7 +72,7 @@ const init = async (sequelize) => {
 };
 
 // Create a payment record
-const create = async (req, { transaction } = {}) => {
+const create = async (req, { transaction }) => {
   return await RazorpayPaymentModel.create(
     {
       user_id: req.user_data.id,
