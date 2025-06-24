@@ -20,7 +20,7 @@ const getById = async (id) => {
 
 const get = async (searchParams = "") => {
   const { data } = await http().get(
-    `${endpoints.plans.getAll}?${searchParams}`
+    `${endpoints.plans.getAll}/all?${searchParams}`
   );
   return data;
 };
