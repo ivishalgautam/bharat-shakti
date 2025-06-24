@@ -15,6 +15,7 @@ export const endpoints = {
   authorities: { getAll: "/authorities" },
   tenders: { getAll: "/tenders" },
   plans: { getAll: "/plans" },
+  reports: { getAll: "/reports" },
   sectors: { getAll: "/sectors" },
   categories: { getAll: "/categories" },
   subcategories: {
