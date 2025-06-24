@@ -41,6 +41,7 @@
     "cmdk": "^1.1.1",
     "cookies-next": "^4.3.0",
     "date-fns": "^4.1.0",
+    "framer-motion": "^12.19.1",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.479.0",
     "moment": "^2.30.1",
