@@ -23,8 +23,11 @@ export default function AuthProvider({ children }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    setIsUserLoading(true);
+    let isCancelled = false;
+
     async function fetchData() {
+      if (isCancelled) return;
+      setIsUserLoading(true);
       try {
         // const user = await http().get(endpoints.profile);
         // delete user.password;
@@ -32,18 +35,33 @@ export default function AuthProvider({ children }) {
         // localStorage.setItem("user", JSON.stringify(user));
 
         const { data } = await axios.get("/api/auth/profile");
+
+        if (isCancelled) return;
+
         delete data.user.password;
         setUser(data.user);
-        localStorage.setItem("user", JSON.stringify(data.user));
+
+        if (typeof window !== "undefined") {
+          localStorage.setItem("user", JSON.stringify(data.user));
+        }
       } catch (error) {
-        localStorage.clear();
+        if (isCancelled) return;
+        if (typeof window !== "undefined") {
+          localStorage.clear();
+        }
         setUser(null);
         console.log(error);
       } finally {
-        setIsUserLoading(false);
+        if (!isCancelled) {
+          setIsUserLoading(false);
+        }
       }
     }
     fetchData();
+
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   return (
