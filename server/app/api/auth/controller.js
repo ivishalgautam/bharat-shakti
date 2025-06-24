@@ -184,9 +184,7 @@ const loginVerify = async (req, res) => {
       await table.SessionModel.deleteById(toRemove,  transaction);
     }
 
-    const session = await table.SessionModel.create(userData.id, {
-      transaction,
-    });
+    const session = await table.SessionModel.create(userData.id, transaction);
 
     const userPayload = {
       ...userData,
