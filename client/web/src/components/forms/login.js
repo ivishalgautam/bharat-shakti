@@ -43,7 +43,7 @@ export default function LoginForm({ redirectLink = "" }) {
   });
 
   async function onSubmit(data) {
-    loginMutation.mutate(data);
+    loginMutation.mutate({ ...data, role: "user" });
   }
 
   return (
