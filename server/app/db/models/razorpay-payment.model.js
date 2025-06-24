@@ -72,7 +72,8 @@ const init = async (sequelize) => {
 };
 
 // Create a payment record
-const create = async (req, { transaction }) => {
+const create = async (req, transaction = null) => {
+  const options = transaction ? { transaction } : {};
   return await RazorpayPaymentModel.create(
     {
       user_id: req.user_data.id,
@@ -83,21 +84,26 @@ const create = async (req, { transaction }) => {
       receipt: req.body.receipt,
       status: req.body.status,
     },
-    { transaction }
+    options
   );
 };
 
 // Update payment status/payment_id
-const update = async (req, razorpay_order_id, { transaction } = {}) => {
+const update = async (req, razorpay_order_id, transaction = null) => {
+  const options = {
+    where: { razorpay_order_id },
+  };
+
+  if (transaction) {
+    options.transaction = transaction;
+  }
+
   return await RazorpayPaymentModel.update(
     {
       status: req.body.status,
       razorpay_payment_id: req.body.razorpay_payment_id,
     },
-    {
-      where: { razorpay_order_id },
-      transaction,
-    }
+    options
   );
 };
 

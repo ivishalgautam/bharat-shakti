@@ -10,7 +10,6 @@ import moment from "moment";
 const status = constants.http.status;
 
 const create = async (req, res) => {
-  const transaction = await sequelize.transaction();
   try {
     const planId = req.body.plan_id;
     const planRecord = await table.PlanModel.getById(0, planId);
@@ -38,25 +37,20 @@ const create = async (req, res) => {
     };
 
     const order = await razorpay.orders.create(options);
-    await table.RazorpayPaymentModel.create(
-      {
-        user_data: { id: req.user_data.id },
-        body: {
-          plan_id: planId,
-          razorpay_order_id: order.id,
-          amount: order.amount,
-          currency: order.currency,
-          receipt: order.receipt,
-          status: order.status || "created",
-        },
+    await table.RazorpayPaymentModel.create({
+      user_data: { id: req.user_data.id },
+      body: {
+        plan_id: planId,
+        razorpay_order_id: order.id,
+        amount: order.amount,
+        currency: order.currency,
+        receipt: order.receipt,
+        status: order.status || "created",
       },
-      { transaction }
-    );
+    });
 
-    await transaction.commit();
     res.code(status.CREATED).send({ status: true, order });
   } catch (error) {
-    await transaction.rollback();
     throw error;
   }
 };
@@ -91,7 +85,7 @@ const verify = async (req, res) => {
       await table.RazorpayPaymentModel.update(
         { body: { status: "paid" } },
         paymentRecord.razorpay_order_id,
-        { transaction }
+        transaction
       );
       const planRecord = await table.PlanModel.getById(
         0,
@@ -124,7 +118,7 @@ const verify = async (req, res) => {
       await table.RazorpayPaymentModel.update(
         { body: { status: "failed" } },
         paymentRecord.razorpay_order_id,
-        { transaction }
+        transaction
       );
       return res
         .code(status.BAD_REQUEST)
