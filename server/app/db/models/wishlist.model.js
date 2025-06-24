@@ -206,11 +206,15 @@ const isTenderFollowed = async (req) => {
   return !!exists; // Converts result to true/false
 };
 
-const deleteByTenderId = async (req, id, { transaction }) => {
-  return await WishlistModel.destroy({
-    where: { tender_id: req.params.id || id },
-    transaction,
-  });
+const deleteByTenderId = async (req, id, transaction = null) => {
+  const options = {
+    where: { tender_id: req?.params?.id || id },
+  };
+  if (transaction) {
+    options.transaction = transaction;
+  }
+
+  return await WishlistModel.destroy(options);
 };
 
 const getExpiringTendersWithUsers = async () => {

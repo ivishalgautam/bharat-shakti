@@ -47,19 +47,15 @@ const get = async (req, res) => {
 };
 
 const deleteById = async (req, res) => {
-  const transaction = await sequelize.transaction();
   try {
     const record = await table.WishlistModel.getByUserAndTenderId(req);
     if (!record)
       return res.code(409).send({ status: false, message: "Not found!" });
-
-    await table.WishlistModel.deleteByTenderId(req, 0, { transaction });
-    await transaction.commit();
+    await table.WishlistModel.deleteByTenderId(0, record.id);
     res
       .code(status.CREATED)
       .send({ status: true, message: "Unfollowed successfully." });
   } catch (error) {
-    await transaction.rollback();
     throw error;
   }
 };
