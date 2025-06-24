@@ -51,7 +51,7 @@ const deleteById = async (req, res) => {
     const record = await table.WishlistModel.getByUserAndTenderId(req);
     if (!record)
       return res.code(409).send({ status: false, message: "Not found!" });
-    await table.WishlistModel.deleteByTenderId(0, record.id);
+    await table.WishlistModel.deleteById(0, record.id);
     res
       .code(status.CREATED)
       .send({ status: true, message: "Unfollowed successfully." });

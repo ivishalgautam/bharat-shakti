@@ -217,6 +217,17 @@ const deleteByTenderId = async (req, id, transaction = null) => {
   return await WishlistModel.destroy(options);
 };
 
+const deleteById = async (req, id, transaction = null) => {
+  const options = {
+    where: { id: req?.params?.id || id },
+  };
+  if (transaction) {
+    options.transaction = transaction;
+  }
+
+  return await WishlistModel.destroy(options);
+};
+
 const getExpiringTendersWithUsers = async () => {
   const now = moment();
   const fiveDaysLaterAt5PM = moment()
@@ -254,6 +265,7 @@ export default {
   get: get,
   getByUserAndTenderId: getByUserAndTenderId,
   deleteByTenderId: deleteByTenderId,
+  deleteById: deleteById,
   isTenderFollowed: isTenderFollowed,
   getExpiringTendersWithUsers: getExpiringTendersWithUsers,
 };
