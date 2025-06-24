@@ -277,9 +277,9 @@ const update = async (req, id, { transaction = null }) => {
   return rows;
 };
 
-const incrementViewCount = async (id, transaction) => {
+const incrementViewCount = async (id, count = 1, transaction) => {
   return await TenderModel.increment("view_count", {
-    by: 1,
+    by: count,
     where: { id },
     ...(transaction && { transaction }),
   });
@@ -390,7 +390,6 @@ const get = async (req) => {
   const featured = req.query.featured;
   if (featured) {
     whereConditions.push(`tdr.is_featured = true`);
-    
   }
 
   const page = req.query.page ? Number(req.query.page) : 1;

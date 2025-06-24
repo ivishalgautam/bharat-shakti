@@ -20,6 +20,7 @@ import routes from "./app/routes/v1/index.js";
 import publicRoutes from "./app/routes/v1/public.js";
 import waffly from "./app/services/waffly.js";
 import { ErrorHandler } from "./app/utils/error-handler.js";
+import viewCount from "./app/cron/view-count.js";
 
 export default async function server(app) {
   app.setErrorHandler(ErrorHandler);
@@ -56,7 +57,7 @@ export default async function server(app) {
   app.register(authRoutes, { prefix: "v1/auth" });
   app.register(uploadFileRoutes, { prefix: "v1/upload" });
   app.register(fastifyCron, {
-    jobs: [freezeJob, closingTenderReminder],
+    jobs: [freezeJob, closingTenderReminder, viewCount],
   });
 
   app.post("/testing", {}, async (req, res) => {

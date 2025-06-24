@@ -13,6 +13,7 @@ import util from "util";
 import xlsx from "xlsx";
 import { pipeline } from "stream";
 import { fileURLToPath } from "url";
+import { viewCounter } from "../../store/store.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const pump = util.promisify(pipeline);
@@ -226,14 +227,10 @@ const getBySlug = async (req, res) => {
 };
 
 const addView = async (req, res) => {
-  const transaction = await sequelize.transaction();
   try {
-    const record = await table.TenderModel.getById(req);
-    if (!record) {
-      return res.code(404).send({ status: false });
-    }
-    await table.TenderModel.incrementViewCount(record.id);
-
+    const id = req.params.id;
+    const current = viewCounter.get(id) || 0;
+    viewCounter.set(id, current + 1);
     res.send({ status: true });
   } catch (err) {
     throw err;

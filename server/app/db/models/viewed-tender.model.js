@@ -46,13 +46,14 @@ const init = async (sequelize) => {
   await ViewedTenderModel.sync({ alter: true });
 };
 
-const create = async (req, { transaction }) => {
+const create = async (req, transaction) => {
+  const options = transaction ? { transaction } : {};
   return await ViewedTenderModel.create(
     {
       user_id: req.user_data.id,
       tender_id: req.body.tender_id,
     },
-    { transaction }
+    options
   );
 };
 
