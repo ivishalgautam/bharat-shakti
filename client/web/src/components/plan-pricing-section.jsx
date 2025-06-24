@@ -51,6 +51,7 @@ export default function PricingSection() {
   const createOrderMutation = useMutation({
     mutationFn: (planData) => payments.create(planData),
     onSuccess: ({ order }) => {
+      console.log({ order });
       handleRazorpayPayment(order);
     },
     onError: (error) => {
