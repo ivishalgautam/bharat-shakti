@@ -32,6 +32,10 @@ const verifyUserCredentials = async (req, res) => {
           .send({ message: "User with that username does not exist" });
       }
 
+      if (userData.role !== req.body.role) {
+        return res.code(404).send({ message: "User not exist" });
+      }
+
       // 🚨 If user registered via social, tell them to use social login
       if (userData.provider && userData.provider !== "credentials") {
         return res.code(400).send({
