@@ -2,6 +2,7 @@ import Layout from "@/components/layout";
 import ThemeProvider from "@/providers/theme-provider";
 import { Instrument_Sans } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/toaster";
 
 const InstrumentSans = Instrument_Sans({
   weight: ["400", "500", "600", "700"],
@@ -34,6 +35,7 @@ export default function RootLayout({ children }) {
           disableTransitionOnChange
         >
           <Layout>{children}</Layout>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

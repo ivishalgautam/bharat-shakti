@@ -5,7 +5,6 @@ import axios from "axios";
 import { AtSign, KeyRound, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -19,6 +18,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { toast } from "@/hooks/use-toast";
 
 // Form validation schema
 const loginSchema = z.object({
@@ -54,15 +54,18 @@ export default function LoginForm() {
   const loginMutation = useMutation({
     mutationFn: loginUser,
     onSuccess: () => {
-      toast.success("Login successful!");
+      toast({ title: "Success", description: "Login successful!" });
       router.replace("/dashboard");
     },
     onError: (error) => {
-      toast.error(
-        error?.response?.data?.message ??
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description:
+          error?.response?.data?.message ??
           error?.message ??
-          "Login failed. Please check your credentials."
-      );
+          "Login failed. Please check your credentials.",
+      });
     },
   });
 

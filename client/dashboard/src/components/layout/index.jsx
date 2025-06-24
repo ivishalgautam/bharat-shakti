@@ -7,7 +7,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { AppSidebar } from "../app-sidebar";
 import { Button } from "../ui/button";
 import { SidebarProvider, SidebarTrigger } from "../ui/sidebar";
-import { Toaster } from "../ui/toaster";
 
 export default function Layout({ children }) {
   const pathname = usePathname();
@@ -37,7 +36,6 @@ export default function Layout({ children }) {
                 </Button>
                 {children}
               </div>
-              <Toaster />
             </main>
           </SidebarProvider>
         </RoleContext>
