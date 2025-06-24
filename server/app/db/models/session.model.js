@@ -35,22 +35,32 @@ const init = async (sequelize) => {
   await UserSession.sync({ alter: true });
 };
 
-const create = async (user_id, { transaction }) => {
+const create = async (user_id, transaction = null) => {
+  const options = { returning: true };
+  if (transaction) {
+    options.transaction = transaction;
+  }
+
   const data = await UserSession.create(
     {
       user_id: user_id,
     },
-    { returning: true, transaction }
+    options
   );
 
   return data.dataValues;
 };
 
-const deleteById = async (id, { transaction }) => {
-  return await UserSession.destroy({
+const deleteById = async (id, transaction = null) => {
+  const options = {
     where: { id: id },
-    transaction,
-  });
+  };
+
+  if (transaction) {
+    options.transaction = transaction;
+  }
+
+  return await UserSession.destroy(options);
 };
 
 const getByUserId = async (user_id) => {

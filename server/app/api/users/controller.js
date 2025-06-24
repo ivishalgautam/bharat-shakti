@@ -32,7 +32,7 @@ const update = async (req, res) => {
       return res.code(404).send({ message: "User not exists" });
     }
 
-    return res.send(await table.UserModel.update(req, 0, { transaction }));
+    return res.send(await table.UserModel.update(req, 0, transaction));
   } catch (error) {
     console.error(error);
     return res.send(error);

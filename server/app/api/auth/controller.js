@@ -18,10 +18,8 @@ import waffly from "../../services/waffly.js";
 
 const verifyUserCredentials = async (req, res) => {
   const { username, password, provider, provider_account_id, email } = req.body;
-
   let userData = null;
-
-  const transaction = await sequelize.transaction();
+  let transaction = null;
   try {
     if (username && password) {
       userData = await table.UserModel.getByUsername(req);
@@ -51,6 +49,7 @@ const verifyUserCredentials = async (req, res) => {
       }
     } else if (provider && provider_account_id && email) {
       userData = await table.UserModel.getByEmailId(req);
+      transaction = await sequelize.transaction();
       if (!userData) {
         userData = await table.UserModel.create(req, { transaction });
         const freePlan = await table.PlanModel.getByFreePlan();
@@ -79,9 +78,12 @@ const verifyUserCredentials = async (req, res) => {
           await table.UserModel.update(
             { body: { provider, provider_account_id } },
             userData.id,
-            { transaction }
+            transaction
           );
         }
+      }
+      if (transaction) {
+        await transaction.commit();
       }
     } else {
       return res.code(400).send({ message: "Invalid login request." });
@@ -91,16 +93,14 @@ const verifyUserCredentials = async (req, res) => {
       userData.id
     );
     const allowedSessions =
-      constants.plan_limits[planTier?.plan_tier ?? "free"];
+      constants.plan_limits[planTier?.plan_tier ?? "unsubscribed"];
     const sessions = await table.SessionModel.getByUserId(userData.id);
     if (sessions.length >= allowedSessions) {
       const toRemove = sessions[0].id;
-      await table.SessionModel.deleteById(toRemove, { transaction });
+      await table.SessionModel.deleteById(toRemove);
     }
 
-    const session = await table.SessionModel.create(userData.id, {
-      transaction,
-    });
+    const session = await table.SessionModel.create(userData.id);
 
     const userPayload = {
       ...userData,
@@ -111,7 +111,6 @@ const verifyUserCredentials = async (req, res) => {
     const [refreshToken, refreshExpireTime] =
       authToken.generateRefreshToken(userPayload);
 
-    await transaction.commit();
     return res.send({
       token: jwtToken,
       expire_time: Date.now() + expiresIn,
@@ -120,7 +119,9 @@ const verifyUserCredentials = async (req, res) => {
       user_data: userData,
     });
   } catch (error) {
-    await transaction.rollback();
+    if (transaction) {
+      await transaction.rollback();
+    }
     console.log(error);
     throw error;
   }

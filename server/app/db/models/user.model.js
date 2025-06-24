@@ -231,7 +231,31 @@ const isEmailExist = async (email) => {
   return !!user;
 };
 
-const update = async (req, id, { transaction }) => {
+const update = async (req, id, transaction = null) => {
+  const options = {
+    where: {
+      id: req.params?.id || id,
+    },
+    returning: [
+      "id",
+      "username",
+      "email",
+      "first_name",
+      "last_name",
+      "blocked",
+      "role",
+      "mobile_number",
+      "is_verified",
+      "image_url",
+    ],
+    plain: true,
+    transaction,
+  };
+
+  if (transaction) {
+    options.transaction = transaction;
+  }
+
   return await UserModel.update(
     {
       email: req.body?.email,
@@ -243,25 +267,7 @@ const update = async (req, id, { transaction }) => {
       is_active: req.body?.is_active,
       is_verified: req.body?.is_verified,
     },
-    {
-      where: {
-        id: req.params?.id || id,
-      },
-      returning: [
-        "id",
-        "username",
-        "email",
-        "first_name",
-        "last_name",
-        "blocked",
-        "role",
-        "mobile_number",
-        "is_verified",
-        "image_url",
-      ],
-      plain: true,
-      transaction,
-    }
+    options
   );
 };
 
