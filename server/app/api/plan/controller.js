@@ -70,6 +70,15 @@ const get = async (req, res) => {
   }
 };
 
+const getAll = async (req, res) => {
+  try {
+    const data = await table.PlanModel.getAll(req);
+    res.code(status.OK).send({ status: true, data });
+  } catch (error) {
+    throw error;
+  }
+};
+
 const getById = async (req, res) => {
   try {
     const record = await table.PlanModel.getById(req);
@@ -89,5 +98,6 @@ export default {
   update: update,
   deleteById: deleteById,
   get: get,
+  getAll: getAll,
   getById: getById,
 };

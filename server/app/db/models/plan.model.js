@@ -156,6 +156,61 @@ const get = async (req) => {
   return { plans: data, total: count?.[0]?.total ?? 0 };
 };
 
+const getAll = async (req) => {
+  let whereConditions = [];
+  const queryParams = {};
+  let q = req.query.q;
+  if (q) {
+    whereConditions.push(`pln.name ILIKE :query`);
+    queryParams.query = `%${q}%`;
+  }
+
+  const popular = req.query.popular;
+  if (popular) {
+    whereConditions.push(`pln.is_popular = true`);
+  }
+
+  const page = req.query.page ? Number(req.query.page) : 1;
+  const limit = req.query.limit ? Number(req.query.limit) : null;
+  const offset = (page - 1) * limit;
+
+  let whereClause = "";
+  if (whereConditions.length > 0) {
+    whereClause = "WHERE " + whereConditions.join(" AND ");
+  }
+
+  let countQuery = `
+  SELECT
+      COUNT(pln.id) OVER()::integer as total
+    FROM ${constants.models.PLAN_TABLE} pln
+    ${whereClause}
+    ORDER BY pln.created_at DESC
+  `;
+
+  let query = `
+  SELECT
+      pln.*
+    FROM ${constants.models.PLAN_TABLE} pln
+    ${whereClause}
+    ORDER BY pln.created_at DESC
+    LIMIT :limit OFFSET :offset
+  `;
+
+  const data = await PlanModel.sequelize.query(query, {
+    replacements: { ...queryParams, limit, offset },
+    type: QueryTypes.SELECT,
+    raw: true,
+  });
+
+  const count = await PlanModel.sequelize.query(countQuery, {
+    replacements: { ...queryParams },
+    type: QueryTypes.SELECT,
+    raw: true,
+  });
+
+  return { plans: data, total: count?.[0]?.total ?? 0 };
+};
+
 const getById = async (req, id) => {
   return await PlanModel.findOne({
     where: {
@@ -187,4 +242,5 @@ export default {
   deleteById: deleteById,
   updateById: updateById,
   getByFreePlan: getByFreePlan,
+  getAll: getAll,
 };
