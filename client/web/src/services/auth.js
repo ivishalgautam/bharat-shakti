@@ -41,9 +41,9 @@ const registerVerify = async (data) => {
 const auth = {
   login: login,
   loginRequest: loginRequest,
+  loginVerify: loginVerify,
   registerRequest: registerRequest,
   registerVerify: registerVerify,
-  loginVerify: loginVerify,
 };
 
 export default auth;

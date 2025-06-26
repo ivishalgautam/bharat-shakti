@@ -223,12 +223,6 @@ export default function LoginWithOtp() {
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
           Login With OTP
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          {"Already have an account? "}
-          <Link href={`/login`} className={"font-medium text-primary"}>
-            Login
-          </Link>
-        </p>
       </div>
       <form onSubmit={handleSubmit(onSubmit)}>
         {/* Mobile Number */}
