@@ -177,16 +177,14 @@ const loginVerify = async (req, res) => {
       userData.id
     );
     const allowedSessions =
-      constants.plan_limits[planTier?.plan_tier ?? "free"];
+      constants.plan_limits[planTier?.plan_tier ?? "unsubscribed"];
     const sessions = await table.SessionModel.getByUserId(userData.id);
     if (sessions.length >= allowedSessions) {
       const toRemove = sessions[0].id;
-      await table.SessionModel.deleteById(toRemove, { transaction });
+      await table.SessionModel.deleteById(toRemove,  transaction);
     }
 
-    const session = await table.SessionModel.create(userData.id, {
-      transaction,
-    });
+    const session = await table.SessionModel.create(userData.id, transaction);
 
     const userPayload = {
       ...userData,
