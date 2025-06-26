@@ -140,6 +140,45 @@ const init = async (sequelize) => {
     {
       createdAt: "created_at",
       updatedAt: "updated_at",
+      indexes: [
+        {
+          fields: ["slug"],
+          unique: true,
+        },
+        {
+          fields: ["bid_number"],
+        },
+        {
+          fields: ["organisation"],
+        },
+        {
+          fields: ["keywords"],
+        },
+        {
+          fields: ["subcategory_ids"],
+        },
+        {
+          fields: ["authority_ids"],
+        },
+        {
+          fields: ["industry_ids"],
+        },
+        {
+          fields: ["sector_ids"],
+        },
+        {
+          fields: ["state_id"],
+        },
+        {
+          fields: ["city_id"],
+        },
+        {
+          fields: ["bid_end_date_time"],
+        },
+        {
+          fields: ["tender_value"],
+        },
+      ],
     }
   );
 
