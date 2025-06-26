@@ -218,12 +218,8 @@ export default function PricingSection() {
             </p>
           </div>
 
-          <Tabs
-            defaultValue="3"
-            className="w-full max-w-3xl"
-            onValueChange={setDuration}
-          >
-            <TabsList className="grid w-full grid-cols-3 border border-primary/30 bg-primary/5">
+          <Tabs defaultValue="3" className="w-full" onValueChange={setDuration}>
+            <TabsList className="mx-auto grid w-full max-w-3xl grid-cols-3 border border-primary/30 bg-primary/5">
               {["3", "6", "12"].map((month) => (
                 <TabsTrigger
                   className="text-black data-[state=active]:bg-primary data-[state=active]:text-white"
@@ -235,7 +231,7 @@ export default function PricingSection() {
               ))}
             </TabsList>
 
-            <div className="mt-8 grid min-h-96 gap-6 md:grid-cols-2">
+            <div className="mt-8 grid min-h-96 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {getPlans(duration).map((plan) => (
                 <Card
                   key={plan.id}

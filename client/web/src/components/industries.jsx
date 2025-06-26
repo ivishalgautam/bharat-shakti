@@ -1,7 +1,7 @@
 "use client";
 import industries from "@/services/industries";
 import { useQuery } from "@tanstack/react-query";
-import IndustryCard from "./cards/keyword";
+import IndustryCard from "./cards/industry";
 import ErrorMessage from "./ui/error";
 import { Skeleton } from "./ui/skeleton";
 

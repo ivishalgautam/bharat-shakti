@@ -26,12 +26,12 @@ export default function StateCard({ state }) {
           size="sm"
           type="button"
           variant="outline"
-          className="h-8 border-none bg-transparent"
-          // effect="expandIcon"
-          // icon={ArrowRight}
-          // iconPlacement="right"
+          className="mt-2 h-8 border-none bg-transparent"
+          effect="expandIcon"
+          icon={ArrowRight}
+          iconPlacement="right"
         >
-          View tenders <ArrowRight />
+          View tenders
         </Button>
       </div>
     </Link>

@@ -3,7 +3,7 @@ import industries from "@/services/industries";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import IndustryCard from "./cards/keyword";
+import IndustryCard from "./cards/industry";
 import Section from "./layout/section";
 import SectionHeading from "./layout/section-heading";
 import { Button } from "./ui/button";
@@ -24,7 +24,7 @@ export default function ExploreByIndustries() {
       <div className="container">
         <div className="flex flex-col items-center gap-4">
           <SectionHeading heading="Explore by Industries" />
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6">
             {isLoading
               ? Array.from({ length: 12 }).map((_, i) => (
                   <Skeleton key={i} className={"h-32 w-44 bg-gray-200"} />

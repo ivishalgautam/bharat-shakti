@@ -10,8 +10,24 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { parseAsString, useQueryState } from "nuqs";
 import { useMemo } from "react";
 import { FilterBox } from "./tenders/filter-box";
+import { ImagesSlider } from "./images-slider";
+
+import railways from "../../public/banners/indian-railway.webp";
+import defense from "../../public/banners/indian-defense.webp";
+import construction from "../../public/banners/construction.webp";
+import healthcare from "../../public/banners/healthcare.webp";
+import mining from "../../public/banners/mining.webp";
+import itServices from "../../public/banners/it-services.webp";
 
 export function Hero() {
+  const banners = [
+    railways,
+    defense,
+    construction,
+    healthcare,
+    mining,
+    itServices,
+  ];
   const { data: authoritiesData } = useGetAuthorities();
   const formattedAuthorities = useFormattedOptions(authoritiesData);
   const { data: statesData } = useGetStates();
@@ -43,94 +59,100 @@ export function Hero() {
   };
 
   return (
-    <div className="relative flex min-h-[90vh] flex-col items-center justify-center bg-gradient-to-r from-slate-900 to-slate-800">
+    <div className="relative flex flex-col items-center justify-center lg:h-[87vh]">
       {/* Hero Background */}
-      <div className="relative overflow-hidden rounded-xl">
-        <div className="mx-auto max-w-7xl px-6 py-16 md:px-12 md:py-24 lg:px-16">
-          <div className="grid items-center gap-8 md:grid-cols-12">
-            <div className="space-y-6 md:col-span-5 lg:col-span-4">
-              <div className="ms:text-sm inline-block text-nowrap rounded-full bg-primary/20 px-4 py-1 text-xs font-medium text-primary">
-                {"India's Leading Tender Search Platform"}
+      <ImagesSlider
+        images={banners}
+        direction="down"
+        overlayClassName={"bg-black/70"}
+      >
+        <div className="relative z-[999999] overflow-hidden rounded-xl">
+          <div className="mx-auto max-w-7xl px-6 py-16 md:px-12 md:py-24 lg:px-16">
+            <div className="grid items-center gap-8 md:grid-cols-12">
+              <div className="space-y-6 md:col-span-5 lg:col-span-4">
+                <div className="ms:text-sm inline-block text-nowrap rounded-full bg-primary px-4 py-1 text-xs font-medium text-white">
+                  {"India's Leading Tender Search Platform"}
+                </div>
+                <h1 className="text-3xl font-semibold leading-tight text-white md:text-4xl">
+                  The Smarter Way to Find & Bid on Tenders
+                </h1>
+                <p className="text-sm text-slate-200">
+                  Our advanced search platform helps businesses find relevant
+                  tender opportunities across government and private sectors
+                  worldwide.
+                </p>
               </div>
-              <h1 className="text-3xl font-semibold leading-tight text-white md:text-4xl">
-                The Smarter Way to Find & Bid on Tenders
-              </h1>
-              <p className="text-slate-300">
-                Our advanced search platform helps businesses find relevant
-                tender opportunities across government and private sectors
-                worldwide.
-              </p>
-            </div>
-            <div className="space-y-2 md:col-span-7 lg:col-span-8">
-              <div className="col-span-8 rounded-xl bg-white/10 p-6 shadow-xl backdrop-blur-sm">
-                <h2 className="mb-4 text-xl font-semibold text-white">
-                  Search Tenders
-                </h2>
-
-                <div className="space-y-4">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
-                    <Input
-                      placeholder="Search by keyword, tender ID or description"
-                      className="border-slate-700 bg-white/5 pl-10 text-white placeholder:text-slate-400"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                    <div className="relative">
-                      <FilterBox
-                        filterKey={"authorities"}
-                        options={formattedAuthorities}
-                        filterValue={authorities}
-                        setFilterValue={setAuthorities}
-                        title={"Authorities"}
-                      />
-                    </div>
-
-                    <div className="relative">
-                      <FilterBox
-                        filterKey={"states"}
-                        options={formattedStates}
-                        filterValue={states}
-                        setFilterValue={setStates}
-                        title={"States"}
-                      />
-                    </div>
-                  </div>
-
-                  <Button className="w-full" onClick={handleSearch}>
+              <div className="space-y-2 md:col-span-7 lg:col-span-8">
+                <div className="col-span-8 rounded-xl border border-gray-600 bg-gray-500/20 p-6 shadow-xl backdrop-blur-xl">
+                  <h2 className="mb-4 text-xl font-semibold text-white">
                     Search Tenders
-                  </Button>
-                </div>
-              </div>
-              <div className="flex flex-wrap gap-4 pt-2">
-                <div className="flex items-center gap-2 text-white">
-                  <div className="rounded-full bg-primary/20 p-1.5">
-                    <Search className="h-4 w-4 text-primary" />
-                  </div>
-                  <span className="text-sm">10,000+ Tenders</span>
-                </div>
+                  </h2>
 
-                <div className="flex items-center gap-2 text-white">
-                  <div className="rounded-full bg-primary/20 p-1.5">
-                    <Building2 className="h-4 w-4 text-primary" />
-                  </div>
-                  <span className="text-sm">All Industries</span>
-                </div>
+                  <div className="space-y-4">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
+                      <Input
+                        placeholder="Search by keyword, tender ID or description"
+                        className="border-gray-600 bg-white/5 pl-10 text-white placeholder:text-slate-400"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                    </div>
 
-                <div className="flex items-center gap-2 text-white">
-                  <div className="rounded-full bg-primary/20 p-1.5">
-                    <Handshake className="h-4 w-4 text-primary" />
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                      <div className="relative">
+                        <FilterBox
+                          filterKey={"authorities"}
+                          options={formattedAuthorities}
+                          filterValue={authorities}
+                          setFilterValue={setAuthorities}
+                          title={"Authorities"}
+                        />
+                      </div>
+
+                      <div className="relative">
+                        <FilterBox
+                          filterKey={"states"}
+                          options={formattedStates}
+                          filterValue={states}
+                          setFilterValue={setStates}
+                          title={"States"}
+                        />
+                      </div>
+                    </div>
+
+                    <Button className="w-full" onClick={handleSearch}>
+                      Search Tenders
+                    </Button>
                   </div>
-                  <span className="text-sm">Post-Bid Support</span>
+                </div>
+                <div className="flex flex-wrap gap-4 pt-2">
+                  <div className="flex items-center gap-2 text-white">
+                    <div className="rounded-full bg-primary p-1.5">
+                      <Search className="h-4 w-4 text-white" />
+                    </div>
+                    <span className="text-sm">10,000+ Tenders</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-white">
+                    <div className="rounded-full bg-primary p-1.5">
+                      <Building2 className="h-4 w-4 text-white" />
+                    </div>
+                    <span className="text-sm">All Industries</span>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-white">
+                    <div className="rounded-full bg-primary p-1.5">
+                      <Handshake className="h-4 w-4 text-white" />
+                    </div>
+                    <span className="text-sm">Post-Bid Support</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </ImagesSlider>
     </div>
   );
 }
