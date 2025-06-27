@@ -17,7 +17,8 @@ import { sendOtp } from "../../services/otp-sender.js";
 import waffly from "../../services/waffly.js";
 
 const verifyUserCredentials = async (req, res) => {
-  const { username, password, provider, provider_account_id, email } = req.body;
+  const { username, password, provider, provider_account_id, email, role } =
+    req.body;
   let userData = null;
   let transaction = null;
   try {
@@ -30,7 +31,7 @@ const verifyUserCredentials = async (req, res) => {
           .send({ message: "User with that username does not exist" });
       }
 
-      if (userData.role !== req.body.role) {
+      if (userData.role !== role) {
         return res.code(404).send({ message: "User not exist" });
       }
 
@@ -45,6 +46,22 @@ const verifyUserCredentials = async (req, res) => {
       if (!passwordIsValid) {
         return res.code(401).send({
           message: "Invalid Credentials.",
+        });
+      }
+
+      if (role === "admin") {
+        const otp = otpGenerator();
+        const otpRecord = await table.OTPModel.create({
+          mobile_number: userData.mobile_number,
+          otp,
+          type: "login",
+          user_id: userData.id,
+        });
+        await sendOtp({ phone: req.body.mobile_number, otp });
+        return res.send({
+          status: true,
+          message: "OTP Sent.",
+          request_id: otpRecord.id,
         });
       }
     } else if (provider && provider_account_id && email) {
@@ -92,6 +109,7 @@ const verifyUserCredentials = async (req, res) => {
     const planTier = await table.SubscriptionModel.getLastActivePlanByUserId(
       userData.id
     );
+
     const allowedSessions =
       constants.plan_limits[planTier?.plan_tier ?? "unsubscribed"];
     const sessions = await table.SessionModel.getByUserId(userData.id);
@@ -181,7 +199,7 @@ const loginVerify = async (req, res) => {
     const sessions = await table.SessionModel.getByUserId(userData.id);
     if (sessions.length >= allowedSessions) {
       const toRemove = sessions[0].id;
-      await table.SessionModel.deleteById(toRemove,  transaction);
+      await table.SessionModel.deleteById(toRemove, transaction);
     }
 
     const session = await table.SessionModel.create(userData.id, transaction);

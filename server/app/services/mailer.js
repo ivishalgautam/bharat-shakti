@@ -2,15 +2,16 @@ import nodemailer from "nodemailer";
 import path from "path";
 import fs from "fs";
 import ejs from "ejs";
+import config from "../config/index.js";
 
 // Create transporter using Brevo SMTP
 const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
+  host: config.smtp_host,
+  port: config.smtp_port,
   secure: false,
   auth: {
-    user: "8fdb80001@smtp-brevo.com",
-    pass: "8Z4HVdNgtwshnb9v",
+    user: config.smtp_user,
+    pass: config.smtp_password,
   },
 });
 
