@@ -50,6 +50,7 @@ import { Skeleton } from "./ui/skeleton";
 import { H3, Small } from "./ui/typography";
 
 export default function TenderDetails({ data }) {
+  // console.log({ data });
   const [activeTab, setActiveTab] = useState("overview");
   const queryClient = useQueryClient();
   const { user, isUserLoading } = useContext(AuthContext);
@@ -485,6 +486,21 @@ export default function TenderDetails({ data }) {
                           <p>
                             {tenderData.pre_qualification_criteria
                               ? tenderData.pre_qualification_criteria
+                              : "N/a"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <Separator className="bg-indigo-100" />
+
+                      <div>
+                        <h3 className="mb-3 text-lg font-semibold text-primary">
+                          Tender Items
+                        </h3>
+                        <div className={cn("rounded-lg bg-primary/5 p-4")}>
+                          <p>
+                            {tenderData.item_gem_arpts
+                              ? tenderData.item_gem_arpts
                               : "N/a"}
                           </p>
                         </div>
