@@ -61,7 +61,7 @@ export default async function server(app) {
     jobs: [freezeJob, closingTenderReminder, viewCount],
   });
 
-  app.post("/testing", {}, async (req, res) => {
-    await Brevo.sendSimpleEmail();
-  });
+  // app.post("/testing", {}, async (req, res) => {
+  //   await Brevo.sendSimpleEmail();
+  // });
 }
