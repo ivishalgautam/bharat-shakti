@@ -6,17 +6,14 @@ import { usePathname } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next";
 import Footer from "../footer";
 import Header from "../header";
+import { publicRoutes } from "@/data/routes";
 
 export default function Layout({ children }) {
   const pathname = usePathname();
 
   const getContent = () => {
     // Array of all the paths that don't need the layout
-    if (
-      ["/login", "/register", "/unauthorized", "/login-with-otp"].includes(
-        pathname,
-      )
-    ) {
+    if (publicRoutes.includes(pathname)) {
       return children;
     }
 

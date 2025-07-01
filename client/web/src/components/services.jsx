@@ -47,6 +47,7 @@ export default function Services() {
               heading="Services"
               headingClassNames="text-white"
               subheading="Comprehensive tender solutions to help you win more bids"
+              subHeadingClassNames="text-gray-200"
             />
           </div>
 

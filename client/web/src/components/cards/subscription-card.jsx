@@ -36,6 +36,7 @@ export default function SubscriptionCard({ subscription }) {
             variant={
               subscription.status === "active" ? "default" : "destructive"
             }
+            className={"capitalize"}
           >
             {subscription.status}
           </Badge>

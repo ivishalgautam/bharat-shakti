@@ -5,16 +5,16 @@ export default function Logo() {
   return (
     <Link
       href="/"
-      className="flex aspect-video w-36 items-center justify-center"
+      className="flex aspect-video w-44 items-center justify-center"
     >
       <figure>
         <Image
           src={"/logo.png"}
-          width={200}
-          height={200}
+          width={1000}
+          height={1000}
           alt="Bharat Shakti"
           className="rounded object-contain object-center"
-          quality={80}
+          quality={100}
           priority
         />
       </figure>

@@ -13,6 +13,23 @@ import { navItems } from "./header";
 import LogoWhite from "./logo-white";
 
 export default function Footer() {
+  // Flatten navigation items to include subitems
+  const flattenNavItems = () => {
+    const flattened = [];
+    navItems.forEach((item) => {
+      if (item.subItems) {
+        // Add subitems instead of parent item
+        item.subItems.forEach((subItem) => {
+          flattened.push(subItem);
+        });
+      } else {
+        // Add regular item
+        flattened.push(item);
+      }
+    });
+    return flattened;
+  };
+
   return (
     <footer className="border-t bg-slate-900 text-slate-200">
       <div className="container px-4 py-12 md:px-6 md:py-16 lg:py-20">
@@ -45,12 +62,34 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               {navItems.map((nav, ind) => (
                 <li key={ind}>
-                  <Link
-                    href={nav.href}
-                    className="text-slate-400 hover:text-white"
-                  >
-                    {nav.label}
-                  </Link>
+                  {nav.subItems ? (
+                    // If item has subitems, show them with parent as header
+                    <div className="space-y-2">
+                      <div className="font-medium text-slate-300">
+                        {nav.label}
+                      </div>
+                      <ul className="ml-2 space-y-1">
+                        {nav.subItems.map((subItem, subInd) => (
+                          <li key={subInd}>
+                            <Link
+                              href={subItem.href}
+                              className="text-slate-400 hover:text-white"
+                            >
+                              {subItem.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : (
+                    // Regular nav item
+                    <Link
+                      href={nav.href}
+                      className="text-slate-400 hover:text-white"
+                    >
+                      {nav.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

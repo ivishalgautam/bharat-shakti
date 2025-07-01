@@ -5,12 +5,13 @@ export default function SectionHeading({
   heading = "",
   subheading = "",
   headingClassNames = "",
+  subHeadingClassNames = "",
 }) {
   return (
     <div className="flex flex-col items-center">
       <h2
         className={cn(
-          "text-center font-serif text-2xl font-bold text-gray-800",
+          "text-center text-2xl font-bold text-gray-800",
           headingClassNames,
         )}
       >
@@ -21,7 +22,9 @@ export default function SectionHeading({
         <div className="h-1.5 w-1.5 rounded-full bg-primary"></div>
         <div className="h-px w-8 bg-primary"></div>
       </div>
-      <Muted className={"text-balance"}>{subheading}</Muted>
+      <Muted className={cn("text-balance", subHeadingClassNames)}>
+        {subheading}
+      </Muted>
     </div>
   );
 }

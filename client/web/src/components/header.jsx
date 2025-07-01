@@ -2,7 +2,7 @@
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
-import { Menu } from "lucide-react";
+import { Menu, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Logo from "./logo";
@@ -15,6 +15,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import { Skeleton } from "./ui/skeleton";
 import UserDropdown from "./user-dropdown";
 import { motion } from "framer-motion";
@@ -22,24 +28,19 @@ import { usePathname } from "next/navigation";
 
 export const navItems = [
   {
-    label: "Home",
-    href: "/",
-  },
-  {
-    label: "Tenders",
+    label: "Live Tenders",
     href: "/tenders",
   },
   {
-    label: "About",
-    href: "/about",
-  },
-  {
-    label: "Contact",
-    href: "/contact",
-  },
-  {
-    label: "Pricing",
+    label: "Go Premium",
     href: "/pricing",
+  },
+  {
+    label: "About",
+    subItems: [
+      { label: "Who we are", href: "/about" },
+      { label: "Get in touch", href: "/contact" },
+    ],
   },
 ];
 
@@ -70,19 +71,29 @@ export default function Header() {
             <div className="hidden space-x-2 lg:block">
               <Link
                 href="/login"
-                className={buttonVariants({
-                  variant: "outline",
-                  effect: "shineHover",
-                  size: "sm",
-                })}
+                className={cn(
+                  buttonVariants({
+                    variant: "ghost",
+                    effect: "shineHover",
+                    size: "sm",
+                  }),
+                  "hover:bg-secondary",
+                )}
               >
-                Log In
+                Sign In
               </Link>
               <Link
                 href="/register"
-                className={buttonVariants({ effect: "shineHover", size: "sm" })}
+                className={cn(
+                  buttonVariants({
+                    effect: "gooeyRight",
+                    size: "sm",
+                    variant: "outline",
+                  }),
+                  "border-2 border-secondary bg-transparent text-secondary hover:bg-secondary",
+                )}
               >
-                Register
+                Join for Free
               </Link>
             </div>
           )}
@@ -110,14 +121,33 @@ export default function Header() {
                   </SheetHeader>
                   <div className="my-4 flex flex-col gap-0">
                     {navItems.map((menu, idx) => (
-                      <Link
-                        key={idx}
-                        href={menu.href}
-                        className="inline-block rounded-lg px-4 py-2 text-lg hover:bg-primary hover:text-white"
-                        onClick={() => setIsSheetOpen(false)}
-                      >
-                        {menu.label}
-                      </Link>
+                      <div key={idx}>
+                        {menu.subItems ? (
+                          <div className="flex flex-col">
+                            <div className="inline-block rounded-lg px-4 py-2 text-lg font-medium text-gray-700">
+                              {menu.label}
+                            </div>
+                            {menu.subItems.map((subItem, subIdx) => (
+                              <Link
+                                key={subIdx}
+                                href={subItem.href}
+                                className="ml-4 inline-block rounded-lg px-4 py-2 text-base hover:bg-primary hover:text-white"
+                                onClick={() => setIsSheetOpen(false)}
+                              >
+                                {subItem.label}
+                              </Link>
+                            ))}
+                          </div>
+                        ) : (
+                          <Link
+                            href={menu.href}
+                            className="inline-block w-full rounded-lg px-4 py-2 text-lg hover:bg-primary hover:text-white"
+                            onClick={() => setIsSheetOpen(false)}
+                          >
+                            {menu.label}
+                          </Link>
+                        )}
+                      </div>
                     ))}
                   </div>
                   {!user && (
@@ -126,26 +156,27 @@ export default function Header() {
                         href="/login"
                         className={cn(
                           buttonVariants({
-                            variant: "outline",
+                            variant: "ghost",
                             effect: "shineHover",
                             size: "sm",
                           }),
                           "w-full",
                         )}
                       >
-                        Log In
+                        Sign In
                       </Link>
                       <Link
                         href="/register"
                         className={cn(
                           buttonVariants({
-                            effect: "shineHover",
+                            effect: "gooeyRight",
                             size: "sm",
+                            variant: "outline",
                           }),
-                          "w-full",
+                          "w-full border-2 border-secondary bg-transparent text-secondary hover:bg-secondary",
                         )}
                       >
-                        Register
+                        Join for Free
                       </Link>
                     </div>
                   )}
@@ -160,42 +191,83 @@ export default function Header() {
 }
 
 const NavigationTabs = () => {
-  const [selected, setSelected] = useState(navItems[0]);
   const pathname = usePathname();
+
+  const isSelected = (item) => {
+    if (item.href && pathname === item.href) return true;
+    if (item.subItems) {
+      return item.subItems.some((subItem) => pathname === subItem.href);
+    }
+    return false;
+  };
+
   return (
     <div className="flex flex-wrap items-center gap-2">
       {navItems.map((tab, index) => (
-        <Tab
-          tab={tab}
-          selected={pathname === (tab.href === "Home" ? "/" : tab.href)}
-          setSelected={setSelected}
-          key={tab.label}
-        />
+        <Tab tab={tab} selected={isSelected(tab)} key={tab.label} />
       ))}
     </div>
   );
 };
 
-const Tab = ({ tab, selected, setSelected }) => {
+const Tab = ({ tab, selected }) => {
+  if (tab.subItems) {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            className={`${
+              selected
+                ? "text-white"
+                : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100"
+            } relative flex items-center gap-1 rounded-md px-2 py-1 text-sm font-medium transition-colors`}
+          >
+            <span className="relative z-10">{tab.label}</span>
+            <ChevronDown
+              className={cn("z-10 h-3 w-3", {
+                "text-white": selected,
+              })}
+            />
+            {selected && (
+              <motion.span
+                layoutId="tab"
+                transition={{ type: "spring", duration: 0.4 }}
+                className="absolute inset-0 z-0 rounded-md bg-primary"
+              ></motion.span>
+            )}
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="start" className="w-48">
+          {tab.subItems.map((subItem, index) => (
+            <DropdownMenuItem key={index} asChild>
+              <Link href={subItem.href} className="w-full cursor-pointer">
+                {subItem.label}
+              </Link>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
+
   return (
-    <button
-      onClick={() => setSelected(tab)}
-      className={`${
-        selected
-          ? "text-white"
-          : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100"
-      } relative rounded-md px-2 py-1 text-sm font-medium transition-colors`}
-    >
-      <Link href={tab.href}>
+    <Link href={tab.href}>
+      <button
+        className={`${
+          selected
+            ? "text-white"
+            : "text-gray-500 hover:text-gray-900 dark:hover:text-gray-100"
+        } relative rounded-md px-2 py-1 text-sm font-medium transition-colors`}
+      >
         <span className="relative z-10">{tab.label}</span>
-      </Link>
-      {selected && (
-        <motion.span
-          layoutId="tab"
-          transition={{ type: "spring", duration: 0.4 }}
-          className="absolute inset-0 z-0 rounded-md bg-primary"
-        ></motion.span>
-      )}
-    </button>
+        {selected && (
+          <motion.span
+            layoutId="tab"
+            transition={{ type: "spring", duration: 0.4 }}
+            className="absolute inset-0 z-0 rounded-md bg-primary"
+          ></motion.span>
+        )}
+      </button>
+    </Link>
   );
 };

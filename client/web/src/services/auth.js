@@ -38,12 +38,28 @@ const registerVerify = async (data) => {
   });
 };
 
+const forgotPassword = async (data) => {
+  return await axios.post("/api/auth/forgot-password", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+const resetPassword = async (data) => {
+  return await axios.post("/api/auth/reset-password", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
 const auth = {
   login: login,
   loginRequest: loginRequest,
   loginVerify: loginVerify,
   registerRequest: registerRequest,
   registerVerify: registerVerify,
+  forgotPassword: forgotPassword,
+  resetPassword: resetPassword,
 };
 
 export default auth;

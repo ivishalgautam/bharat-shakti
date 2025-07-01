@@ -1,12 +1,12 @@
-import { isValidPhoneNumber } from "react-phone-number-input";
+import { isValidPhoneNumber, parsePhoneNumber } from "react-phone-number-input";
 import { z } from "zod";
 
 export const userFormSchema = z
   .object({
-    username: z
-      .string()
-      .min(3, "Username must be at least 3 characters")
-      .max(50),
+    // username: z
+    //   .string()
+    //   .min(3, "Username must be at least 3 characters")
+    //   .max(50),
     email: z.string().email("Please enter a valid email address"),
     mobile_number: z
       .string({ required_error: "Mobile number is required." })
@@ -14,6 +14,7 @@ export const userFormSchema = z
     first_name: z.string().optional(),
     last_name: z.string().optional(),
     password: z.string().min(8, "Password must be at least 8 characters"),
+    confirm_password: z.string().min(6, "Confirm Password is required"),
     terms: z.literal(true, {
       errorMap: () => ({ message: "You must accept the terms and conditions" }),
     }),
@@ -21,6 +22,18 @@ export const userFormSchema = z
   .refine((data) => isValidPhoneNumber(data.mobile_number), {
     path: ["mobile_number"],
     message: "Invalid phone number",
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    message: "Passwords do not match",
+    path: ["confirm_password"], // set error on confirm_password field
+  })
+  .transform((data) => {
+    const { nationalNumber } = parsePhoneNumber(data.mobile_number);
+    console.log({ nationalNumber });
+    return {
+      ...data,
+      username: nationalNumber,
+    };
   });
 
 export const otpSchema = z.object({

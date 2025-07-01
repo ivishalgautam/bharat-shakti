@@ -133,7 +133,7 @@ export default function LoginWithOtp() {
       <form onSubmit={handleOtpSubmit(onOtpSubmit)}>
         <div className="mx-auto w-full max-w-md space-y-8">
           <div className="text-center">
-            <h2 className="text-3xl font-extrabold text-gray-900">
+            <h2 className="text-3xl font-extrabold text-secondary">
               Verify Your Account
             </h2>
             <p className="mt-2 text-sm text-gray-600">
@@ -220,7 +220,7 @@ export default function LoginWithOtp() {
   return (
     <div className="mx-auto w-full space-y-8">
       <div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-2xl font-extrabold text-secondary">
           Login With OTP
         </h2>
       </div>

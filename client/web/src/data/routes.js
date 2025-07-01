@@ -1,6 +1,8 @@
 import {
   BookHeart,
   Eye,
+  File,
+  FileCheck2,
   FileUser,
   IndianRupee,
   Settings,
@@ -45,13 +47,6 @@ export const allRoutes = [
     icon: BookHeart,
   },
   {
-    label: "Applied tenders",
-    link: "/dashboard/applied-tenders",
-    roles: [ROLES.USER],
-    tier: [TIER.STANDARD, TIER.PREMIUM],
-    icon: FileUser,
-  },
-  {
     label: "Tenders by preferences",
     link: "/tenders-by-preferences",
     roles: [ROLES.USER],
@@ -65,4 +60,41 @@ export const allRoutes = [
     tier: [TIER.STANDARD, TIER.PREMIUM, TIER.FREE, TIER.UNSUBSCRIBED],
     icon: IndianRupee,
   },
+  {
+    label: "Applied tenders",
+    link: "/dashboard/applied-tenders",
+    roles: [ROLES.USER],
+    tier: [TIER.STANDARD, TIER.PREMIUM],
+    icon: FileUser,
+  },
+  {
+    label: "Invoice Master",
+    link: "/dashboard/invoice-master?page=1&limit=10",
+    roles: [ROLES.USER],
+    tier: [TIER.STANDARD, TIER.PREMIUM],
+    icon: File,
+  },
+  {
+    label: "Invoice Master",
+    link: "/dashboard/invoice-master/create",
+    roles: [ROLES.USER],
+    tier: [TIER.STANDARD, TIER.PREMIUM],
+    icon: File,
+  },
+  {
+    label: "Order Follow Up",
+    link: "/dashboard/order-follow-up?page=1&limit=10",
+    roles: [ROLES.USER],
+    tier: [TIER.STANDARD, TIER.PREMIUM],
+    icon: FileCheck2,
+  },
+];
+
+export const publicRoutes = [
+  "/login",
+  "/register",
+  "/unauthorized",
+  "/login-with-otp",
+  "/forgot-password",
+  "/reset-password",
 ];

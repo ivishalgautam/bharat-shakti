@@ -1,14 +1,21 @@
 import Layout from "@/components/layout";
 import SessionWrapper from "@/components/providers/session-provider";
 import { Toaster } from "@/components/ui/toaster";
-import { Poppins } from "next/font/google";
+import { Poppins, Montserrat } from "next/font/google";
 import "./globals.css";
+
+const monteserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  variable: "--font-montserrat",
+});
 
 const poppins = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   variable: "--font-poppins",
 });
+
 // const articular = localFont({
 //   src: [
 //     {
@@ -59,7 +66,7 @@ export default function RootLayout({ children }) {
     <SessionWrapper>
       <html lang="en">
         <body
-          className={`${poppins.className} antialiased`}
+          className={`${monteserrat.className} antialiased`}
           suppressHydrationWarning={true}
         >
           <Layout>{children}</Layout>

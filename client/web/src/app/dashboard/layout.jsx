@@ -1,6 +1,5 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { allRoutes } from "@/data/routes";
 import { cn } from "@/lib/utils";
@@ -28,10 +27,8 @@ export default function DashboardLayout({ children }) {
         <aside className="hidden w-[280px] flex-col border-r bg-white md:flex">
           <NavigationList />
         </aside>
-        <main className="flex-1 p-2">
-          <ScrollArea className="h-screen">
-            <div className="grid gap-4 md:gap-8">{children}</div>
-          </ScrollArea>
+        <main className="w-full overflow-hidden p-2">
+          <div className="">{children}</div>
         </main>
       </div>
     </div>
@@ -45,12 +42,12 @@ function NavigationList() {
     () =>
       allRoutes.filter(
         (route) =>
+          !route.link.includes("/create") &&
           route.roles.includes(user?.role) &&
           route.tier.includes(user?.plan_tier),
       ),
     [user],
   );
-
   return (
     <nav className="grid gap-2 p-4 text-sm">
       {tabs.map((tab, key) => (
@@ -59,7 +56,7 @@ function NavigationList() {
           href={tab.link}
           className={cn(
             "flex items-center gap-3 rounded-lg px-3 py-2 hover:bg-accent",
-            pathname === tab.link
+            pathname === tab.link.split("?").shift()
               ? "bg-accent text-accent-foreground"
               : "text-muted-foreground",
           )}

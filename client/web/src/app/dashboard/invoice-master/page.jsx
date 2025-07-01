@@ -5,6 +5,7 @@ import { Suspense } from "react";
 // import PageContainer from "@/components/layout/page-container";
 import Listing from "./_component/listing";
 import TableActions from "./_component/table-actions";
+import { Heading } from "@/components/ui/heading";
 
 export const metadata = {
   title: "Applied tenders",
@@ -15,13 +16,13 @@ export default async function AppliedTendersPage({ searchParams }) {
   const key = serialize({ ...searchParams });
 
   return (
-    <>
-      {/* <div className="flex items-start justify-between">
+    <div className="rounded-lg border bg-white p-8">
+      <div className="flex items-start justify-between">
         <Heading
-          title="Applications"
-          description="Manage Applications (Update, Delete)."
+          title="Invoice Masters"
+          // description="Manage Invoice masters (Update, Delete)."
         />
-      </div> */}
+      </div>
       <TableActions />
       <Suspense
         key={key}
@@ -29,6 +30,6 @@ export default async function AppliedTendersPage({ searchParams }) {
       >
         <Listing />
       </Suspense>
-    </>
+    </div>
   );
 }

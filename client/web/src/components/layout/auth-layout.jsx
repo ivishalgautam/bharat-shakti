@@ -2,6 +2,7 @@
 "use client";
 import Logo from "@/components/logo";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function AuthLayout({ children }) {
   return (
@@ -45,7 +46,22 @@ export default function AuthLayout({ children }) {
         <div className="flex w-full items-center justify-center p-8 lg:w-1/2">
           <div className="w-full max-w-md">
             <div className="flex items-center justify-center">
-              <Logo />
+              <Link
+                href="/"
+                className="flex aspect-video w-64 items-center justify-center"
+              >
+                <figure>
+                  <Image
+                    src={"/logo.png"}
+                    width={1000}
+                    height={1000}
+                    alt="Bharat Shakti"
+                    className="rounded object-contain object-center"
+                    quality={100}
+                    priority
+                  />
+                </figure>
+              </Link>
             </div>
             {children}
           </div>

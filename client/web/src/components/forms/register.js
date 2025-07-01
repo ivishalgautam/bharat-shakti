@@ -9,7 +9,7 @@ import { otpSchema, userFormSchema } from "@/utils/schema/register";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { RiGoogleFill } from "@remixicon/react";
 import { useMutation } from "@tanstack/react-query";
-import { LoaderCircle } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,10 +19,13 @@ import { Checkbox } from "../ui/checkbox";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 import PhoneSelect from "../ui/phone-input";
 import { Separator } from "../ui/separator";
+import { parsePhoneNumber } from "react-phone-number-input";
 
 export default function Register() {
   const [step, setStep] = useState("register"); // "register" or "otp"
   const [resendTimer, setResendTimer] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
@@ -45,6 +48,10 @@ export default function Register() {
       terms: false,
     },
   });
+
+  const mobileNumber = watch("mobile_number");
+  const formattedNumber = parsePhoneNumber(mobileNumber);
+
   const {
     handleSubmit: handleOtpSubmit,
     formState: { errors: otpErrors },
@@ -120,6 +127,7 @@ export default function Register() {
   const onOtpSubmit = (data) => {
     const payload = {
       ...getValues(),
+      username: formattedNumber.nationalNumber,
       otp: data.otp,
       request_id: getOtpFormValues().request_id,
     };
@@ -230,7 +238,7 @@ export default function Register() {
   return (
     <div className="mx-auto w-full space-y-8">
       <div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        <h2 className="mt-6 text-center text-2xl font-extrabold text-secondary">
           User Registration
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
@@ -277,7 +285,7 @@ export default function Register() {
             <Label htmlFor="email">Email *</Label>
             <Input
               id="email"
-              type="email"
+              type="text"
               placeholder="Enter your email"
               {...register("email")}
               className={errors.email ? "border-red-500" : ""}
@@ -310,7 +318,7 @@ export default function Register() {
           </div>
 
           {/* Username */}
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label htmlFor="username">Username *</Label>
             <Input
               id="username"
@@ -321,20 +329,57 @@ export default function Register() {
             {errors.username && (
               <p className="text-sm text-red-500">{errors.username.message}</p>
             )}
-          </div>
+          </div> */}
 
           {/* Password */}
-          <div className="space-y-2">
+          <div className="relative space-y-2">
             <Label htmlFor="password">Password *</Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              {...register("password")}
-              className={errors.password ? "border-red-500" : ""}
-            />
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                {...register("password")}
+                className={errors.password ? "border-red-500 pr-10" : "pr-10"}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
             {errors.password && (
               <p className="text-sm text-red-500">{errors.password.message}</p>
+            )}
+          </div>
+
+          {/* Confirm Password */}
+          <div className="relative space-y-2">
+            <Label htmlFor="confirm_password">Confirm Password *</Label>
+            <div className="relative">
+              <Input
+                id="confirm_password"
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Re-enter your password"
+                {...register("confirm_password")}
+                className={
+                  errors.confirm_password ? "border-red-500 pr-10" : "pr-10"
+                }
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600"
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {errors.confirm_password && (
+              <p className="text-sm text-red-500">
+                {errors.confirm_password.message}
+              </p>
             )}
           </div>
         </div>

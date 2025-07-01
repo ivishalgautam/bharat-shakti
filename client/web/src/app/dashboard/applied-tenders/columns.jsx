@@ -1,6 +1,8 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import moment from "moment";
+import Link from "next/link";
 
 export const columns = (setUserId, openModal) => [
   {
@@ -28,48 +30,19 @@ export const columns = (setUserId, openModal) => [
       );
     },
   },
-  // {
-  //   id: "actions",
-  //   enableHiding: false,
-  //   cell: ({ row }) => {
-  //     const id = row.original.id;
-  //     const role = row.original.role;
-  //     return (
-  //       <DropdownMenu>
-  //         <DropdownMenuTrigger asChild>
-  //           <Button variant="ghost" className="h-8 w-8 p-0">
-  //             <span className="sr-only">Open menu</span>
-  //             <DotsHorizontalIcon className="h-4 w-4" />
-  //           </Button>
-  //         </DropdownMenuTrigger>
-  //         <DropdownMenuContent align="end">
-  //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-  //           <DropdownMenuSeparator />
-  //           <DropdownMenuItem>
-  //             <Link
-  //               href={
-  //                 role === "user"
-  //                   ? `/users/view/${id}/user`
-  //                   : role === "subAdmin"
-  //                     ? `/users/view/${id}/sub-admin`
-  //                     : "#"
-  //               }
-  //             >
-  //               View
-  //             </Link>
-  //           </DropdownMenuItem>
-  //           <DropdownMenuSeparator />
-  //           <DropdownMenuItem
-  //             onClick={() => {
-  //               setUserId(id);
-  //               openModal();
-  //             }}
-  //           >
-  //             Delete
-  //           </DropdownMenuItem>
-  //         </DropdownMenuContent>
-  //       </DropdownMenu>
-  //     );
-  //   },
-  // },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const id = row.original.id;
+      return (
+        <Link
+          className={buttonVariants()}
+          href={`/dashboard/invoice-master/create?aid=${id}`}
+        >
+          <Plus /> Add Invoice
+        </Link>
+      );
+    },
+  },
 ];
