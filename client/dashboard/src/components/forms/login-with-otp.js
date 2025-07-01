@@ -1,63 +1,38 @@
 "use client";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { toast } from "@/hooks/use-toast";
+import auth from "@/services/auth";
+import { loginSchema } from "@/utils/schema/login";
+import { otpSchema } from "@/utils/schema/register";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import { AtSign, KeyRound, Loader2, LoaderCircle } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
-import { z } from "zod";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-// import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { toast } from "@/hooks/use-toast";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
-import { otpSchema } from "@/utils/schema/register";
 import { useEffect, useState } from "react";
-import auth from "@/services/auth";
+import { Controller, useForm } from "react-hook-form";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
+import PhoneSelect from "../ui/phone-input";
 
-// Form validation schema
-const loginSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  // rememberMe: z.boolean().optional(),
-});
-
-// API login function
-const loginUser = async (data) => {
-  return await axios.post("/api/login", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-};
-
-export default function LoginForm() {
+export default function LoginWithOtp() {
   const [step, setStep] = useState("login");
   const [resendTimer, setResendTimer] = useState(0);
-  const router = useRouter();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
+    control,
     getValues,
+    setValue,
   } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      username: "",
-      password: "",
-      rememberMe: false,
+      mobile_number: "",
     },
   });
-
   const {
     handleSubmit: handleOtpSubmit,
     formState: { errors: otpErrors },
@@ -68,9 +43,21 @@ export default function LoginForm() {
     resolver: zodResolver(otpSchema),
     defaultValues: { otp: "", request_id: "" },
   });
+  const router = useRouter();
 
-  const loginMutation = useMutation({
-    mutationFn: loginUser,
+  // Timer effect for resend OTP
+  useEffect(() => {
+    let interval;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [resendTimer]);
+
+  const registerMutation = useMutation({
+    mutationFn: auth.loginRequest,
     onSuccess: ({ data }) => {
       setOtpFormValue("request_id", data.request_id);
       toast({
@@ -84,11 +71,11 @@ export default function LoginForm() {
     onError: (error) => {
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Registration Failed",
         description:
           error?.response?.data?.message ??
           error?.message ??
-          "Login failed. Please check your credentials.",
+          "Something went wrong!",
       });
     },
   });
@@ -103,8 +90,7 @@ export default function LoginForm() {
       });
       delete data.user_data.password;
       localStorage.setItem("user", JSON.stringify(data.user_data));
-      toast({ title: "Success", description: "Login successful!" });
-      router.replace("/dashboard");
+      router.replace("/");
     },
     onError: (error) => {
       toast({
@@ -118,6 +104,10 @@ export default function LoginForm() {
     },
   });
 
+  const onSubmit = (data) => {
+    registerMutation.mutate(data);
+  };
+
   const onOtpSubmit = (data) => {
     const payload = {
       ...getValues(),
@@ -129,27 +119,14 @@ export default function LoginForm() {
 
   const handleResendOtp = () => {
     if (resendTimer === 0) {
-      loginMutation.mutate({ ...getValues(), role: "admin" });
+      registerMutation.mutate({ ...getValues() });
     }
   };
 
   const handleBackToRegister = () => {
+    setValue("mobile_number", "");
     setStep("login");
   };
-
-  const onSubmit = (data) => {
-    loginMutation.mutate({ ...data, role: "admin" });
-  };
-
-  useEffect(() => {
-    let interval;
-    if (resendTimer > 0) {
-      interval = setInterval(() => {
-        setResendTimer((prev) => prev - 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [resendTimer]);
 
   if (step === "otp") {
     return (
@@ -162,9 +139,9 @@ export default function LoginForm() {
             <p className="mt-2 text-sm text-gray-600">
               {"We've sent a 6-digit OTP to your mobile number"}
             </p>
-            {/* <p className="mt-1 text-sm font-medium text-gray-900">
+            <p className="mt-1 text-sm font-medium text-gray-900">
               {watch("mobile_number")}
-            </p> */}
+            </p>
           </div>
 
           <div className="space-y-6">
@@ -210,10 +187,10 @@ export default function LoginForm() {
                 type="button"
                 variant="link"
                 onClick={handleResendOtp}
-                disabled={resendTimer > 0 || loginMutation.isPending}
+                disabled={resendTimer > 0 || registerMutation.isPending}
                 className="h-auto p-0 text-primary"
               >
-                {loginMutation.isPending ? (
+                {registerMutation.isPending ? (
                   <>
                     <LoaderCircle className="mr-2 size-4 animate-spin" />
                     Resending...
@@ -241,72 +218,53 @@ export default function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto shadow-none border-none">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
-        <CardDescription className="text-center">
-          Enter your credentials to access your account
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
-            <div className="relative">
-              <AtSign className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-              <Input
-                id="username"
-                placeholder="johndoe"
-                className="pl-10"
-                {...register("username")}
+    <div className="mx-auto w-full space-y-8">
+      <div>
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+          Login With OTP
+        </h2>
+        <p className="mt-2 text-center text-sm text-gray-600">
+          {"Already have an account? "}
+          <Link href={`/login`} className={"font-medium text-primary"}>
+            Login
+          </Link>
+        </p>
+      </div>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {/* Mobile Number */}
+        <div className="col-span-full space-y-2">
+          <Label htmlFor="mobile_number">Mobile Number *</Label>
+          <Controller
+            control={control}
+            name="mobile_number"
+            render={({ field }) => (
+              <PhoneSelect
+                value={field.value}
+                onChange={field.onChange}
+                placeholder="Enter your mobile number"
+                className={errors.mobile_number ? "border-red-500" : ""}
               />
-            </div>
-            {errors.username && (
-              <p className="text-sm text-destructive">
-                {errors.username.message}
-              </p>
             )}
-          </div>
+          />
+          {errors.mobile_number && (
+            <p className="text-sm text-red-500">
+              {errors.mobile_number.message}
+            </p>
+          )}
+        </div>
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
-              {/* <Link
-                  href="/forgot-password"
-                  className="text-sm text-primary hover:underline"
-                >
-                  Forgot password?
-                </Link> */}
-            </div>
-            <div className="relative">
-              <KeyRound className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                className="pl-10"
-                {...register("password")}
-              />
-            </div>
-            {errors.password && (
-              <p className="text-sm text-destructive">
-                {errors.password.message}
-              </p>
-            )}
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={loginMutation.isPending}
-          >
-            {loginMutation.isPending && (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            )}
-            Sign in
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+        {/* Submit Button */}
+        <Button
+          type="submit"
+          className="mt-4 w-full"
+          disabled={registerMutation.isPending}
+        >
+          {registerMutation.isPending && (
+            <LoaderCircle className="mr-2 size-4 animate-spin" />
+          )}
+          Send OTP
+        </Button>
+      </form>
+    </div>
   );
 }

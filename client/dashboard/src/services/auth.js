@@ -1,15 +1,22 @@
-"use server";
+import axios from "axios";
 
-import { redirect } from "next/navigation";
+const loginRequest = async (data) => {
+  return await axios.post("/api/login-request", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
 
-// export async function handleLogout() {
-//   try {
-//     const resp = await axios.post("/api/logout");
-//     console.log({ resp });
-//     return resp.data;
-//     redirect("/");
-//   } catch (error) {
-//     console.log(error?.response?.data?.message ?? error?.message ?? "Error");
-//     return error;
-//   }
-// }
+const loginVerify = async (data) => {
+  return await axios.post("/api/login-verify", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+const auth = {
+  loginRequest: loginRequest,
+  loginVerify: loginVerify,
+};
+
+export default auth;

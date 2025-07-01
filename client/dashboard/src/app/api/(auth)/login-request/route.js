@@ -1,5 +1,5 @@
 import { endpoints } from "@/utils/endpoints";
-import { cookies } from "next/headers";
+import axios from "axios";
 import { NextResponse } from "next/server";
 
 const API_URL = process.env.NEXT_PUBLIC_BHARAT_SHAKTI_API_URL;
@@ -7,22 +7,25 @@ const API_URL = process.env.NEXT_PUBLIC_BHARAT_SHAKTI_API_URL;
 // This route acts as a middleware between you and your backend server
 export async function POST(request) {
   const data = await request.json();
-  const cookieStore = await cookies();
   try {
     // login request to the original backend
-    const res = await fetch(API_URL + endpoints.auth.login, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: data.body,
-    });
-    const json = await res.json();
+    const res = await axios.post(
+      API_URL + endpoints.auth.loginRequest,
+      JSON.parse(data.body),
+    );
+    const json = res.data;
     // Return the same response as the external backend.
     return NextResponse.json(json, { status: res.status });
   } catch (err) {
-    console.log("Error logging in:", err);
+    // console.log("Error register user:", err);
     return NextResponse.json(
-      { message: "Something went wrong" },
-      { status: 500 }
+      {
+        message:
+          err?.response?.data?.message ??
+          err?.message ??
+          "Something went wrong",
+      },
+      { status: err.status },
     );
   }
 }
