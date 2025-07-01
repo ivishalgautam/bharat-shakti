@@ -10,7 +10,6 @@ const update = async (req, res) => {
   try {
     const record = await table.CompanyProfileModel.getByUserId(req);
     if (!record) {
-      console.log("not found");
       const data = await table.CompanyProfileModel.create(
         req,
         req.user_data.id,

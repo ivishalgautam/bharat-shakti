@@ -75,12 +75,11 @@ const init = async (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
       },
-
       reset_password_token: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
       },
       confirmation_token: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
       },
     },
     {
@@ -249,7 +248,6 @@ const update = async (req, id, transaction = null) => {
       "image_url",
     ],
     plain: true,
-    transaction,
   };
 
   if (transaction) {
@@ -266,16 +264,19 @@ const update = async (req, id, transaction = null) => {
       image_url: req.body?.image_url,
       is_active: req.body?.is_active,
       is_verified: req.body?.is_verified,
+      reset_password_token: req.body?.reset_password_token,
+      confirmation_token: req.body?.confirmation_token,
     },
     options
   );
 };
 
 const updatePassword = async (req, user_id) => {
-  const hash_password = hash.encrypt(req.body.new_password);
+  const hash_password = hash.encrypt(req.body.password);
   return await UserModel.update(
     {
       password: hash_password,
+      reset_password_token: "",
     },
     {
       where: {
@@ -338,10 +339,10 @@ const getByMobileNumber = async (req) => {
   });
 };
 
-const getByResetToken = async (req) => {
+const getByResetToken = async (token) => {
   return await UserModel.findOne({
     where: {
-      reset_password_token: req.params.token,
+      reset_password_token: token,
     },
   });
 };

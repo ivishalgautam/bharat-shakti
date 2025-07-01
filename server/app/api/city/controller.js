@@ -207,7 +207,6 @@ const importCities = async (req, res) => {
           const cityPromises = obj[state].map(async (city) => {
             const citySlug = slugify(city, { lower: true });
             const isCityExist = await table.CityModel.getBySlug(0, citySlug);
-            console.log({ isCityExist });
             if (isCityExist) {
               await table.CityModel.update(
                 {

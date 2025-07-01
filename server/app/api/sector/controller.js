@@ -85,7 +85,6 @@ const deleteById = async (req, res) => {
 
 const get = async (req, res) => {
   try {
-    console.log("object");
     const data = await table.SectorModel.get(req);
     res.code(status.OK).send({ status: true, data });
   } catch (error) {

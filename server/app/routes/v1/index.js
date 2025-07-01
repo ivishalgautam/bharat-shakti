@@ -19,6 +19,8 @@ import preferenceRoutes from "../../api/preference/routes.js";
 import faqRoutes from "../../api/faq/routes.js";
 import paymentRoutes from "../../api/payment/routes.js";
 import reportRoutes from "../../api/report/routes.js";
+import invoiceMasterRoutes from "../../api/invoice-master/routes.js";
+import orderFollowupRoutes from "../../api/order-followup/routes.js";
 
 export default async function routes(fastify, options) {
   fastify.addHook("onRequest", jwtVerify.verifyToken);
@@ -45,4 +47,6 @@ export default async function routes(fastify, options) {
   fastify.register(faqRoutes, { prefix: "faqs" });
   fastify.register(paymentRoutes, { prefix: "payments" });
   fastify.register(reportRoutes, { prefix: "reports" });
+  fastify.register(invoiceMasterRoutes, { prefix: "invoice-masters" });
+  fastify.register(orderFollowupRoutes, { prefix: "order-followups" });
 }

@@ -82,7 +82,6 @@ const update = async (req, res) => {
     if (record.status !== updated.status) {
       const user = await table.UserModel.getById(0, updated.user_id);
       const tender = await table.TenderModel.getById(0, updated.tender_id);
-      console.log({ user, tender });
       await Brevo.sendApplicationStatusUpdateEmail({
         application_id: updated.application_id,
         bid_number: tender.bid_number,

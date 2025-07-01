@@ -45,7 +45,6 @@ const verifyToken = async (req, res) => {
 
     const sessions = await table.SessionModel.getByUserId(decoded.user.id);
     const sessionExist = sessions.some((s) => s.id === decoded.user.session_id);
-    console.log({ access: decoded });
     if (!sessionExist) res.code(401).send({ message: "unauthorized!" });
 
     req.user_data = userData;
@@ -60,7 +59,6 @@ const verifyRefreshToken = async (req, res) => {
   const refreshToken = req.body.refresh_token;
   try {
     const decoded = jwt.verify(refreshToken, config.jwt_refresh_secret);
-    console.log({ refresh: decoded });
     const sessions = await table.SessionModel.getByUserId(decoded.user.id);
     const sessionExist = sessions.some((s) => s.id === decoded.user.session_id);
 

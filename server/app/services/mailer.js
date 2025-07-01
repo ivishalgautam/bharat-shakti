@@ -131,6 +131,34 @@ async function sendWelcomeEmail(userEmail, fullname) {
     // throw error;
   }
 }
+async function sendResetPasswordEmail(userEmail, token) {
+  try {
+    const templatePath = path.join(
+      process.cwd(),
+      "views",
+      "forgot-password.ejs"
+    );
+    const templateString = fs.readFileSync(templatePath, "utf-8");
+    const resetLink = `${process.env.NEXT_PUBLIC_URL}/reset-password?t=${token}`;
+    const htmlContent = ejs.render(templateString, {
+      resetLink,
+    });
+
+    const mailOptions = {
+      from: '"Bharat Shakti Tenders" <no-reply@bharatshaktitenders.com>',
+      to: userEmail,
+      subject: "Reset Your Password – BharatShaktiTenders.com",
+      html: htmlContent,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Password reset email sent successfully!");
+    return info;
+  } catch (error) {
+    console.error("Error sending password reset email:", error);
+    throw error;
+  }
+}
 
 async function sendTenderReminderEmail({ userEmail, fullname, tenders = [] }) {
   try {
@@ -228,6 +256,7 @@ export const Brevo = {
   sendEmailWithAttachment: sendEmailWithAttachment,
   sendBulkEmails: sendBulkEmails,
   sendWelcomeEmail: sendWelcomeEmail,
+  sendResetPasswordEmail: sendResetPasswordEmail,
   sendTenderReminderEmail: sendTenderReminderEmail,
   sendApplicationStatusUpdateEmail: sendApplicationStatusUpdateEmail,
   sendInquiryEmail: sendInquiryEmail,

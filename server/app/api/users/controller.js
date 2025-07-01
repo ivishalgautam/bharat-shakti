@@ -25,14 +25,13 @@ const create = async (req, res) => {
 };
 
 const update = async (req, res) => {
-  const transaction = await sequelize.transaction();
   try {
     const record = await table.UserModel.getById(req);
     if (!record) {
       return res.code(404).send({ message: "User not exists" });
     }
 
-    return res.send(await table.UserModel.update(req, 0, transaction));
+    return res.send(await table.UserModel.update(req, 0));
   } catch (error) {
     console.error(error);
     return res.send(error);
@@ -137,13 +136,17 @@ const getUser = async (req, res) => {
 };
 
 const resetPassword = async (req, res) => {
+  const resetToken = req.body.token;
   try {
-    const token = await table.UserModel.getByResetToken(req);
-    if (!token) {
-      return res.code(401).send({ message: "invalid url" });
+    const token = await table.UserModel.getByResetToken(resetToken);
+    if (!token || token.provider !== "credentials") {
+      return res.code(401).send({ message: "Token expired" });
     }
 
-    await table.UserModel.updatePassword(req, token.id);
+    await table.UserModel.updatePassword(
+      { body: { password: req.body.password } },
+      token.id
+    );
     return res.send({
       message: "Password reset successfully!",
     });

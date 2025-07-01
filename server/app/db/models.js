@@ -20,13 +20,13 @@ import sessionsModel from "./models/session.model.js";
 import faqModel from "./models/faq.model.js";
 import razorpayPaymentModel from "./models/razorpay-payment.model.js";
 import otpModel from "./models/otp.model.js";
+import invoiceMasterModel from "./models/invoice-master.model.js";
 
 export default {
   UserModel: userModel,
   TenderModel: tenderModel,
   AuthorityModel: authorityModel,
   IndustryModel: industryModel,
-  CityModel: cityModel,
   CityModel: cityModel,
   SectorModel: sectorModel,
   StateModel: stateModel,
@@ -44,4 +44,5 @@ export default {
   FAQModel: faqModel,
   RazorpayPaymentModel: razorpayPaymentModel,
   OTPModel: otpModel,
+  InvoiceMasterModel: invoiceMasterModel,
 };

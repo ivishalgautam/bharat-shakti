@@ -16,6 +16,10 @@ import { Brevo } from "../../services/mailer.js";
 import { sendOtp } from "../../services/otp-sender.js";
 import waffly from "../../services/waffly.js";
 
+const verifyRefreshToken = async (req, res) => {
+  return authToken.verifyRefreshToken(req, res);
+};
+
 const verifyUserCredentials = async (req, res) => {
   const { username, password, provider, provider_account_id, email, role } =
     req.body;
@@ -330,8 +334,33 @@ const registerVerify = async (req, res) => {
   }
 };
 
-const verifyRefreshToken = async (req, res) => {
-  return authToken.verifyRefreshToken(req, res);
+const sendResetToken = async (req, res) => {
+  try {
+    const record = await table.UserModel.getByEmailId(req);
+    if (!record || record.provider !== "credentials") {
+      return res
+        .code(401)
+        .send({ status: false, message: "Email not registered!" });
+    }
+    console.log({ record });
+    const [jwtToken, expiresIn] = authToken.generateAccessToken(record);
+    const updateConfirmation = await table.UserModel.update(
+      { body: { reset_password_token: jwtToken } },
+      record.id
+    );
+    if (updateConfirmation) {
+      await Brevo.sendResetPasswordEmail(record.email, jwtToken);
+    }
+
+    return res.send({
+      status: true,
+      message:
+        "We have sent an reset password link to your registered email id.",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.code(500).send({ status: false, error });
+  }
 };
 
 export default {
@@ -341,4 +370,5 @@ export default {
   verifyRefreshToken: verifyRefreshToken,
   loginRequest: loginRequest,
   loginVerify: loginVerify,
+  sendResetToken: sendResetToken,
 };

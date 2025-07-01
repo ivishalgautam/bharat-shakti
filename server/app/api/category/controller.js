@@ -97,7 +97,6 @@ const deleteById = async (req, res) => {
 
 const get = async (req, res) => {
   try {
-    console.log("object");
     const data = await table.CategoryModel.get(req);
     res.code(status.OK).send({ status: true, data });
   } catch (error) {
@@ -162,7 +161,6 @@ const importCategories = async (req, reply) => {
               slug: slug,
               type: String(type).toLowerCase(),
             };
-            console.log({ categoryPayload });
             const categoryData = await table.CategoryModel.create(
               { body: categoryPayload },
               { transaction }

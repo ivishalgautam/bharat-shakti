@@ -163,7 +163,7 @@ const deleteById = async (req, id, { transaction }) => {
 
 const getById = async (req, id) => {
   return await ApplicationModel.findOne({
-    where: { id: req.params.id || id },
+    where: { id: req.params?.id || id },
     raw: true,
   });
 };
