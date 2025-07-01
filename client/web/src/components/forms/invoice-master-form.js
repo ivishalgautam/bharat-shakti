@@ -16,7 +16,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { invoiceMasterSchema } from "@/utils/schema/invoice-master";
 import { useRouter } from "next/navigation";
 
-export function InvoiceMasterForm({ updateMutation, type, id, applicationId }) {
+export function InvoiceMasterForm({ updateMutation, type, id }) {
+  const searchParams = useSearchParams();
+  const applicationId = searchParams.get("aid");
   const {
     control,
     register,
