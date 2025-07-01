@@ -186,13 +186,8 @@ const create = async (req, transaction) => {
 
 const get = async (req) => {
   const { role, id } = req.user_data;
-  let whereConditions = [];
-  const queryParams = {};
-
-  if (role === "user") {
-    whereConditions.push("im.user_id = :userId");
-    queryParams.userId = id;
-  }
+  let whereConditions = ["im.user_id = :userId"];
+  const queryParams = { userId: id };
 
   let q = req.query.q;
   if (q) {
@@ -252,13 +247,8 @@ const get = async (req) => {
 
 const getOrderFollowup = async (req) => {
   const { role, id } = req.user_data;
-  let whereConditions = [];
-  const queryParams = {};
-
-  if (role === "user") {
-    whereConditions.push("im.user_id = :userId");
-    queryParams.userId = id;
-  }
+  let whereConditions = ["im.user_id = :userId"];
+  const queryParams = { userId: id };
 
   let q = req.query.q;
   if (q) {
