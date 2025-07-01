@@ -12,7 +12,7 @@ import { toast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // Zod Schemas
 const forgotSchema = z.object({
@@ -36,7 +36,9 @@ const resetSchema = z
     message: "Passwords do not match",
   });
 
-export default function ForgotPasswordForm({ type, token }) {
+export default function ForgotPasswordForm({ type }) {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("t");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const router = useRouter();

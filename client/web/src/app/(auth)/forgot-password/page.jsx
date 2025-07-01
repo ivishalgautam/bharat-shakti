@@ -1,6 +1,10 @@
 import ForgotPasswordForm from "@/components/forms/forgot-password";
-import React from "react";
+import React, { Suspense } from "react";
 
 export default function ForgotPasswordPage() {
-  return <ForgotPasswordForm type="forgot" />;
+  return (
+    <Suspense>
+      <ForgotPasswordForm type="forgot" />
+    </Suspense>
+  );
 }
