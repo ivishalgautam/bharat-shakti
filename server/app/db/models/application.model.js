@@ -121,7 +121,7 @@ const get = async (req) => {
   SELECT
       apl.id, apl.application_id, apl.status, usr.id as user_id, CONCAT(usr.first_name, ' ', usr.last_name) as fullname, usr.username, 
       usr.mobile_number, usr.email, usr.role, usr.is_active, apl.created_at,
-      tdr.id AS tender_id, tdr.bid_end_date_time, tdr.tender_value, tdr.bid_number
+      tdr.id AS tender_id, tdr.bid_end_date_time, tdr.tender_value, tdr.bid_number, tdr.item_gem_arpts
     FROM ${constants.models.APPLICATION_TABLE} apl
     LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON tdr.id = apl.tender_id
     LEFT JOIN ${constants.models.USER_TABLE} usr ON usr.id = apl.user_id

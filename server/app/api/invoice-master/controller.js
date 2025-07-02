@@ -75,7 +75,22 @@ const get = async (req, res) => {
   }
 };
 
+const getById = async (req, res) => {
+  try {
+    const data = await table.InvoiceMasterModel.getById(req);
+    if (!data)
+      return res
+        .status(status.NOT_FOUND)
+        .send({ status: false, message: "Not found!" });
+
+    res.send({ status: true, data });
+  } catch (error) {
+    throw error;
+  }
+};
+
 export default {
   create: create,
   get: get,
+  getById: getById,
 };
