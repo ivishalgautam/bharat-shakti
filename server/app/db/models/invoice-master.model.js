@@ -65,6 +65,7 @@ const init = async (sequelize) => {
       invoice_quantity: {
         type: DataTypes.DECIMAL(20, 2),
         allowNull: false,
+        defaultValue: 0,
       },
       delivery_date_with_ld: {
         type: DataTypes.DATEONLY,
