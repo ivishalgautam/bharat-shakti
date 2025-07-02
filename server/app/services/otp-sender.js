@@ -2,6 +2,7 @@ import axios from "axios";
 import config from "../config/index.js";
 
 export async function sendOtp({ phone, otp }) {
+  console.log({ phone });
   if (config.node_env === "development") return true;
 
   let axiosConfig = {

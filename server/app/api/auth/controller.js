@@ -61,7 +61,7 @@ const verifyUserCredentials = async (req, res) => {
           type: "login",
           user_id: userData.id,
         });
-        await sendOtp({ phone: req.body.mobile_number, otp });
+        await sendOtp({ phone: userData.mobile_number, otp });
         return res.send({
           status: true,
           message: "OTP Sent.",
