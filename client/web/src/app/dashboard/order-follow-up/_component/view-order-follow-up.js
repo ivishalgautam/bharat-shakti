@@ -21,13 +21,21 @@ export default function ViewOrderFollowup({ data }) {
       <div className="space-y-8">
         <section>
           <h2 className="mb-4 text-lg font-medium text-gray-900">Summary</h2>
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
             <div className="text-center">
               <div className="text-2xl font-light text-gray-900">
                 {data.invoice_quantity}
               </div>
               <div className="text-sm uppercase tracking-wide text-gray-500">
                 Invoice Quantity
+              </div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-light text-gray-900">
+                {data.supplied_quantity}
+              </div>
+              <div className="text-sm uppercase tracking-wide text-gray-500">
+                Supplied Quantity
               </div>
             </div>
             <div className="text-center">
