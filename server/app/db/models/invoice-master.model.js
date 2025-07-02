@@ -350,6 +350,7 @@ const getOrderFollowupByApplicationId = async (req, id) => {
         ((tdr.tender_value::integer / tdr.quantity::integer) / (1 + 18/100)) as basic_rate,
 
         -- Aggregated values
+        SUM(im.invoice_quantity) as invoice_quantity,
         SUM(im.supplied_quantity) as supplied_quantity,
         SUM(im.rejected_quantity) as rejected_quantity,
         SUM(im.accepted_quantity) as accepted_quantity,
