@@ -6,6 +6,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { rupee } from "@/lib/Intl";
 import { ArrowUpDown, Plus } from "lucide-react";
 import moment from "moment";
 import Link from "next/link";
@@ -43,6 +44,21 @@ export const columns = () => [
           </Tooltip>
         </TooltipProvider>
       );
+    },
+  },
+  {
+    accessorKey: "tender_value",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Tender Value <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const value = row.getValue("tender_value");
+      return rupee.format(value);
     },
   },
   {

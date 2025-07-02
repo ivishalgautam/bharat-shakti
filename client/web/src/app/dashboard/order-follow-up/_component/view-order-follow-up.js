@@ -1,7 +1,7 @@
 import { rupee } from "@/lib/Intl";
 import moment from "moment";
 
-export default function ViewOrderFollowup({ data }) {
+export default function ViewOrderFollowup({ data = {} }) {
   return (
     <div className="mx-auto max-w-4xl rounded-lg bg-white p-8">
       <div className="mb-8 border-b border-gray-200 pb-6">

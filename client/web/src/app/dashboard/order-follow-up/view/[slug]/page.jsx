@@ -15,6 +15,7 @@ export default function ViewOrderFollowupPage({ params: { slug } }) {
 
   if (isLoading) return <Spinner />;
   if (isError) return <ErrorMessage error={error} />;
+  if (!data) return "Not found!";
 
   return <ViewOrderFollowup data={data} />;
 }
