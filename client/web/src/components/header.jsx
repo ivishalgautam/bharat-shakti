@@ -62,13 +62,13 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-white py-2">
       <div className="container flex h-20 items-center justify-between px-4 md:px-6">
         <Logo />
-        <nav className="hidden gap-6 lg:flex">
+        <nav className="hidden gap-6 md:flex">
           <NavigationTabs />
         </nav>
         <div className="flex items-center gap-2">
           {user && <UserDropdown user={user} />}
           {!user && (
-            <div className="hidden space-x-2 lg:block">
+            <div className="hidden space-x-2 md:block">
               <Link
                 href="/login"
                 className={cn(
@@ -97,7 +97,7 @@ export default function Header() {
               </Link>
             </div>
           )}
-          <div className="block lg:hidden">
+          <div className="block md:hidden">
             <div className="flex items-center justify-between">
               <Sheet onOpenChange={setIsSheetOpen} open={isSheetOpen}>
                 <SheetTrigger asChild>
