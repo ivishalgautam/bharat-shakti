@@ -63,7 +63,7 @@ const init = async (sequelize) => {
         allowNull: false,
       },
       invoice_quantity: {
-        type: DataTypes.STRING,
+        type: DataTypes.DECIMAL(20, 2),
         allowNull: false,
       },
       delivery_date_with_ld: {
