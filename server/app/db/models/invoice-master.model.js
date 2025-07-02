@@ -62,11 +62,6 @@ const init = async (sequelize) => {
         type: DataTypes.DATEONLY,
         allowNull: false,
       },
-      invoice_quantity: {
-        type: DataTypes.DECIMAL(20, 2),
-        allowNull: false,
-        defaultValue: 0,
-      },
       delivery_date_with_ld: {
         type: DataTypes.DATEONLY,
         allowNull: true,
@@ -74,6 +69,10 @@ const init = async (sequelize) => {
       delivery_date_without_ld: {
         type: DataTypes.DATEONLY,
         allowNull: true,
+      },
+      invoice_quantity: {
+        type: DataTypes.DECIMAL(20, 2),
+        allowNull: false,
       },
       supplied_quantity: {
         type: DataTypes.DECIMAL(20, 2),
@@ -226,6 +225,7 @@ const get = async (req) => {
       FROM ${constants.models.INVOICE_MASTER_TABLE} im
       LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON tdr.id = im.tender_id
       ${whereClause}
+      ORDER BY im.created_at DESC
       LIMIT :limit OFFSET :offset
   `;
 
@@ -283,34 +283,15 @@ const getOrderFollowups = async (req) => {
 
   let query = `
     SELECT
-        im.application_id,
-        MAX(im.internal_order_no) as internal_order_no,
-        MAX(im.date) as date,
-        MAX(im.delivery_date_without_ld) as delivery_period,
-        MAX(im.delivery_date_with_ld) as extended_dp,
-        MAX(im.created_at) as last_invoice_date,
-        tdr.id as tender_id,
-        tdr.bid_number,
-        tdr.item_gem_arpts as items,
-        tdr.quantity::integer as order_quantity,
-        tdr.tender_value as order_value,
-        (tdr.tender_value::integer / tdr.quantity::integer) as rate_inc_gst,
-        ((tdr.tender_value::integer / tdr.quantity::integer) / (1 + 18/100)) as basic_rate,
+      im.application_id,
+      MAX(im.internal_order_no) as internal_order_no,
+      tdr.id as tender_id,
+      tdr.bid_number,
+      tdr.item_gem_arpts as items,
 
-        -- Aggregated values
-        SUM(im.supplied_quantity::integer) as supplied_quantity,
-        SUM(im.rejected_quantity) as rejected_quantity,
-        SUM(im.accepted_quantity) as accepted_quantity,
-        (tdr.quantity::integer - SUM(im.accepted_quantity)) as so_due,
-        SUM(im.supplied_value_basic) as supplied_value_basic,
-        SUM(im.supplied_value_gst) as supplied_value_gst,
-        SUM(im.accepted_value_basic) as accepted_value_basic,
-        SUM(im.accepted_value_gst) as accepted_value_gst,
-        SUM(im.payment_received) as payment_received,
-        SUM(im.ld_deduction) as ld_deduction,
-        SUM(im.gst_tds) as gst_tds,
-        SUM(im.it_tds) as it_tds,
-        SUM(im.payment_dues) as payment_dues
+      -- Aggregated values
+      SUM(im.payment_received) as payment_received,
+      SUM(im.payment_dues) as payment_dues
     FROM ${constants.models.INVOICE_MASTER_TABLE} im
     LEFT JOIN ${constants.models.TENDER_TABLE} tdr ON tdr.id = im.tender_id
     ${whereClause}
