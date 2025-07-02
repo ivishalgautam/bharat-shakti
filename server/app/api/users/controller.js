@@ -5,6 +5,7 @@ import { sequelize } from "../../db/postgres.js";
 import hash from "../../lib/encryption/index.js";
 
 const create = async (req, res) => {
+  const transaction = await sequelize.transaction();
   try {
     const record = await table.UserModel.getByUsername(req);
 
@@ -16,9 +17,10 @@ const create = async (req, res) => {
     }
 
     const user = await table.UserModel.create(req, { transaction });
-
+    await transaction.commit();
     res.send(user);
   } catch (error) {
+    await transaction.rollback();
     console.error(error);
     return res.send(error);
   }
