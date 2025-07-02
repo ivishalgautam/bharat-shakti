@@ -1,18 +1,48 @@
 "use client";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { ArrowUpDown, Plus } from "lucide-react";
 import moment from "moment";
 import Link from "next/link";
 
-export const columns = (setUserId, openModal) => [
-  {
-    accessorKey: "application_id",
-    header: "Application ID",
-  },
+export const columns = () => [
   {
     accessorKey: "bid_number",
     header: ({ column }) => {
-      return <Button variant="ghost">Bid Number</Button>;
+      return <Button variant="ghost">GEM Order Number</Button>;
+    },
+  },
+  {
+    accessorKey: "item_gem_arpts",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        ITEMS <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => {
+      const items = row.getValue("item_gem_arpts");
+      return (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              {items.length > 10
+                ? String(items).substring(0, 10) + "..."
+                : items}
+            </TooltipTrigger>
+            <TooltipContent>
+              <p className="w-72">{items}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      );
     },
   },
   {
@@ -40,7 +70,7 @@ export const columns = (setUserId, openModal) => [
           className={buttonVariants()}
           href={`/dashboard/invoice-master/create?aid=${id}`}
         >
-          <Plus /> Add Invoice
+          <Plus /> Add to invoice master
         </Link>
       );
     },

@@ -8,8 +8,14 @@ const get = async (searchParams = "") => {
   return data;
 };
 
+const getByApplicationId = async (id) => {
+  const { data } = await http().get(`${endpoints.orderFollowups.getAll}/${id}`);
+  return data;
+};
+
 const orderFollowup = {
   get: get,
+  getByApplicationId: getByApplicationId,
 };
 
 export default orderFollowup;

@@ -12,9 +12,15 @@ const get = async (searchParams = "") => {
   return data;
 };
 
+const getById = async (id) => {
+  const { data } = await http().get(`${endpoints.invoiceMasters.getAll}/${id}`);
+  return data;
+};
+
 const invoiceMaster = {
   create: create,
   get: get,
+  getById: getById,
 };
 
 export default invoiceMaster;

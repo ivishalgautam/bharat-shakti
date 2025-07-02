@@ -8,7 +8,7 @@ import TableActions from "./_component/table-actions";
 import { Heading } from "@/components/ui/heading";
 
 export const metadata = {
-  title: "Applied tenders",
+  title: "Order follow up",
 };
 
 export default async function AppliedTendersPage({ searchParams }) {
@@ -19,7 +19,7 @@ export default async function AppliedTendersPage({ searchParams }) {
     <div className="max-w-full rounded-lg border bg-white p-8">
       <div className="flex items-start justify-between">
         <Heading
-          title="Invoice Masters"
+          title="Order Follow Up"
           // description="Manage Invoice masters (Update, Delete)."
         />
       </div>
