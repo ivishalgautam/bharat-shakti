@@ -49,7 +49,7 @@ export default function Register() {
     },
   });
 
-  const mobileNumber = watch("mobile_number");
+  const mobileNumber = watch("mobile_number") ?? "";
   const formattedNumber = parsePhoneNumber(mobileNumber);
 
   const {
