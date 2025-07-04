@@ -26,7 +26,10 @@ const init = async (sequelize) => {
         type: DataTypes.STRING,
         allowNull: false,
         unique: {
+<<<<<<< HEAD
           args: true,
+=======
+>>>>>>> 3b9f15270dc65d40549f9da2f71e875b4a650938
           msg: "Email address already in use.",
         },
       },
@@ -34,7 +37,10 @@ const init = async (sequelize) => {
         type: DataTypes.STRING,
         allowNull: true,
         unique: {
+<<<<<<< HEAD
           args: true,
+=======
+>>>>>>> 3b9f15270dc65d40549f9da2f71e875b4a650938
           msg: "Mobile number already in use.",
         },
       },
