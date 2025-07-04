@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Application Status Update</title>
+  <style>
+    body, table, td, p, a, li, blockquote {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+    table, td {
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+    }
+    img {
+      -ms-interpolation-mode: bicubic;
+      border: 0;
+      height: auto;
+      line-height: 100%;
+      outline: none;
+      text-decoration: none;
+    }
+
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #003366 0%, #004080 100%);
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .logo {
+      color: #ffffff;
+      font-size: 28px;
+      font-weight: bold;
+      margin: 0;
+      text-decoration: none;
+    }
+
+    .tagline {
+      color: #008080;
+      font-size: 14px;
+      margin: 5px 0 0 0;
+    }
+
+    .content {
+      background-color: #ffffff;
+      padding: 40px 30px;
+    }
+
+    .greeting {
+      color: #2d3748;
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 20px 0;
+    }
+
+    .intro-text {
+      color: #4a5568;
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .status-box {
+      background-color: #f7fafc;
+      border-left: 4px solid #2e7d32;
+      padding: 15px 20px;
+      margin: 20px 0;
+      border-radius: 6px;
+    }
+
+    .status-box strong {
+      color: #2e7d32;
+    }
+
+    .support-text {
+      font-size: 15px;
+      color: #4a5568;
+      margin: 30px 0 10px;
+    }
+
+    .support-email {
+      color: #008080;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer {
+      background-color: #003366;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .footer-text {
+      color: #a0aec0;
+      font-size: 14px;
+      margin: 0 0 10px 0;
+    }
+
+    .footer-link {
+      color: #008080;
+      text-decoration: none;
+    }
+
+    .footer-link:hover {
+      text-decoration: underline;
+    }
+
+    @media only screen and (max-width: 600px) {
+      .email-container {
+        width: 100% !important;
+      }
+
+      .content {
+        padding: 30px 20px !important;
+      }
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f7fafc;">
+  <div class="email-container">
+    <!-- Header -->
+    <div class="header">
+      <h1 class="logo">BharatShaktiTenders.com</h1>
+      <p class="tagline">India's Trusted Government Tender Portal</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+      <h2 class="greeting">Dear <%= fullname || "Valued User" %>,</h2>
+
+      <p class="intro-text">
+        Your application <strong>ID: <%= application_id %></strong> for BID number 
+        <strong><%= bid_number %></strong> has been updated.
+      </p>
+
+      <div class="status-box">
+        📌 <strong>Current Status:</strong> <%= status %>
+      </div>
+
+      <p class="support-text">
+        If you have any questions, feel free to contact our support team at
+        <a href="mailto:contact@bharatshaktitenders.com" class="support-email">
+          contact@bharatshaktitenders.com
+        </a>.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <p class="footer-text">Thank you,</p>
+      <p class="footer-text"><strong>Team BharatShaktiTenders</strong></p>
+      <p class="footer-text">
+        <a href="https://bharatshaktitenders.com" class="footer-link">
+          www.bharatshaktitenders.com
+        </a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

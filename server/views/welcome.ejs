@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to BharatShaktiTenders.com</title>
+  <style>
+     body, table, td, p, a, li, blockquote {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        table, td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+        img {
+            -ms-interpolation-mode: bicubic;
+            border: 0;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+        }
+        
+        /* Main styles */
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #003366 0%, #004080 100%);
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .logo {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+            text-decoration: none;
+        }
+        
+        .tagline {
+            color: #008080;
+            font-size: 14px;
+            margin: 5px 0 0 0;
+        }
+        
+        .content {
+            background-color: #ffffff;
+            padding: 40px 30px;
+        }
+        
+        .greeting {
+            color: #2d3748;
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+        }
+        
+        .intro-text {
+            color: #4a5568;
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 0 0 30px 0;
+        }
+        
+        .features-section {
+            background-color: #f7fafc;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        
+        .features-title {
+            color: #2d3748;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 15px 0;
+            color: #4a5568;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        
+        .feature-icon {
+            color: #008080;
+            font-size: 18px;
+            margin-right: 12px;
+            margin-top: 2px;
+        }
+        
+        .cta-section {
+            text-align: center;
+            margin: 35px 0;
+        }
+        
+        .cta-text {
+            color: #2d3748;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 20px 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #008080 0%, #006666 100%);
+            color: #ffffff !important;
+            text-decoration: none;
+            padding: 15px 35px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 128, 128, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            background: linear-gradient(135deg, #006666 0%, #004d4d 100%);
+            box-shadow: 0 6px 16px rgba(0, 128, 128, 0.4);
+        }
+        
+        .support-section {
+            background-color: #edf2f7;
+            border-radius: 8px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .support-text {
+            color: #4a5568;
+            font-size: 15px;
+            line-height: 1.6;
+            margin: 0 0 15px 0;
+        }
+        
+        .support-email {
+            color: #008080;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .footer {
+            background-color: #003366;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .footer-text {
+            color: #a0aec0;
+            font-size: 14px;
+            margin: 0 0 10px 0;
+        }
+        
+        .footer-link {
+            color: #008080;
+            text-decoration: none;
+        }
+        
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* Mobile responsiveness */
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+            }
+            
+            .content {
+                padding: 30px 20px !important;
+            }
+            
+            .features-section, .support-section {
+                padding: 20px !important;
+            }
+            
+            .greeting {
+                font-size: 22px !important;
+            }
+            
+            .cta-button {
+                padding: 12px 25px !important;
+                font-size: 15px !important;
+            }
+        }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f7fafc;">
+  <div class="email-container">
+    <!-- Header -->
+    <div class="header">
+      <h1 class="logo">BharatShaktiTenders.com</h1>
+      <p class="tagline">India's Trusted Government Tender Portal</p>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="content">
+      <h2 class="greeting">Dear <%= fullname || "Valued User" %>,</h2>
+      
+      <p class="intro-text">
+        Thank you for registering on <strong>BharatShaktiTenders.com</strong> – India's trusted portal for discovering and bidding on the latest government and PSU tenders.
+      </p>
+      
+      <!-- Features Section -->
+      <div class="features-section">
+        <h3 class="features-title">With your new account, you now have access to:</h3>
+        
+        <div class="feature-item">
+          <span class="feature-icon">🔍</span>
+          <span>Central & State Government Tenders</span>
+        </div>
+        
+        <div class="feature-item">
+          <span class="feature-icon">🏛️</span>
+          <span>GeM, PSU, and Infrastructure Projects</span>
+        </div>
+        
+        <div class="feature-item">
+          <span class="feature-icon">📩</span>
+          <span>Daily Tender Alerts via SMS & Email</span>
+        </div>
+        
+        <div class="feature-item">
+          <span class="feature-icon">📊</span>
+          <span>Easy Search & Category Filters</span>
+        </div>
+        
+        <div class="feature-item">
+          <span class="feature-icon">📝</span>
+          <span>Online Bid Support (coming soon)</span>
+        </div>
+      </div>
+      
+      <!-- Call to Action -->
+      <div class="cta-section">
+        <p class="cta-text">Get started now:</p>
+        <a href="https://bharatshaktitenders.com/login" class="cta-button">
+          👉 Login Now
+        </a>
+      </div>
+      
+      <!-- Support Section -->
+      <div class="support-section">
+        <p class="support-text">
+          We're here to help you stay ahead in the tendering process. If you have any questions, feel free to contact our support team at 
+          <a href="mailto:contact@bharatshaktitenders.com" class="support-email">contact@bharatshaktitenders.com</a>
+        </p>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+      <p class="footer-text">Welcome aboard,</p>
+      <p class="footer-text"><strong>Team BharatShaktiTenders</strong></p>
+      <p class="footer-text">
+        <a href="https://bharatshaktitenders.com" class="footer-link">www.bharatshaktitenders.com</a>
+      </p>
+      
+    </div>
+  </div>
+</body>
+</html>
