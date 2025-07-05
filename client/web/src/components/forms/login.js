@@ -67,14 +67,14 @@ export default function LoginForm({ redirectLink = "" }) {
               htmlFor="username"
               className="block text-sm font-medium text-gray-700"
             >
-              Username
+              Phone Number
             </Label>
             <Input
               id="username"
               name="username"
               type="username"
               autoComplete="username"
-              placeholder="username"
+              placeholder="Enter Phone Number"
               {...register("username", {
                 required: true,
               })}
